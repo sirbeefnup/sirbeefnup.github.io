@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Cardápio Digital — Sir Beef</title>
+<style>
+  body { margin:0; background:#0B0B0E; color:#F9FAFB; font-family:system-ui,-apple-system,sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; text-align:center; padding:20px; box-sizing:border-box; }
+  .card { background:#14141C; border:1px solid #D4AF37; border-radius:18px; padding:28px 24px; max-width:420px; width:100%; box-shadow:0 12px 35px rgba(0,0,0,0.65); }
+  .logo { font-size:26px; font-weight:900; color:#F3D87D; letter-spacing:1px; margin-bottom:6px; }
+  .sub { font-size:13.5px; color:#D1D5DB; margin-bottom:20px; }
+  .spinner { width:42px; height:42px; border:4px solid #272732; border-top-color:#D4AF37; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .btn { display:block; text-decoration:none; background:#D4AF37; color:#0B0B0E; font-weight:800; padding:12px 16px; border-radius:10px; margin-top:10px; font-size:13.5px; }
+  .btn-sec { background:#1F2937; color:#E5E7EB; border:1px solid #374151; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">🥩 SIR BEEF</div>
+    <div class="sub" id="status">Carregando Cardápio Digital Sir Beef...</div>
+    <div class="spinner" id="sp"></div>
+    <div id="links" style="margin-top:14px;">
+      <a class="btn btn-sec" href="http://192.168.18.53/cardapio">📶 Abrir via Wi-Fi da Loja (192.168.18.53)</a>
+    </div>
+  </div>
+<script>
+(async function(){
+  const targetSuffix = "/cardapio" + (window.location.search || "") + (window.location.hash || "");
+  try {
+    const r = await fetch("https://api.github.com/repos/sirbeefnup/sirbeefnup.github.io/contents/tunnel.json?t=" + Date.now(), {
+      headers: { "Accept": "application/vnd.github.raw+json" },
+      cache: "no-store"
+    });
+    if (r.ok) {
+      const data = await r.json();
+      if (data && data.tunnel_url) {
+        const dest = data.tunnel_url.replace(/\/+$/, "") + targetSuffix;
+        document.getElementById("status").innerText = "Conectado! Abrindo " + dest + "...";
+        window.location.replace(dest);
+        return;
+      }
+    }
+  } catch (e) {}
+  try {
+    const r2 = await fetch("/tunnel.json?t=" + Date.now(), { cache: "no-store" });
+    if (r2.ok) {
+      const data2 = await r2.json();
+      if (data2 && data2.tunnel_url) {
+        const dest2 = data2.tunnel_url.replace(/\/+$/, "") + targetSuffix;
+        window.location.replace(dest2);
+        return;
+      }
+    }
+  } catch (e2) {}
+  document.getElementById("status").innerText = "Selecione abaixo para acessar:";
+})();
+</script>
+</body>
+</html>
