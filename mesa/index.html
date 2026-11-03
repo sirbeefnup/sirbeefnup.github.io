@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sir Beef — Autoatendimento na Mesa (QR Code Exclusivo)</title>
+  <style>
+    body { margin:0; background:#0b0b0e; color:#f4f4f6; font-family:system-ui,-apple-system,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; text-align:center; padding:20px; }
+    .box { background:#131318; border:1px solid rgba(201,164,92,0.45); border-radius:18px; padding:28px 24px; max-width:420px; width:100%; box-shadow:0 12px 40px rgba(0,0,0,0.65); }
+    .gold { color:#e2c27d; font-weight:800; font-size:20px; margin-bottom:8px; }
+    .sub { color:#9ca3af; font-size:13.5px; line-height:1.5; margin-bottom:18px; }
+    .spinner { width:38px; height:38px; border:4px solid rgba(201,164,92,0.25); border-top-color:#c9a45c; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 14px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    a.btn { display:inline-block; margin-top:10px; padding:11px 18px; border-radius:10px; background:linear-gradient(135deg,#c9a45c,#9e7a32); color:#09090b; font-weight:800; text-decoration:none; font-size:13.5px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <div class="gold" id="titleTxt">🍽️ Abrindo Autoatendimento da Mesa...</div>
+    <div class="sub" id="statusTxt">Conectando ao servidor Sir Beef da sua mesa...</div>
+    <div id="fallbackActions" style="display:none;"></div>
+  </div>
+  <script>
+    (async function() {
+      const qs = window.location.search || '?m=13&autoatendimento=1';
+      const params = new URLSearchParams(qs);
+      const m = params.get('m') || params.get('mesa') || '13';
+      document.getElementById('titleTxt').textContent = '🍽️ Abrindo MESA ' + String(m).padStart(2, '0') + ' — Sir Beef';
+      try {
+        const res = await fetch('/tunnel.json?t=' + Date.now(), { cache: 'no-store' });
+        const data = await res.json();
+        const tUrl = (data.tunnel_url || '').replace(/\/$/, '');
+        const lanUrl = (data.lan_url || 'http://192.168.18.53:8080').replace(/\/$/, '');
+        if (tUrl) {
+          window.location.replace(tUrl + '/mesa' + qs);
+          return;
+        }
+        window.location.replace(lanUrl + '/mesa' + qs);
+      } catch (e) {
+        window.location.replace('http://192.168.18.53:8080/mesa' + qs);
+      }
+    })();
+  </script>
+</body>
+</html>
