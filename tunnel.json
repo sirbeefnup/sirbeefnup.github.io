@@ -1,17 +1,17 @@
 {
-    "pdv_fixed_url":  "https://sirbeefnup.github.io/pdv",
-    "lan_ips":  [
-                    "192.168.18.53",
-                    "192.168.18.29"
-                ],
-    "apk_version_code":  18,
-    "tunnel_url":  "https://targeted-taken-marco-vendor.trycloudflare.com",
-    "apk_version_name":  "2.8.0",
-    "updated_at":  "2026-11-03T13:31:17-03:00",
-    "apk_direct_url":  "https://raw.githubusercontent.com/sirbeefnup/sirbeefnup.github.io/main/SirBeef-SuperApp.apk",
-    "hostname_url":  "http://gui",
-    "lan_url":  "http://192.168.18.53:8080",
-    "cardapio_fixed_url":  "https://sirbeefnup.github.io/cardapio",
-    "lan_no_port_url":  "http://192.168.18.53",
-    "apk_fixed_url":  "https://sirbeefnup.github.io/apk"
+  "apk_direct_url": "https://raw.githubusercontent.com/sirbeefnup/sirbeefnup.github.io/main/SirBeef-SuperApp.apk",
+  "apk_fixed_url": "https://sirbeefnup.github.io/apk",
+  "apk_version_code": 18,
+  "apk_version_name": "2.8.0",
+  "cardapio_fixed_url": "https://sirbeefnup.github.io/cardapio",
+  "hostname_url": "http://gui",
+  "lan_ips": [
+    "192.168.18.29",
+    "192.168.18.53"
+  ],
+  "lan_no_port_url": "http://192.168.18.53",
+  "lan_url": "http://192.168.18.53:8080",
+  "pdv_fixed_url": "https://sirbeefnup.github.io/pdv",
+  "tunnel_url": "https://targeted-taken-marco-vendor.trycloudflare.com",
+  "updated_at": "2026-11-03T13:34:40-03:00"
 }
