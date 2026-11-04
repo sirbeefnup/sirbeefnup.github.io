@@ -1,8 +1,8 @@
 {
   "apk_direct_url": "https://raw.githubusercontent.com/sirbeefnup/sirbeefnup.github.io/main/SirBeef-SuperApp.apk",
   "apk_fixed_url": "https://sirbeefnup.github.io/apk",
-  "apk_version_code": 33,
-  "apk_version_name": "4.3.0",
+  "apk_version_code": 35,
+  "apk_version_name": "4.5.0",
   "cardapio_fixed_url": "https://sirbeefnup.github.io/cardapio",
   "hostname_url": "http://gui",
   "lan_ips": [
@@ -12,6 +12,6 @@
   "lan_no_port_url": "http://192.168.18.53",
   "lan_url": "http://192.168.18.53:8080",
   "pdv_fixed_url": "https://sirbeefnup.github.io/pdv",
-  "tunnel_url": "https://thou-refurbished-olympic-kid.trycloudflare.com",
-  "updated_at": "2026-11-04T10:45:49-03:00"
+  "tunnel_url": "https://guild-loading-lean-kings.trycloudflare.com",
+  "updated_at": "2026-11-04T11:37:02-03:00"
 }
