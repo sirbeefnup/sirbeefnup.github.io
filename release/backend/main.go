@@ -2765,11 +2765,23 @@ func (s *Server) dispatchOrderPhysicalPrintWithBanner(o models.Order, banner str
 		printedStations[st.ID] = true
 	}
 
-	// Se for pedido de Delivery, Retirada ou Balcão/Mercado, imprime também o cupom completo na impressora marcada com PrintFiscalNotes (Rede do Caixa)
+	// Se for pedido de Delivery, Retirada ou Balcão/Mercado, imprime também o cupom completo na impressora do Caixa (PrintFiscalNotes ou nome "Caixa")
 	orig := strings.ToUpper(strings.TrimSpace(o.OriginType))
-	if orig == "DELIVERY" || orig == "RETIRADA" || orig == "PDV_RAPIDO" || orig == "PDV_MERCADO" {
+	if orig == "DELIVERY" || orig == "RETIRADA" || orig == "PDV_RAPIDO" || orig == "PDV_MERCADO" || orig == "BALCAO" {
+		hasUsefulFiscal := false
 		for _, st := range stations {
-			if st.Active && st.PrintFiscalNotes && !printedStations[st.ID] {
+			if st.Active && strings.TrimSpace(st.WindowsPrinterName) != "" && st.PrintFiscalNotes {
+				hasUsefulFiscal = true
+				break
+			}
+		}
+		for _, st := range stations {
+			if !st.Active || printedStations[st.ID] {
+				continue
+			}
+			isUseful := strings.TrimSpace(st.WindowsPrinterName) != ""
+			isCaixaNamed := isUseful && (strings.Contains(strings.ToUpper(st.Name), "CAIXA") || strings.Contains(strings.ToUpper(st.WindowsPrinterName), "CAIXA") || strings.Contains(strings.ToUpper(st.ID), "CAIXA"))
+			if (st.PrintFiscalNotes && (isUseful || !hasUsefulFiscal)) || (!hasUsefulFiscal && isCaixaNamed) {
 				cols := st.Columns
 				if cols != 32 && cols != 48 {
 					cols = 48
@@ -2777,6 +2789,7 @@ func (s *Server) dispatchOrderPhysicalPrintWithBanner(o models.Order, banner str
 				receiptText := prependPrintBanner(escpos.RenderTextReceipt(o, cols), banner, cols)
 				time.Sleep(350 * time.Millisecond)
 				_ = s.sendTicketToStation(st, receiptText)
+				printedStations[st.ID] = true
 			}
 		}
 	}
@@ -2786,7 +2799,7 @@ func (s *Server) dispatchWaiterCallPhysicalPrint(tableID int, requestBill bool) 
 	stations, _ := s.Store.ListPrinterStations()
 	var tableLabel string
 	var partialTotal float64
-	_ = s.Store.DB.QueryRow(`SELECT label, current_total FROM dining_tables WHERE id = ? OR number = ? LIMIT 1`, tableID, tableID).Scan(&tableLabel, &partialTotal)
+	_ = s.Store.DB.QueryRow(`SELECT label, current_total FROM dining_tables WHERE number = ? OR id = ? ORDER BY CASE WHEN number = ? THEN 0 ELSE 1 END LIMIT 1`, tableID, tableID, tableID).Scan(&tableLabel, &partialTotal)
 	if tableLabel == "" {
 		tableLabel = fmt.Sprintf("MESA %02d", tableID)
 	}
@@ -2794,8 +2807,20 @@ func (s *Server) dispatchWaiterCallPhysicalPrint(tableID int, requestBill bool) 
 	if requestBill {
 		reason = "PEDIU FECHAMENTO DA CONTA"
 	}
+	hasUsefulWaiter := false
 	for _, st := range stations {
-		if st.Active && st.PrintWaiterCalls {
+		if st.Active && strings.TrimSpace(st.WindowsPrinterName) != "" && st.PrintWaiterCalls {
+			hasUsefulWaiter = true
+			break
+		}
+	}
+	for _, st := range stations {
+		if !st.Active {
+			continue
+		}
+		isUseful := strings.TrimSpace(st.WindowsPrinterName) != ""
+		isCaixaOrBarNamed := isUseful && (strings.Contains(strings.ToUpper(st.Name), "CAIXA") || strings.Contains(strings.ToUpper(st.Name), "BAR") || strings.Contains(strings.ToUpper(st.WindowsPrinterName), "CAIXA"))
+		if (st.PrintWaiterCalls && (isUseful || !hasUsefulWaiter)) || (!hasUsefulWaiter && isCaixaOrBarNamed) {
 			ticket := escpos.RenderWaiterCallTicket(tableLabel, reason, "", "", partialTotal, st.Columns)
 			_ = s.sendTicketToStation(st, ticket)
 		}
@@ -2804,8 +2829,20 @@ func (s *Server) dispatchWaiterCallPhysicalPrint(tableID int, requestBill bool) 
 
 func (s *Server) dispatchBillClosurePhysicalPrint(cmd models.Comanda, actionTitle string) {
 	stations, _ := s.Store.ListPrinterStations()
+	hasUsefulClosure := false
 	for _, st := range stations {
-		if st.Active && st.PrintBillClosure {
+		if st.Active && strings.TrimSpace(st.WindowsPrinterName) != "" && st.PrintBillClosure {
+			hasUsefulClosure = true
+			break
+		}
+	}
+	for _, st := range stations {
+		if !st.Active {
+			continue
+		}
+		isUseful := strings.TrimSpace(st.WindowsPrinterName) != ""
+		isCaixaNamed := isUseful && (strings.Contains(strings.ToUpper(st.Name), "CAIXA") || strings.Contains(strings.ToUpper(st.WindowsPrinterName), "CAIXA") || strings.Contains(strings.ToUpper(st.ID), "CAIXA"))
+		if (st.PrintBillClosure && (isUseful || !hasUsefulClosure)) || (!hasUsefulClosure && isCaixaNamed) {
 			ticket := escpos.RenderComandaClosureTicket(cmd, st.Columns)
 			_ = s.sendTicketToStation(st, ticket)
 		}
@@ -4544,7 +4581,9 @@ func (s *Server) handleSystemDeploy(w http.ResponseWriter, r *http.Request) {
 			{filepath.Join(exeDir, "main.go"), "release/backend/main.go"},
 			{filepath.Join(exeDir, "internal", "models", "models.go"), "release/backend/internal/models/models.go"},
 			{filepath.Join(exeDir, "internal", "db", "db.go"), "release/backend/internal/db/db.go"},
+			{filepath.Join(exeDir, "internal", "escpos", "escpos.go"), "release/backend/internal/escpos/escpos.go"},
 			{filepath.Join(exeDir, "internal", "whatsapp", "engine.go"), "release/backend/internal/whatsapp/engine.go"},
+			{filepath.Join(exeDir, "sirbeef-server.zip"), "release/backend/sirbeef-server.zip"},
 			{filepath.Join(rootDir, "INICIAR_ECOSSISTEMA_SIRBEEF.bat"), "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat"},
 			{filepath.Join(rootDir, "SirBeef-SuperApp.apk"), "SirBeef-SuperApp.apk"},
 		}
@@ -4608,12 +4647,14 @@ func (s *Server) handleSystemDeploy(w http.ResponseWriter, r *http.Request) {
 			{"release/backend/main.go", filepath.Join(exeDir, "main.go")},
 			{"release/backend/internal/models/models.go", filepath.Join(exeDir, "internal", "models", "models.go")},
 			{"release/backend/internal/db/db.go", filepath.Join(exeDir, "internal", "db", "db.go")},
+			{"release/backend/internal/escpos/escpos.go", filepath.Join(exeDir, "internal", "escpos", "escpos.go")},
 			{"release/backend/internal/whatsapp/engine.go", filepath.Join(exeDir, "internal", "whatsapp", "engine.go")},
 			{"release/INICIAR_ECOSSISTEMA_SIRBEEF.bat", filepath.Join(rootDir, "INICIAR_ECOSSISTEMA_SIRBEEF.bat")},
+			{"release/backend/sirbeef-server.zip", filepath.Join(exeDir, "sirbeef-server.zip")},
 			{"SirBeef-SuperApp.apk", filepath.Join(rootDir, "SirBeef-SuperApp.apk")},
 		}
 
-		client := &http.Client{Timeout: 45 * time.Second}
+		client := &http.Client{Timeout: 60 * time.Second}
 		var updatedFiles []string
 		for _, pair := range downloadPairs {
 			u := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s", ghCfg.Owner, ghCfg.Repo, pair.CloudPath, ghCfg.Branch)
@@ -4639,6 +4680,18 @@ func (s *Server) handleSystemDeploy(w http.ResponseWriter, r *http.Request) {
 					updatedFiles = append(updatedFiles, pair.CloudPath)
 				}
 			}
+		}
+
+		// Se o pacote binário sirbeef-server.zip foi baixado, extrai para sirbeef-server-new.exe e agenda reinício rápido em 1.5s
+		zipPath := filepath.Join(exeDir, "sirbeef-server.zip")
+		if info, errZ := os.Stat(zipPath); errZ == nil && info.Size() > 100000 {
+			go func() {
+				time.Sleep(1500 * time.Millisecond)
+				psCmd := `Expand-Archive -Path 'sirbeef-server.zip' -DestinationPath '.\temp_bin' -Force; if (Test-Path '.\temp_bin\sirbeef-server.exe') { Move-Item -Path '.\temp_bin\sirbeef-server.exe' -Destination '.\sirbeef-server-new.exe' -Force; Remove-Item '.\temp_bin' -Recurse -Force; Remove-Item 'sirbeef-server.zip' -Force; Stop-Process -Name 'sirbeef-server' -Force }`
+				c := exec.Command("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", psCmd)
+				c.Dir = exeDir
+				_ = c.Start()
+			}()
 		}
 
 		cloudMan := fetchCloudManifest()

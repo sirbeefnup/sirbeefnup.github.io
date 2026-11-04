@@ -1,18 +1,24 @@
 {
-    "published_from_pc":  "GUI",
-    "published_at":  "04/11/2026 15:54:56",
-    "release_notes":  "v4.8.2: (1) Central de Impressoras em 3 Passos simples (Detectar -\u003e Minhas Impressoras Uteis c/ Renomear -\u003e Vincular em cada Area do Cardapio); (2) Auto-Dimensionamento de Tela + Botao de Zoom (- / Auto / +) salvo por computador.",
-    "published_files":  [
-                            "release/backend/main.go",
-                            "release/web/pdv.html",
-                            "release/web/index.html",
-                            "release/web/rastreio.html",
-                            "release/backend/internal/db/db.go"
-                        ],
-    "version_name":  "4.8.2",
-    "version_code":  40,
-    "excluded_private_data":  [
-                                  "sirbeef.db",
-                                  "whatsapp_session.db"
-                              ]
+  "excluded_private_data": [
+    "sirbeef.db (Clientes/Vendas de Teste)",
+    "whatsapp_session.db"
+  ],
+  "published_at": "04/11/2026 18:31:08",
+  "published_files": [
+    "release/web/index.html",
+    "release/web/rastreio.html",
+    "release/data/apk_version.json",
+    "release/backend/internal/escpos/escpos.go",
+    "release/web/pdv.html",
+    "release/backend/main.go",
+    "release/backend/internal/models/models.go",
+    "release/backend/internal/db/db.go",
+    "release/backend/internal/whatsapp/engine.go",
+    "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat",
+    "release/backend/sirbeef-server.zip"
+  ],
+  "published_from_pc": "GUI",
+  "release_notes": "v4.8.3 (Build #41): (1) Cabecalho destacado MESA 15 em tamanho gigante nas comandas termicas ESC/POS; (2) Resolucao 1366x768 compactada perfeitamente no PDV (cupom e menus sem cortes verticais); (3) Auto-roteamento das impressoras uteis do Caixa (bebidas/fechamento); (4) Alinhamento automatico Mesa 15 QR Code.",
+  "version_code": 41,
+  "version_name": "4.8.3"
 }

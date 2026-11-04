@@ -471,6 +471,10 @@ func (s *Store) migrate() error {
 	_, _ = s.DB.Exec(`UPDATE dining_tables SET qr_token = '' WHERE is_kiosk = 1`)
 	_, _ = s.DB.Exec(`UPDATE dining_tables SET qr_token = printf('SIRBEEF-MESA-%02d', number) WHERE is_kiosk = 0 AND TRIM(COALESCE(qr_token, '')) = ''`)
 	_, _ = s.DB.Exec(`UPDATE orders SET header_tag = REPLACE(REPLACE(header_tag, '[T] ', ''), '[Q] ', '')`)
+	// Sincroniza IDs da tabela dining_tables com o número da mesa (number) para que ?m=15 nunca confunda ID 15 com Mesa 13
+	_, _ = s.DB.Exec(`UPDATE dining_tables SET id = number + 10000 WHERE id != number`)
+	_, _ = s.DB.Exec(`UPDATE dining_tables SET id = number WHERE id != number`)
+	_, _ = s.DB.Exec(`UPDATE comandas SET table_id = table_number, comanda_code = printf('MESA %02d', table_number) WHERE table_number > 0 AND (comanda_code GLOB 'M[0-9]*' OR table_id != table_number)`)
 
 	// Garante logins de Tablet Kiosk (mesa01 até mesa12, senha 1234) para abrir direto o Cardápio Estilo Goomer
 	fullNow := time.Now().Format("02/01/2006 15:04")
@@ -2700,7 +2704,7 @@ func (s *Store) SetTableWaiterCall(tableID int, callActive bool, requestBill boo
 	realID := tableID
 	var tNum int
 	var tLabel string
-	_ = s.DB.QueryRow(`SELECT id, number, label FROM dining_tables WHERE id = ? OR number = ? LIMIT 1`, tableID, tableID).Scan(&realID, &tNum, &tLabel)
+	_ = s.DB.QueryRow(`SELECT id, number, label FROM dining_tables WHERE number = ? OR id = ? ORDER BY CASE WHEN number = ? THEN 0 ELSE 1 END LIMIT 1`, tableID, tableID, tableID).Scan(&realID, &tNum, &tLabel)
 	var err error
 	if requestBill {
 		_, err = s.DB.Exec(`UPDATE dining_tables SET waiter_call = ?, status = 'CONTA', updated_at = ? WHERE id = ?`, wInt, now, realID)
@@ -2851,20 +2855,23 @@ func (s *Store) OpenOrGetComanda(tableID int, comandaCode, comandaType, customer
 	if tableID <= 0 {
 		tableID = 1
 	}
+	realTableID := tableID
 	var tableNum int
 	var tableLbl string
 	var isKiosk int
-	err := s.DB.QueryRow(`SELECT number, label, COALESCE(is_kiosk,0) FROM dining_tables WHERE id = ? OR number = ? LIMIT 1`, tableID, tableID).Scan(&tableNum, &tableLbl, &isKiosk)
+	err := s.DB.QueryRow(`SELECT id, number, label, COALESCE(is_kiosk,0) FROM dining_tables WHERE number = ? OR id = ? ORDER BY CASE WHEN number = ? THEN 0 ELSE 1 END LIMIT 1`, tableID, tableID, tableID).Scan(&realTableID, &tableNum, &tableLbl, &isKiosk)
 	if err != nil {
 		tableNum = tableID
 		tableLbl = fmt.Sprintf("MESA %02d", tableNum)
+	} else {
+		tableID = realTableID
 	}
 
 	cName := strings.TrimSpace(customerName)
 	cPhone := strings.TrimSpace(customerPhone)
 	normCode := s.ResolveComandaCode(comandaCode)
 	if strings.HasPrefix(strings.ToUpper(normCode), "M") && strings.Contains(normCode, "-") {
-		normCode = strings.Split(normCode, "-")[0]
+		normCode = strings.TrimSpace(strings.Split(normCode, "-")[0])
 	}
 
 	if comandaType == "" {
@@ -2876,7 +2883,7 @@ func (s *Store) OpenOrGetComanda(tableID int, comandaCode, comandaType, customer
 	}
 
 	if comandaType == "NOME_CELULAR" && (normCode == "" || strings.HasPrefix(strings.ToUpper(normCode), "M")) {
-		normCode = fmt.Sprintf("M%02d", tableNum)
+		normCode = fmt.Sprintf("MESA %02d", tableNum)
 	}
 	if normCode == "" {
 		normCode = fmt.Sprintf("CMD-%03d", tableNum)
@@ -3400,13 +3407,13 @@ func (s *Store) CreateOrder(o models.Order) (*models.Order, error) {
 				o.CustomerPhone = cmd.CustomerPhone
 			}
 			if cmd.ComandaType == "QR_TABLET" {
-				o.HeaderTag = fmt.Sprintf("%s • %s", cmd.TableLabel, cmd.ComandaCode)
+				o.HeaderTag = fmt.Sprintf("MESA %02d • %s", cmd.TableNumber, cmd.ComandaCode)
 			} else {
 				shortName := FirstTwoNames(cmd.CustomerName)
 				if shortName != "" {
-					o.HeaderTag = fmt.Sprintf("%s %s", cmd.ComandaCode, shortName)
+					o.HeaderTag = fmt.Sprintf("MESA %02d • %s", cmd.TableNumber, shortName)
 				} else {
-					o.HeaderTag = cmd.ComandaCode
+					o.HeaderTag = fmt.Sprintf("MESA %02d", cmd.TableNumber)
 				}
 			}
 		}
@@ -3479,7 +3486,7 @@ func (s *Store) CreateOrder(o models.Order) (*models.Order, error) {
 			tLbl := o.HeaderTag
 			if o.TableID != nil && *o.TableID > 0 {
 				tID = *o.TableID
-				_ = s.DB.QueryRow(`SELECT number, label FROM dining_tables WHERE id = ? OR number = ? LIMIT 1`, tID, tID).Scan(&tNum, &tLbl)
+				_ = s.DB.QueryRow(`SELECT number, label FROM dining_tables WHERE number = ? OR id = ? ORDER BY CASE WHEN number = ? THEN 0 ELSE 1 END LIMIT 1`, tID, tID, tID).Scan(&tNum, &tLbl)
 			}
 			if tLbl == "" {
 				if tID > 0 {
@@ -4812,9 +4819,20 @@ func (s *Store) BuildOrderSectorTickets(o models.Order) []models.SectorTicketPre
 	}
 	stations, _ := s.ListPrinterStations()
 	stMap := map[string]models.PrinterStation{}
+	hasAnyUsefulStation := false
+	for _, st := range stations {
+		if st.Active && strings.TrimSpace(st.WindowsPrinterName) != "" {
+			hasAnyUsefulStation = true
+			break
+		}
+	}
 	var drinkStationID, boutiqueStationID string
 	for _, st := range stations {
 		stMap[st.ID] = st
+		isUseful := strings.TrimSpace(st.WindowsPrinterName) != ""
+		if hasAnyUsefulStation && !isUseful {
+			continue
+		}
 		if st.Active && st.PrintDrinks && drinkStationID == "" {
 			drinkStationID = st.ID
 		}
@@ -5855,7 +5873,7 @@ func (s *Store) CreateWaiterAlert(a models.WaiterAlert) (*models.WaiterAlert, er
 	a.Status = "PENDENTE"
 	a.CreatedAt = time.Now().Format("15:04:05")
 	if a.TableID > 0 && a.TableLabel == "" {
-		_ = s.DB.QueryRow(`SELECT number, label FROM dining_tables WHERE id = ? OR number = ? LIMIT 1`, a.TableID, a.TableID).Scan(&a.TableNumber, &a.TableLabel)
+		_ = s.DB.QueryRow(`SELECT number, label FROM dining_tables WHERE number = ? OR id = ? ORDER BY CASE WHEN number = ? THEN 0 ELSE 1 END LIMIT 1`, a.TableID, a.TableID, a.TableID).Scan(&a.TableNumber, &a.TableLabel)
 		if a.TableLabel == "" {
 			a.TableNumber = a.TableID
 			a.TableLabel = fmt.Sprintf("MESA %02d", a.TableID)
@@ -5902,7 +5920,7 @@ func (s *Store) TriggerKitchenReadyAlert(orderID int) (*models.WaiterAlert, erro
 	tLbl := ord.HeaderTag
 	if ord.TableID != nil && *ord.TableID > 0 {
 		tID = *ord.TableID
-		_ = s.DB.QueryRow(`SELECT number, label FROM dining_tables WHERE id = ? OR number = ? LIMIT 1`, tID, tID).Scan(&tNum, &tLbl)
+		_ = s.DB.QueryRow(`SELECT number, label FROM dining_tables WHERE number = ? OR id = ? ORDER BY CASE WHEN number = ? THEN 0 ELSE 1 END LIMIT 1`, tID, tID, tID).Scan(&tNum, &tLbl)
 	}
 	if tLbl == "" {
 		if tID > 0 {

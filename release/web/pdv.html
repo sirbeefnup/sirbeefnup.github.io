@@ -367,6 +367,124 @@
       animation: pdvSpin 0.8s linear infinite;
       margin: 0 auto 12px;
     }
+
+    /* =====================================================================
+       MODO COMPACTO VERTICAL HD (1366x768 / 1280x720 / 1600x900)
+       Mantém a fonte grande e legível (80% a 85%), mas enxuga alturas
+       desnecessárias para caberem os 5 botões da esquerda e o Cupom inteiro
+       (incluindo TOTAL A PAGAR e FINALIZAR VENDA) sem cortar nada!
+       ===================================================================== */
+    body.pdv-compact-hd header {
+      padding: 5px 12px !important;
+      gap: 6px !important;
+    }
+    body.pdv-compact-hd .brand {
+      gap: 8px !important;
+    }
+    body.pdv-compact-hd .brand img {
+      width: 30px !important;
+      height: 30px !important;
+    }
+    body.pdv-compact-hd .brand-title {
+      font-size: 18px !important;
+    }
+    body.pdv-compact-hd .brand-sub {
+      font-size: 10px !important;
+    }
+    body.pdv-compact-hd .nav-tabs {
+      gap: 5px !important;
+    }
+    body.pdv-compact-hd .nav-tabs > .btn {
+      padding: 5px 9px !important;
+      font-size: 11.5px !important;
+    }
+    body.pdv-compact-hd main {
+      padding: 8px 12px !important;
+    }
+    body.pdv-compact-hd #cashierShiftTopBar {
+      padding: 6px 12px !important;
+      margin-bottom: 8px !important;
+      gap: 6px !important;
+    }
+    body.pdv-compact-hd #cashierShiftBarTitle {
+      font-size: 13px !important;
+      display: inline !important;
+      margin-right: 8px !important;
+    }
+    body.pdv-compact-hd #cashierShiftBarSub {
+      font-size: 11.5px !important;
+      display: inline !important;
+    }
+    body.pdv-compact-hd #cashierShiftTopBar .btn {
+      padding: 5px 9px !important;
+      font-size: 11.5px !important;
+    }
+    body.pdv-compact-hd .caixa-layout {
+      gap: 10px !important;
+    }
+    body.pdv-compact-hd #caixaLeftMenuHub {
+      padding: 10px 12px !important;
+    }
+    body.pdv-compact-hd #caixaLeftMenuHub h3 {
+      margin-bottom: 8px !important;
+      font-size: 16px !important;
+    }
+    body.pdv-compact-hd #caixaLeftMenuHub > div {
+      gap: 7px !important;
+    }
+    body.pdv-compact-hd .caixa-big-hub-btn {
+      padding: 9px 14px !important;
+      border-radius: 10px !important;
+      gap: 10px !important;
+    }
+    body.pdv-compact-hd .caixa-big-hub-btn div[style*="font-size:34px"] {
+      font-size: 25px !important;
+    }
+    body.pdv-compact-hd .caixa-big-hub-btn div[style*="font-size:22px"] {
+      font-size: 18.5px !important;
+    }
+    body.pdv-compact-hd .caixa-big-hub-btn div[style*="font-size:12.5px"] {
+      font-size: 11px !important;
+      margin-top: 0 !important;
+    }
+    body.pdv-compact-hd #cupomVendaPanel {
+      padding: 10px 12px !important;
+    }
+    body.pdv-compact-hd #cupomVendaPanel h3 {
+      margin-bottom: 6px !important;
+      font-size: 16.5px !important;
+    }
+    body.pdv-compact-hd #modeTab-PDV_MERCADO,
+    body.pdv-compact-hd #modeTab-DELIVERY {
+      padding: 8px 10px !important;
+      font-size: 14.5px !important;
+    }
+    body.pdv-compact-hd #pdvCustomerName {
+      padding: 6px 10px !important;
+      font-size: 13px !important;
+    }
+    body.pdv-compact-hd #pdvCartItemsBox {
+      min-height: 105px !important;
+      max-height: 180px !important;
+      padding: 6px !important;
+      margin-bottom: 6px !important;
+    }
+    body.pdv-compact-hd #pdvCartItemsBox p {
+      padding: 12px 8px !important;
+      font-size: 11.5px !important;
+    }
+    body.pdv-compact-hd #btnFinalizeCaixaMain {
+      padding: 10px !important;
+      font-size: 14.5px !important;
+    }
+    body.pdv-compact-hd #caixaCatalogGrid {
+      max-height: 410px !important;
+    }
+    body.pdv-compact-hd #caixaRetiradaList,
+    body.pdv-compact-hd #caixaComandasList,
+    body.pdv-compact-hd #caixaTablesList {
+      max-height: 430px !important;
+    }
   </style>
 </head>
 <body>
@@ -434,6 +552,8 @@
       <button type="button" class="btn" style="padding:4px 7px;font-size:11px;" onclick="stepPdvScreenScale(-5)" title="Diminuir tamanho da tela neste PC">➖</button>
       <span id="hdrScalePctLabel" style="font-size:11px;font-weight:800;color:var(--gold-light);min-width:48px;text-align:center;">100%</span>
       <button type="button" class="btn" style="padding:4px 7px;font-size:11px;" onclick="stepPdvScreenScale(5)" title="Aumentar tamanho da tela neste PC">➕</button>
+      <button type="button" class="btn" id="hdrCompactHdBtn" style="padding:4px 7px;font-size:11px;border-color:#38bdf8;color:#7dd3fc;" onclick="togglePdvCompactHdMode()" title="Modo Compacto Vertical para telas 1366x768 (Cabe os 5 botões e o Cupom inteiro na tela sem diminuir a letra!)">📐 Compacto</button>
+      <button type="button" class="btn" id="hdrFullscreenBtn" style="padding:4px 7px;font-size:11px;border-color:var(--green);color:#86efac;" onclick="togglePdvFullscreen()" title="Abrir em Tela Cheia (Esconde barras do navegador para ganhar mais espaço vertical)">⛶ Tela Cheia</button>
     </div>
     <button class="btn btn-red" style="padding:8px 11px;font-size:12px;" onclick="logoutPdvOperator()">🚪 Sair</button>
   </div>
@@ -3485,6 +3605,9 @@
         }));
         detectedPrintersList = pData.detected_printers || [];
         remotePrinterPCs = pData.remote_pcs || [];
+        if (typeof autoSyncUsefulPrinterFlagsAndRoutes === 'function') {
+          await autoSyncUsefulPrinterFlagsAndRoutes();
+        }
       }
       if (waStRes && waStRes.ok) waStatusData = await waStRes.json();
       if (waLogsRes && waLogsRes.ok) waLogsData = (await waLogsRes.json()) || [];
@@ -6055,7 +6178,14 @@
   function cleanComandaShortCode(code) {
     const c = String(code || '').trim();
     if (c.toUpperCase().startsWith('M') && c.includes('-')) {
-      return c.split('-')[0];
+      const mPart = c.split('-')[0].trim().toUpperCase();
+      if (/^M\d+$/.test(mPart)) {
+        return 'MESA ' + mPart.substring(1).padStart(2, '0');
+      }
+      return mPart;
+    }
+    if (/^M\d+$/i.test(c)) {
+      return 'MESA ' + c.substring(1).padStart(2, '0');
     }
     return c;
   }
@@ -6945,9 +7075,11 @@
     }
     const activeCmd = activeCupomComandaId ? comandas.find(c => c.id === activeCupomComandaId) : null;
     const tableId = activeCmd ? activeCmd.table_id : (activeCupomTableId || parseInt(document.getElementById('pdvTableSelect').value || '1', 10));
+    const tblObj = (tables || []).find(t => Number(t.id) === Number(tableId)) || (tables || []).find(t => Number(t.number) === Number(tableId));
+    const tblNum = tblObj ? tblObj.number : tableId;
     const custName = document.getElementById('pdvCustomerName').value || (activeCmd ? activeCmd.customer_name : 'Cliente Mesa');
     const custPhone = document.getElementById('pdvCustomerPhone').value || (activeCmd ? activeCmd.customer_phone : '');
-    const shortCode = activeCmd ? cleanComandaShortCode(activeCmd.comanda_code) : `M${String(tableId).padStart(2, '0')}`;
+    const shortCode = activeCmd ? cleanComandaShortCode(activeCmd.comanda_code) : `MESA ${String(tblNum).padStart(2, '0')}`;
 
     const payload = {
       origin_type: 'MESA',
@@ -7735,6 +7867,8 @@
     const tblStr = prompt('Número da Mesa (01 a 12 p/ Tablet QR ou 13 a 30 p/ Salão Nome+Celular):', '15');
     if (!tblStr) return;
     const tableNum = parseInt(tblStr, 10) || 15;
+    const matchedTbl = (tables || []).find(t => Number(t.number) === tableNum) || (tables || []).find(t => Number(t.id) === tableNum);
+    const resolvedTableId = matchedTbl ? matchedTbl.id : tableNum;
     const isTablet = tableNum <= 12;
     let code = '';
     let cName = '';
@@ -7746,6 +7880,7 @@
       cName = prompt('Nome do Cliente (Obrigatório p/ Mesas sem Tablet 13 a 30):', '') || '';
       if (!cName) { alert('Informe o nome do cliente!'); return; }
       cPhone = prompt('Número de Celular / WhatsApp do Cliente:', '11999998888') || '';
+      code = `MESA ${String(tableNum).padStart(2, '0')} • ${cName.trim()}`;
     }
     showPdvLoading('🪪 Abrindo Comanda...', 'Registrando comanda no servidor e carregando no Cupom de Venda...');
     try {
@@ -7754,7 +7889,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'OPEN',
-          table_id: tableNum,
+          table_id: resolvedTableId,
           comanda_code: code,
           comanda_type: isTablet ? 'QR_TABLET' : 'NOME_CELULAR',
           customer_name: cName,
@@ -9714,7 +9849,7 @@
     ];
 
     const sysFunctionsHtml = sysFunctions.map(fn => {
-      const activeSt = optionListForStep3.find(s => !!s[fn.field] && s.enabled !== false) || (printerStations || []).find(s => !!s[fn.field] && s.enabled !== false);
+      const activeSt = optionListForStep3.find(s => !!s[fn.field] && s.enabled !== false);
       const curId = activeSt ? activeSt.id : 'NAO_IMPRIMIR';
       const opts = [
         ...optionListForStep3.map(st => `
@@ -9726,13 +9861,13 @@
       ].join('');
 
       return `
-        <div style="background:#101420;border:1px solid #1e3a8a;border-left:4px solid #38bdf8;border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div style="background:#101420;border:1px solid #1e3a8a;border-left:4px solid ${activeSt ? 'var(--green)' : '#38bdf8'};border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
           <div style="flex:1;min-width:170px;">
             <div style="font-size:13px;font-weight:800;color:#93c5fd;">${fn.icon} ${fn.title}</div>
             <div style="font-size:10.5px;color:#cbd5e1;margin-top:2px;">${fn.sub}</div>
           </div>
           <div style="min-width:250px;flex:1;max-width:340px;">
-            <select onchange="assignSystemFunctionToUsefulPrinter('${fn.field}', this.value)" style="font-size:12px;font-weight:800;border-color:#38bdf8;width:100%;padding:7px 9px;">
+            <select onchange="assignSystemFunctionToUsefulPrinter('${fn.field}', this.value)" style="font-size:12px;font-weight:800;border-color:${activeSt ? 'var(--green)' : '#38bdf8'};width:100%;padding:7px 9px;">
               ${opts}
             </select>
           </div>
@@ -13036,7 +13171,154 @@
     }
   });
 
+  function togglePdvCompactHdMode(forceState) {
+    const isCurrentlyOn = document.body.classList.contains('pdv-compact-hd');
+    const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyOn;
+    document.body.classList.toggle('pdv-compact-hd', newState);
+    localStorage.setItem('sirbeef_pdv_compact_hd_mode', newState ? 'ON' : 'OFF');
+    const btn = document.getElementById('hdrCompactHdBtn');
+    if (btn) {
+      btn.classList.toggle('btn-gold', newState);
+      btn.style.color = newState ? '#000' : '#7dd3fc';
+      btn.style.borderColor = newState ? 'var(--gold-light)' : '#38bdf8';
+    }
+  }
+
+  function togglePdvFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    const isFs = !!document.fullscreenElement;
+    const btn = document.getElementById('hdrFullscreenBtn');
+    if (btn) {
+      btn.classList.toggle('btn-green', isFs);
+      btn.textContent = isFs ? '⛶ Sair da Tela Cheia' : '⛶ Tela Cheia';
+    }
+  });
+
+  // Sincronização inteligente e automática de rotas e flags das impressoras úteis
+  let hasAutoSyncedUsefulPrinters = false;
+  async function autoSyncUsefulPrinterFlagsAndRoutes() {
+    if (hasAutoSyncedUsefulPrinters) return;
+    const useful = getUsefulPrintersList();
+    if (!useful || useful.length === 0) return;
+    hasAutoSyncedUsefulPrinters = true;
+
+    // Encontra impressora do Caixa (UTIL_CAIXA_... ou qualquer impressora com windows_printer_name com CAIXA ou pc_name CAIXA)
+    const caixaPrn = useful.find(st =>
+      String(st.name || '').toLowerCase().includes('caixa') ||
+      String(st.windows_printer_name || '').toLowerCase().includes('caixa') ||
+      String(st.pc_name || '').toUpperCase().includes('CAIXA')
+    );
+
+    // Encontra impressora de Cozinha Lanches (ou principal da Cozinha)
+    const lanchesPrn = useful.find(st =>
+      String(st.name || '').toLowerCase().includes('lanche')
+    ) || useful.find(st =>
+      !String(st.name || '').toLowerCase().includes('caixa') &&
+      !String(st.windows_printer_name || '').toLowerCase().includes('caixa')
+    );
+
+    // 1. Se a impressora do Caixa existir mas não tiver as flags de sistema marcadas, atualiza-as
+    if (caixaPrn) {
+      const needsFlagsUpdate = !caixaPrn.print_drinks || !caixaPrn.print_bill_closure || !caixaPrn.print_boutique || !caixaPrn.print_fiscal_notes;
+      if (needsFlagsUpdate) {
+        const updatedCaixa = {
+          ...caixaPrn,
+          print_drinks: true,
+          print_bill_closure: true,
+          print_boutique: true,
+          print_fiscal_notes: true,
+          print_waiter_calls: true,
+          enabled: true
+        };
+        try {
+          await fetch('/api/admin/printers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'STATION',
+              action: 'SAVE_STATION',
+              operator_role: 'ADMIN',
+              admin_pin: '1111',
+              station: updatedCaixa
+            })
+          });
+        } catch (e) {}
+      }
+
+      // 2. Se a categoria Bebidas (138) ou Boutique (900) não estiver roteada para o Caixa, roteia
+      const routesToUpdate = [
+        { id: 138, name: 'Bebidas' },
+        { id: 900, name: 'Boutique das Carnes & Mercado' }
+      ];
+      for (const r of routesToUpdate) {
+        const curRoute = (categoryPrinterRoutes || []).find(cr => Number(cr.category_id) === r.id);
+        if (!curRoute || curRoute.printer_station_id !== caixaPrn.id) {
+          try {
+            await fetch('/api/admin/printers', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                type: 'ROUTE',
+                action: 'SAVE_ROUTE',
+                operator_role: 'ADMIN',
+                admin_pin: '1111',
+                route: {
+                  category_id: r.id,
+                  category_name: r.name,
+                  printer_station_id: caixaPrn.id
+                }
+              })
+            });
+          } catch (e) {}
+        }
+      }
+    }
+
+    // 3. Se a categoria Lanches Fitness (175) não estiver roteada, direciona para lanchesPrn
+    if (lanchesPrn) {
+      const curLanchesRoute = (categoryPrinterRoutes || []).find(cr => Number(cr.category_id) === 175);
+      if (!curLanchesRoute || curLanchesRoute.printer_station_id !== lanchesPrn.id) {
+        try {
+          await fetch('/api/admin/printers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'ROUTE',
+              action: 'SAVE_ROUTE',
+              operator_role: 'ADMIN',
+              admin_pin: '1111',
+              route: {
+                category_id: 175,
+                category_name: 'Lanches Fitnnes',
+                printer_station_id: lanchesPrn.id
+              }
+            })
+          });
+        } catch (e) {}
+      }
+    }
+  }
+
+  function applyPdvCompactHdModeInit() {
+    const saved = localStorage.getItem('sirbeef_pdv_compact_hd_mode');
+    const screenH = (window.screen && window.screen.availHeight) ? window.screen.availHeight : 768;
+    const innerH = window.innerHeight || screenH;
+    // Se a tela for 768p (ou menor que 860p de altura) e o usuário não desligou explicitamente, ativa o modo compacto!
+    const shouldEnable = saved === 'ON' || (saved !== 'OFF' && (screenH <= 860 || innerH <= 760));
+    togglePdvCompactHdMode(shouldEnable);
+  }
+
   applyPdvScreenScale();
+  applyPdvCompactHdModeInit();
   checkPdvLoginSession();
   switchPdvTab(activeTab);
   loadAllData();

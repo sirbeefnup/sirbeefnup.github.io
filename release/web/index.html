@@ -1601,10 +1601,11 @@
     }
     showLoading('🔔 Chamando Garçom...', `Avisando a equipe Sir Beef na MESA ${String(selectedTableNum).padStart(2, '0')}...`);
     try {
+      const realTableId = await resolveRealTableIdByNumber(selectedTableNum);
       await fetch('/api/tables/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ table_id: selectedTableNum, action: 'CALL_WAITER' })
+        body: JSON.stringify({ table_id: realTableId, action: 'CALL_WAITER' })
       });
       hideLoading();
       alert(`🔔 Garçom chamado na MESA ${String(selectedTableNum).padStart(2, '0')}! Um atendente já está indo até sua mesa.`);
@@ -1612,6 +1613,20 @@
       hideLoading();
       alert('Erro ao chamar garçom. Tente novamente.');
     }
+  }
+
+  async function resolveRealTableIdByNumber(tableNum) {
+    const num = parseInt(String(tableNum), 10) || 15;
+    if (!Array.isArray(hostTablesList) || hostTablesList.length === 0) {
+      try {
+        const r = await fetch('/api/tables');
+        if (r.ok) {
+          hostTablesList = await r.json();
+        }
+      } catch (e) {}
+    }
+    const found = (hostTablesList || []).find(t => Number(t.number) === num);
+    return found && found.id ? Number(found.id) : num;
   }
 
   async function submitWebOrder() {
@@ -1660,17 +1675,48 @@
     if (cBairro) localStorage.setItem('sirbeef_customer_bairro', cBairro);
     localStorage.setItem('sirbeef_customer_comp', cComp);
 
-    let headerTag = '[DELIVERY]';
-    if (isRetirada) headerTag = '[RETIRADA]';
+    let headerTag = 'ENTREGA';
+    if (isRetirada) headerTag = 'RETIRADA';
     if (isMesa) headerTag = `MESA ${String(tableNum).padStart(2, '0')} • ${cName} (${cPhone})`;
 
     const sub = cart.reduce((acc, i) => acc + i.total_price, 0);
     const fee = isDelivery ? configuredDefaultDeliveryFee : 0.0;
     const couponDisc = getAppliedWebCouponDiscount(sub + fee);
 
+    showLoading(
+      isMesa ? '🔥 Enviando Pedido para a Chapa...' : (isRetirada ? '🛍️ Registrando Pedido para Retirada...' : '🛵 Enviando Pedido de Delivery...'),
+      'Aguarde um instante, o servidor Sir Beef está processando seu pedido...'
+    );
+
+    const realTableId = isMesa ? await resolveRealTableIdByNumber(tableNum) : null;
+    let preOpenedComandaId = null;
+    if (isMesa && realTableId) {
+      try {
+        const shortName = cName.trim().split(/\s+/).slice(0, 2).join(' ').toUpperCase();
+        const cmdRes = await fetch('/api/comandas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'OPEN',
+            table_id: realTableId,
+            comanda_type: 'QR_TABLET',
+            comanda_code: `MESA ${String(tableNum).padStart(2, '0')} ${shortName} -`,
+            customer_name: cName,
+            customer_phone: cPhone
+          })
+        });
+        if (cmdRes.ok) {
+          const cmdObj = await cmdRes.json();
+          if (cmdObj && cmdObj.id) preOpenedComandaId = cmdObj.id;
+        }
+      } catch (e) {}
+    }
+
     const payload = {
       origin_type: mode,
-      table_id: isMesa ? tableNum : null,
+      table_id: isMesa ? realTableId : null,
+      comanda_id: preOpenedComandaId,
+      comanda_code: isMesa ? `MESA ${String(tableNum).padStart(2, '0')}` : '',
       header_tag: headerTag,
       customer_name: cName,
       customer_phone: cPhone,
@@ -1688,11 +1734,6 @@
       discount_amount: couponDisc,
       items: cart
     };
-
-    showLoading(
-      isMesa ? '🔥 Enviando Pedido para a Chapa...' : (isRetirada ? '🛍️ Registrando Pedido para Retirada...' : '🛵 Enviando Pedido de Delivery...'),
-      'Aguarde um instante, o servidor Sir Beef está processando seu pedido...'
-    );
 
     try {
       const res = await fetch('/api/orders', {
