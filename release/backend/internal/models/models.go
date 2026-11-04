@@ -77,6 +77,23 @@ type Category struct {
 	Items     []Product `json:"items"`
 }
 
+type WeeklyPromoItem struct {
+	ProductID     int     `json:"product_id"`
+	ProductName   string  `json:"product_name"`
+	OriginalPrice float64 `json:"original_price"`
+	PromoPrice    float64 `json:"promo_price"`
+	Active        bool    `json:"active"`
+	ImageURL      string  `json:"image_url"`
+	CategoryID    int     `json:"category_id"`
+	CategoryName  string  `json:"category_name"`
+	Sector        string  `json:"sector"`
+}
+
+type WeeklyPromotionsConfig struct {
+	Active   bool                         `json:"active"`
+	Schedule map[string][]WeeklyPromoItem `json:"schedule"` // "seg", "ter", "qua", "qui", "sex", "sab", "dom"
+}
+
 type DiningTable struct {
 	ID           int     `json:"id"`
 	Number       int     `json:"number"`
@@ -277,6 +294,7 @@ type PrinterConfig struct {
 	MenuEnableRetirada      bool                 `json:"menu_enable_retirada"`
 	MenuEnableMesa          bool                 `json:"menu_enable_mesa"`
 	MenuEnableKiosk         bool                 `json:"menu_enable_kiosk"`
+	MenuEnablePromotions    bool                 `json:"menu_enable_promotions"`
 	// Controle de Categorias Visíveis para o Garçom (Sem Boutique/Mercado por padrão)
 	WaiterVisibleCategories []int                `json:"waiter_visible_categories"`
 	WaiterHiddenCategories  []int                `json:"waiter_hidden_categories"`

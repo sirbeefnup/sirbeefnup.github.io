@@ -408,12 +408,29 @@ func (s *Store) migrate() error {
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN menu_enable_retirada INTEGER NOT NULL DEFAULT 1`)
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN menu_enable_mesa INTEGER NOT NULL DEFAULT 1`)
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN menu_enable_kiosk INTEGER NOT NULL DEFAULT 1`)
+	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN menu_enable_promotions INTEGER NOT NULL DEFAULT 1`)
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN waiter_visible_categories_json TEXT NOT NULL DEFAULT '[]'`)
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN waiter_hidden_categories_json TEXT NOT NULL DEFAULT '["Boutique das Carnes & Empório"]'`)
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN default_delivery_fee REAL NOT NULL DEFAULT 8.0`)
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN allow_staff_edit_delivery_fee INTEGER NOT NULL DEFAULT 1`)
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN operating_hours_json TEXT NOT NULL DEFAULT ''`)
 	_, _ = s.DB.Exec(`ALTER TABLE printer_config ADD COLUMN ai_nfce_settings_json TEXT NOT NULL DEFAULT '{}'`)
+
+	// Garante que a categoria 137 (Ofertas & Promoções) seja protegida e não tenha produtos estáticos soltos (são todos espelho)
+	_, _ = s.DB.Exec(`UPDATE products SET category_id = 134, category_name = 'Burgers Gourmet' WHERE id = 1 AND category_id = 137`)
+	_, _ = s.DB.Exec(`UPDATE products SET category_id = 145, category_name = 'Sobremesas e Doces' WHERE id = 2 AND category_id = 137`)
+	_, _ = s.DB.Exec(`UPDATE products SET category_id = 134, category_name = 'Burgers Gourmet' WHERE id = 3 AND category_id = 137`)
+	_, _ = s.DB.Exec(`UPDATE products SET category_id = 134, category_name = 'Burgers Gourmet' WHERE category_id = 137`)
+
+	var c137Count int
+	_ = s.DB.QueryRow(`SELECT COUNT(*) FROM categories WHERE id = 137`).Scan(&c137Count)
+	if c137Count == 0 {
+		_, _ = s.DB.Exec(`INSERT INTO categories (id, name, sector, sector_abc) VALUES (137, 'Ofertas & Promoções', 'HAMBURGUERIA', 'HAMBURGUERIA')`)
+	} else {
+		_, _ = s.DB.Exec(`UPDATE categories SET name = 'Ofertas & Promoções' WHERE id = 137`)
+	}
+	// Ofertas & Promoções não deve ter impressora vinculada direta (segue a impressora do produto espelhado)
+	_, _ = s.DB.Exec(`DELETE FROM category_printer_routes WHERE category_id = 137`)
 
 	// Novas colunas de Impressoras Autodetectáveis nos 2 PCs (Cozinha Win11 USB + Caixa Win10 Bluetooth/Rede) e Setores com Corte Separado
 	_, _ = s.DB.Exec(`ALTER TABLE printer_stations ADD COLUMN sector_label TEXT NOT NULL DEFAULT ''`)
@@ -1501,6 +1518,12 @@ func (s *Store) DeleteCategory(id int, moveToCategoryID int) error {
 		return fmt.Errorf("categoria #%d não encontrada", id)
 	}
 
+	// Bloqueio Rígido: A categoria Ofertas & Promoções é protegida pelo sistema e nunca pode ser excluída
+	lowerCat := strings.ToLower(catName)
+	if id == 137 || (strings.Contains(lowerCat, "oferta") && strings.Contains(lowerCat, "promo")) || strings.EqualFold(strings.TrimSpace(catName), "Oferta do dia") {
+		return fmt.Errorf("🚫 A categoria '%s' é protegida pelo sistema e não pode ser excluída. Você pode ativá-la ou desativá-la pelo botão geral no topo da grade semanal.", catName)
+	}
+
 	var prodCount int
 	_ = s.DB.QueryRow(`SELECT COUNT(*) FROM products WHERE category_id = ?`, id).Scan(&prodCount)
 	if prodCount > 0 {
@@ -1569,8 +1592,11 @@ func (s *Store) GetCatalogAll(includeInactive bool) ([]models.Category, error) {
 	defer prodRows.Close()
 
 	ofertaIdx, hasOfertaCat := catMap[137]
-	existingInOferta := map[int]bool{}
+	if hasOfertaCat {
+		cats[ofertaIdx].Items = []models.Product{}
+	}
 
+	var allProds []models.Product
 	for prodRows.Next() {
 		var p models.Product
 		var promo sql.NullFloat64
@@ -1600,19 +1626,42 @@ func (s *Store) GetCatalogAll(includeInactive bool) ([]models.Category, error) {
 
 		if idx, ok := catMap[p.CategoryID]; ok {
 			cats[idx].Items = append(cats[idx].Items, p)
-			if p.CategoryID == 137 {
-				existingInOferta[p.ID] = true
-			}
 		} else if len(cats) > 0 {
 			cats[0].Items = append(cats[0].Items, p)
 		}
+		allProds = append(allProds, p)
+	}
 
-		// Se o produto está na Promoção da Semana de hoje e ainda não está na categoria "Oferta do dia", destaca-o lá também!
-		if !includeInactive && hasOfertaCat && p.CategoryID != 137 {
-			if _, isScheduledToday := activePromoMap[p.ID]; isScheduledToday && !existingInOferta[p.ID] {
-				existingInOferta[p.ID] = true
-				cats[ofertaIdx].Items = append([]models.Product{p}, cats[ofertaIdx].Items...)
+	// Produtos Espelho na categoria 137 (Ofertas & Promoções): alimentados dinamicamente pela programação de hoje
+	pCfg := s.GetPrinterConfig()
+	if hasOfertaCat {
+		cats[ofertaIdx].Items = []models.Product{}
+		if pCfg.MenuEnablePromotions {
+			for _, p := range allProds {
+				if wp, isScheduledToday := activePromoMap[p.ID]; isScheduledToday && wp.Active && wp.PromoPrice > 0 {
+					mirror := p
+					mirror.CategoryID = 137
+					mirror.CategoryName = cats[ofertaIdx].Name
+					mirror.Price = wp.PromoPrice
+					orig := p.Price
+					if wp.OriginalPrice > 0 {
+						orig = wp.OriginalPrice
+					}
+					mirror.PromoFrom = &orig
+					cats[ofertaIdx].Items = append(cats[ofertaIdx].Items, mirror)
+				}
 			}
+		}
+
+		// Se as promoções estiverem desativadas no mestre ou vazias hoje, oculta a categoria no cardápio de clientes (!includeInactive)
+		if !includeInactive && (!pCfg.MenuEnablePromotions || len(cats[ofertaIdx].Items) == 0) {
+			var filtered []models.Category
+			for _, c := range cats {
+				if c.ID != 137 {
+					filtered = append(filtered, c)
+				}
+			}
+			cats = filtered
 		}
 	}
 	return cats, nil
@@ -4162,21 +4211,21 @@ type aiNFCeStoredSettings struct {
 
 func (s *Store) GetPrinterConfig() models.PrinterConfig {
 	var cfg models.PrinterConfig
-	var autoPrint, alarmTable, alarmDrinks, alarmKitchen, menuDel, menuRet, menuMesa, menuKiosk, allowStaffDelivFee int
+	var autoPrint, alarmTable, alarmDrinks, alarmKitchen, menuDel, menuRet, menuMesa, menuKiosk, menuPromo, allowStaffDelivFee int
 	var defDelivFee float64
 	var alarmMode, waiterVisJSON, waiterHidJSON, opHoursJSON, aiNFCeJSON string
 	err := s.DB.QueryRow(`SELECT
 		columns, paper_width_mm, printer_ip, printer_port, auto_print_on_accept, whatsapp_bot_phase, gemini_api_key,
 		COALESCE(waiter_alarm_table_call, 1), COALESCE(waiter_alarm_drinks, 1), COALESCE(waiter_alarm_kitchen_ready, 1),
 		COALESCE(waiter_alarm_mode, 'TOCAR_E_VIBRAR'),
-		COALESCE(menu_enable_delivery, 1), COALESCE(menu_enable_retirada, 1), COALESCE(menu_enable_mesa, 1), COALESCE(menu_enable_kiosk, 1),
+		COALESCE(menu_enable_delivery, 1), COALESCE(menu_enable_retirada, 1), COALESCE(menu_enable_mesa, 1), COALESCE(menu_enable_kiosk, 1), COALESCE(menu_enable_promotions, 1),
 		COALESCE(waiter_visible_categories_json, '[]'), COALESCE(waiter_hidden_categories_json, '["Boutique das Carnes & Empório"]'),
 		COALESCE(default_delivery_fee, 8.0), COALESCE(allow_staff_edit_delivery_fee, 1),
 		COALESCE(operating_hours_json, ''), COALESCE(ai_nfce_settings_json, '{}')
 		FROM printer_config WHERE id = 1`).
 		Scan(
 			&cfg.Columns, &cfg.PaperWidthMM, &cfg.PrinterIP, &cfg.PrinterPort, &autoPrint, &cfg.WhatsappBotPhase, &cfg.GeminiAPIKey,
-			&alarmTable, &alarmDrinks, &alarmKitchen, &alarmMode, &menuDel, &menuRet, &menuMesa, &menuKiosk,
+			&alarmTable, &alarmDrinks, &alarmKitchen, &alarmMode, &menuDel, &menuRet, &menuMesa, &menuKiosk, &menuPromo,
 			&waiterVisJSON, &waiterHidJSON, &defDelivFee, &allowStaffDelivFee, &opHoursJSON, &aiNFCeJSON,
 		)
 	if err != nil {
@@ -4207,6 +4256,7 @@ func (s *Store) GetPrinterConfig() models.PrinterConfig {
 			MenuEnableRetirada:        true,
 			MenuEnableMesa:            true,
 			MenuEnableKiosk:           true,
+			MenuEnablePromotions:      true,
 			WaiterVisibleCategories:   []int{},
 			WaiterHiddenCategories:    []int{900},
 			DefaultDeliveryFee:        8.0,
@@ -4229,6 +4279,7 @@ func (s *Store) GetPrinterConfig() models.PrinterConfig {
 	cfg.MenuEnableRetirada = menuRet == 1
 	cfg.MenuEnableMesa = menuMesa == 1
 	cfg.MenuEnableKiosk = menuKiosk == 1
+	cfg.MenuEnablePromotions = menuPromo == 1
 	if defDelivFee < 0 {
 		defDelivFee = 0
 	}
@@ -4382,6 +4433,10 @@ func (s *Store) UpdatePrinterConfig(cfg models.PrinterConfig) error {
 	if cfg.MenuEnableKiosk {
 		mKiosk = 1
 	}
+	mPromo := 0
+	if cfg.MenuEnablePromotions {
+		mPromo = 1
+	}
 	if cfg.WaiterVisibleCategories == nil {
 		cfg.WaiterVisibleCategories = []int{}
 	}
@@ -4446,13 +4501,36 @@ func (s *Store) UpdatePrinterConfig(cfg models.PrinterConfig) error {
 	_, err := s.DB.Exec(`UPDATE printer_config SET
 		columns=?, paper_width_mm=?, printer_ip=?, printer_port=?, auto_print_on_accept=?, whatsapp_bot_phase=?, gemini_api_key=?,
 		waiter_alarm_table_call=?, waiter_alarm_drinks=?, waiter_alarm_kitchen_ready=?, waiter_alarm_mode=?,
-		menu_enable_delivery=?, menu_enable_retirada=?, menu_enable_mesa=?, menu_enable_kiosk=?,
+		menu_enable_delivery=?, menu_enable_retirada=?, menu_enable_mesa=?, menu_enable_kiosk=?, menu_enable_promotions=?,
 		waiter_visible_categories_json=?, waiter_hidden_categories_json=?,
 		default_delivery_fee=?, allow_staff_edit_delivery_fee=?, operating_hours_json=?, ai_nfce_settings_json=?
 		WHERE id=1`,
 		cfg.Columns, cfg.PaperWidthMM, cfg.PrinterIP, cfg.PrinterPort, auto, cfg.WhatsappBotPhase, cfg.GeminiAPIKey,
-		alTable, alDrinks, alKitchen, alMode, mDel, mRet, mMesa, mKiosk,
+		alTable, alDrinks, alKitchen, alMode, mDel, mRet, mMesa, mKiosk, mPromo,
 		string(visBytes), string(hidBytes), cfg.DefaultDeliveryFee, allowStaffFee, string(ohBytes), string(aiNFCeBytes))
+	return err
+}
+
+func (s *Store) ToggleMasterWeeklyPromotions(active bool) error {
+	actInt := 0
+	if active {
+		actInt = 1
+	}
+	_, err := s.DB.Exec(`UPDATE printer_config SET menu_enable_promotions = ? WHERE id = 1`, actInt)
+	return err
+}
+
+func (s *Store) ToggleDayWeeklyPromotions(dayOfWeek int, active bool) error {
+	actInt := 0
+	if active {
+		actInt = 1
+	}
+	var err error
+	if dayOfWeek == -1 || dayOfWeek == 7 {
+		_, err = s.DB.Exec(`UPDATE weekly_promotions SET active = ?, updated_at = ?`, actInt, time.Now().Format("02/01 15:04"))
+	} else {
+		_, err = s.DB.Exec(`UPDATE weekly_promotions SET active = ?, updated_at = ? WHERE day_of_week = ?`, actInt, time.Now().Format("02/01 15:04"), dayOfWeek)
+	}
 	return err
 }
 

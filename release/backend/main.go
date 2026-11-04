@@ -1576,7 +1576,7 @@ func (s *Server) handleWeeklyPromotions(w http.ResponseWriter, r *http.Request) 
 	}
 	if r.Method == http.MethodPost {
 		var req struct {
-			Action        string  `json:"action"` // SAVE, DELETE, TOGGLE
+			Action        string  `json:"action"` // SAVE, DELETE, TOGGLE, TOGGLE_MASTER, TOGGLE_DAY
 			ID            int     `json:"id"`
 			DayOfWeek     int     `json:"day_of_week"`
 			ProductID     int     `json:"product_id"`
@@ -1589,6 +1589,26 @@ func (s *Server) handleWeeklyPromotions(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 		act := strings.ToUpper(strings.TrimSpace(req.Action))
+		if act == "TOGGLE_MASTER" {
+			actBool := true
+			if req.Active != nil {
+				actBool = *req.Active
+			}
+			_ = s.Store.ToggleMasterWeeklyPromotions(actBool)
+			list, _ := s.Store.ListWeeklyPromotions()
+			writeJSON(w, http.StatusOK, list)
+			return
+		}
+		if act == "TOGGLE_DAY" {
+			actBool := true
+			if req.Active != nil {
+				actBool = *req.Active
+			}
+			_ = s.Store.ToggleDayWeeklyPromotions(req.DayOfWeek, actBool)
+			list, _ := s.Store.ListWeeklyPromotions()
+			writeJSON(w, http.StatusOK, list)
+			return
+		}
 		if act == "DELETE" {
 			if req.ID > 0 {
 				_ = s.Store.DeleteWeeklyPromotion(req.ID)

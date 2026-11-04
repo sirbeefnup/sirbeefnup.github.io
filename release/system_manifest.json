@@ -3,22 +3,22 @@
     "sirbeef.db (Clientes/Vendas de Teste)",
     "whatsapp_session.db"
   ],
-  "published_at": "04/11/2026 18:48:09",
+  "published_at": "04/11/2026 19:18:45",
   "published_files": [
+    "release/backend/internal/escpos/escpos.go",
+    "release/data/apk_version.json",
+    "release/backend/internal/whatsapp/engine.go",
+    "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat",
+    "release/backend/sirbeef-server.zip",
     "release/web/pdv.html",
     "release/web/index.html",
     "release/web/rastreio.html",
-    "release/backend/internal/models/models.go",
-    "release/backend/internal/db/db.go",
-    "release/backend/internal/whatsapp/engine.go",
-    "release/data/apk_version.json",
     "release/backend/main.go",
-    "release/backend/internal/escpos/escpos.go",
-    "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat",
-    "release/backend/sirbeef-server.zip"
+    "release/backend/internal/models/models.go",
+    "release/backend/internal/db/db.go"
   ],
   "published_from_pc": "GUI",
-  "release_notes": "v4.8.4 (Build #42): (1) Bloqueio anti-saida de tela cheia no PDV com modais nativos Sir Beef; (2) Cabecalho destacado MESA 15 em tamanho gigante nas comandas termicas ESC/POS; (3) Resolucao 1366x768 compactada perfeitamente no PDV (cupom e menus sem cortes verticais); (4) Auto-roteamento das impressoras uteis do Caixa (bebidas/fechamento); (5) Alinhamento automatico Mesa 15 QR Code.",
-  "version_code": 42,
-  "version_name": "4.8.4"
+  "release_notes": "v4.8.5 (Build #43): (1) Grade de 7 Colunas para Ofertas da Semana (SEG a DOM) com produtos espelhados que imprimem no setor original (Burger na Cozinha, Chopp/Bebidas no Caixa); (2) Botoes de adicionar e excluir por dia, toggle individual e botao geral mestre; (3) Categoria de Ofertas protegida contra exclusao; (4) Trava anti-saida de tela cheia no PDV; (5) Cabecalho destacado MESA 15 gigante.",
+  "version_code": 43,
+  "version_name": "4.8.5"
 }

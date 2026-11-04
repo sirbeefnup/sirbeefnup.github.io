@@ -1380,60 +1380,68 @@
       <div id="estoqueProductsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:12px;"></div>
     </div>
 
-    <!-- SUB-ABA 2: PROMOÇÕES DA SEMANA PROGRAMADAS (SEGUNDA A DOMINGO) -->
+    <!-- SUB-ABA 2: PROMOÇÕES DA SEMANA PROGRAMADAS (GRADE DE 7 COLUNAS COM PRODUTOS ESPELHO) -->
     <div id="estoqueSubTabPromos" style="display:none;">
-      <div class="panel" style="border:2px solid #f97316;margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+      <div class="panel" style="border:2px solid #f97316;margin-bottom:14px;background:#0b0b12;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;background:#11111a;border:1px solid var(--border);border-radius:12px;padding:12px 16px;">
           <div>
-            <h3 style="margin:0;color:#fdba74;font-family:'Bayformance',sans-serif;font-size:21px;">
-              🔥 PROGRAMAÇÃO DE PROMOÇÕES DA SEMANA (SEGUNDA A DOMINGO)
-            </h3>
-            <p style="font-size:12px;color:var(--muted);margin-top:3px;">
-              Escolha o dia da semana, selecione um produto do estoque e defina o <strong>Preço de Oferta (Por R$)</strong>. No dia programado, o produto entra automaticamente em <strong>Oferta do Dia</strong> com o preço antigo riscado (<em>De R$</em>) e o preço novo em destaque (<em>Por R$</em>)!
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <h3 style="margin:0;color:#fdba74;font-family:'Bayformance',sans-serif;font-size:22px;">
+                🔥 GESTÃO DE OFERTAS & PROMOÇÕES DA SEMANA
+              </h3>
+              <span class="badge" style="background:#1e293b;color:var(--gold-light);font-size:11px;font-weight:800;">🔒 Categoria Protegida</span>
+            </div>
+            <p style="font-size:12px;color:var(--muted);margin:4px 0 0 0;">
+              Produtos <strong>espelhados</strong>: o cliente compra em promoção no dia programado e o pedido <strong>imprime automaticamente na impressora original</strong> (Lanches na Cozinha, Chopp/Bebidas no Caixa/Bar).
             </p>
           </div>
-          <span id="weeklyPromoTodayBadge" class="badge" style="background:#f97316;color:#000;font-size:12px;padding:6px 12px;">📅 Hoje</span>
-        </div>
-
-        <div style="background:#0d0d14;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;">
-          <div style="font-size:12px;font-weight:800;color:var(--gold-light);margin-bottom:8px;">
-            ➕ ADICIONAR / PROGRAMAR PRODUTO NA PROMOÇÃO DO DIA:
-          </div>
-          <div style="display:grid;grid-template-columns:1.1fr 1.8fr 0.9fr 0.9fr auto;gap:10px;align-items:end;flex-wrap:wrap;">
-            <div>
-              <label style="font-size:11px;color:var(--muted);">📅 Dia da Semana *</label>
-              <select id="wpDaySelect" style="margin-top:4px;font-weight:800;border-color:#f97316;">
-                <option value="1">Segunda-feira</option>
-                <option value="2">Terça-feira</option>
-                <option value="3">Quarta-feira</option>
-                <option value="4">Quinta-feira</option>
-                <option value="5">Sexta-feira</option>
-                <option value="6">Sábado</option>
-                <option value="0">Domingo</option>
-                <option value="-1">🌟 Todos os Dias da Semana</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:11px;color:var(--muted);">🍔 Produto do Estoque *</label>
-              <select id="wpProductSelect" onchange="onWeeklyPromoProductSelectChange()" style="margin-top:4px;"></select>
-            </div>
-            <div>
-              <label style="font-size:11px;color:var(--muted);">💲 Preço Antigo Riscado (De R$)</label>
-              <input type="text" id="wpOriginalPricePreview" readonly style="margin-top:4px;background:#161622;color:#9ca3af;text-decoration:line-through;font-weight:700;" value="R$ 0,00" />
-            </div>
-            <div>
-              <label style="font-size:11px;color:#86efac;font-weight:800;">🔥 Preço na Promoção (Por R$) *</label>
-              <input type="number" step="0.50" id="wpPromoPriceInp" placeholder="Ex: 24.90" style="margin-top:4px;font-weight:900;color:#86efac;border-color:var(--green);" />
-            </div>
-            <div>
-              <button type="button" class="btn btn-green" style="padding:9px 14px;font-size:12.5px;" onclick="saveWeeklyPromotionFromUI()">
-                💾 Programar Promoção
-              </button>
-            </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <button type="button" id="btnWeeklyPromoMasterToggle" class="btn btn-green" style="padding:10px 18px;font-size:13px;font-weight:900;" onclick="toggleWeeklyPromoMasterFromUI()">
+              ⚡ OFERTAS DA LOJA: ATIVAS
+            </button>
+            <span id="weeklyPromoTodayBadge" class="badge" style="background:#f97316;color:#000;font-size:12px;padding:8px 14px;font-weight:800;">📅 Hoje</span>
           </div>
         </div>
 
-        <div id="weeklyPromotionsDaysGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;"></div>
+        <!-- GRADE COM AS 7 COLUNAS DA SEMANA (SEG A DOM) -->
+        <div id="weeklyPromotions7ColumnsGrid" style="display:grid;grid-template-columns:repeat(7, minmax(210px, 1fr));gap:10px;overflow-x:auto;padding-bottom:12px;"></div>
+      </div>
+    </div>
+
+    <!-- Modal Adicionar Produto em Oferta no Dia Específico -->
+    <div class="modal-backdrop" id="addWeeklyPromoModal">
+      <div class="modal-box" style="max-width:520px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px;">
+          <h3 id="addWpModalTitle" style="margin:0;color:#fdba74;font-family:'Bayformance',sans-serif;font-size:18px;">➕ Adicionar Produto em Oferta</h3>
+          <button type="button" class="btn" onclick="document.getElementById('addWeeklyPromoModal').style.display='none'">✕ Fechar</button>
+        </div>
+        <input type="hidden" id="addWpDayOfWeek" value="1" />
+
+        <div style="background:#11111a;border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:12px;">
+          <label style="font-size:11px;color:var(--muted);font-weight:700;">📅 Dia da Semana Selecionado:</label>
+          <div id="addWpDayLabel" style="font-size:15px;color:var(--gold-light);font-weight:900;margin-top:2px;">Segunda-feira</div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="font-size:11.5px;color:var(--muted);font-weight:700;">🍔 Produto do Cardápio / Hamburgueria *</label>
+          <select id="addWpProductSelect" onchange="onAddWpProductChange()" style="margin-top:4px;width:100%;font-size:13px;padding:9px;"></select>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+          <div>
+            <label style="font-size:11.5px;color:var(--muted);font-weight:700;">Preço Normal Atual (De R$):</label>
+            <input type="text" id="addWpOrigPricePreview" readonly style="margin-top:4px;background:#11111a;color:#94a3b8;text-decoration:line-through;font-weight:800;font-size:14px;" value="R$ 0,00" />
+          </div>
+          <div>
+            <label style="font-size:11.5px;color:#86efac;font-weight:800;">🔥 Preço na Oferta (Por R$) *:</label>
+            <input type="number" step="0.50" id="addWpPromoPrice" placeholder="Ex: 24.90" style="margin-top:4px;color:#86efac;font-weight:900;font-size:16px;border-color:var(--green);" />
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;">
+          <button type="button" class="btn" onclick="document.getElementById('addWeeklyPromoModal').style.display='none'">Cancelar</button>
+          <button type="button" class="btn btn-green" style="padding:10px 20px;font-weight:800;" onclick="confirmSaveWeeklyPromoFromModal()">💾 Salvar na Promoção</button>
+        </div>
       </div>
     </div>
 
@@ -10770,22 +10778,30 @@
       </button>
     `;
     const catBtns = cats.map(c => {
-      const count = getCategoryProductCountForPdv(c);
+      const isOferta = Number(c.id) === 137 || isOfertaDoDiaCategory(c.id, c.name);
+      const count = isOferta ? (weeklyPromotionsList || []).length : getCategoryProductCountForPdv(c);
       const key = 'CAT_' + c.id;
       const isAct = estoqueCategoryFilter === key;
       const icon = getCategoryIconForPdv(c.id, c.name);
       const safeName = String(c.name || '').replace(/'/g, "\\'");
       return `
         <div style="display:inline-flex;align-items:center;gap:2px;background:${isAct ? 'rgba(212,175,55,0.16)' : '#12121a'};border:1px solid ${isAct ? 'var(--gold)' : 'var(--border)'};border-radius:8px;padding:2px;">
-          <button type="button" class="btn ${isAct ? 'btn-gold' : ''}" style="padding:5px 10px;font-size:12px;border:none;" onclick="setEstoqueCategoryFilter('${key}')">
+          <button type="button" class="btn ${isAct ? 'btn-gold' : ''}" style="padding:5px 10px;font-size:12px;border:none;" onclick="${isOferta ? "switchEstoqueSubTab('PROMOS')" : `setEstoqueCategoryFilter('${key}')`}">
             ${icon} ${c.name} (${count})
           </button>
-          <button type="button" class="btn" style="padding:4px 6px;font-size:10.5px;border:none;background:transparent;color:var(--gold-light);" title="Editar / Renomear categoria ${c.name}" onclick="openCategoriesManagerModal(${c.id}, false)">
-            ✏️
-          </button>
-          <button type="button" class="btn" style="padding:4px 6px;font-size:10.5px;border:none;background:transparent;color:#fca5a5;" title="Excluir categoria ${c.name}" onclick="deleteCategoryFromPdv(${c.id}, '${safeName}', ${count})">
-            🗑️
-          </button>
+          ${isOferta ? `
+            <button type="button" class="btn" style="padding:4px 6px;font-size:10.5px;border:none;background:transparent;color:var(--gold-light);" title="Gerenciar Grade Semanal de Promoções" onclick="switchEstoqueSubTab('PROMOS')">
+              ⚙️
+            </button>
+            <span style="padding:4px 6px;font-size:10.5px;color:var(--gold-light);cursor:help;" title="Categoria de Ofertas é protegida pelo sistema e não pode ser excluída">🔒</span>
+          ` : `
+            <button type="button" class="btn" style="padding:4px 6px;font-size:10.5px;border:none;background:transparent;color:var(--gold-light);" title="Editar / Renomear categoria ${c.name}" onclick="openCategoriesManagerModal(${c.id}, false)">
+              ✏️
+            </button>
+            <button type="button" class="btn" style="padding:4px 6px;font-size:10.5px;border:none;background:transparent;color:#fca5a5;" title="Excluir categoria ${c.name}" onclick="deleteCategoryFromPdv(${c.id}, '${safeName}', ${count})">
+              🗑️
+            </button>
+          `}
         </div>
       `;
     }).join('');
@@ -10857,10 +10873,11 @@
     if (!box) return;
     const cats = getAllCatalogCategoriesList();
     box.innerHTML = cats.map(c => {
-      const count = getCategoryProductCountForPdv(c);
+      const isOferta = Number(c.id) === 137 || isOfertaDoDiaCategory(c.id, c.name);
+      const count = isOferta ? (weeklyPromotionsList || []).length : getCategoryProductCountForPdv(c);
       const icon = getCategoryIconForPdv(c.id, c.name);
       const rt = (categoryPrinterRoutes || []).find(r => Number(r.category_id) === Number(c.id));
-      const prnLabel = rt ? (rt.printer_name || rt.printer_station_id) : '🔥 Cozinha / Chapa';
+      const prnLabel = isOferta ? '🔄 Espelho (Impressora Original de Cada Item)' : (rt ? (rt.printer_name || rt.printer_station_id) : '🔥 Cozinha / Chapa');
       const safeName = String(c.name || '').replace(/'/g, "\\'");
       return `
         <div style="background:#11111a;border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -10868,18 +10885,25 @@
             <div style="font-size:14px;font-weight:800;color:#fff;">
               ${icon} ${c.name}
               <span class="badge" style="background:#1e293b;color:#93c5fd;font-size:10.5px;margin-left:6px;">${count} produto${count === 1 ? '' : 's'}</span>
+              ${isOferta ? `<span class="badge" style="background:rgba(249,115,22,0.2);color:#fdba74;border:1px solid #f97316;font-size:10px;margin-left:4px;">🔒 Categoria Protegida</span>` : ''}
             </div>
             <div style="font-size:11px;color:var(--muted);margin-top:2px;">
               Código #${c.id} • Área: <strong>${c.sector || 'HAMBURGUERIA'}</strong> • Impressão: <strong style="color:var(--gold-light);">${prnLabel}</strong>
             </div>
           </div>
-          <div style="display:flex;gap:6px;">
-            <button type="button" class="btn btn-gold" style="padding:5px 10px;font-size:11.5px;" onclick="selectCategoryForEditInModal(${c.id})">
-              ✏️ Editar / Renomear
-            </button>
-            <button type="button" class="btn" style="padding:5px 10px;font-size:11.5px;border-color:var(--red);color:#fca5a5;" onclick="deleteCategoryFromPdv(${c.id}, '${safeName}', ${count})">
-              🗑️ Excluir
-            </button>
+          <div style="display:flex;gap:6px;align-items:center;">
+            ${isOferta ? `
+              <button type="button" class="btn btn-gold" style="padding:6px 12px;font-size:11.5px;font-weight:900;" onclick="document.getElementById('categoriesManagerModal').style.display='none'; switchEstoqueSubTab('PROMOS');">
+                ⚙️ Gerenciar Grade Semanal
+              </button>
+            ` : `
+              <button type="button" class="btn btn-gold" style="padding:5px 10px;font-size:11.5px;" onclick="selectCategoryForEditInModal(${c.id})">
+                ✏️ Editar / Renomear
+              </button>
+              <button type="button" class="btn" style="padding:5px 10px;font-size:11.5px;border-color:var(--red);color:#fca5a5;" onclick="deleteCategoryFromPdv(${c.id}, '${safeName}', ${count})">
+                🗑️ Excluir
+              </button>
+            `}
           </div>
         </div>
       `;
@@ -10931,6 +10955,10 @@
   }
 
   async function deleteCategoryFromPdv(catId, catName, prodCount) {
+    if (Number(catId) === 137 || isOfertaDoDiaCategory(catId, catName)) {
+      alert('🚫 A categoria de "Ofertas & Promoções" é protegida pelo sistema e não pode ser excluída. Use o botão mestre no topo da grade semanal para desativá-la.');
+      return;
+    }
     let moveToId = 0;
     if (prodCount > 0) {
       const otherCats = getAllCatalogCategoriesList().filter(c => Number(c.id) !== Number(catId) && !isOfertaDoDiaCategory(c.id, c.name));
@@ -11160,134 +11188,220 @@
   }
 
   // =========================================================================
-  // 5A. PROMOÇÕES DA SEMANA PROGRAMADAS (SEGUNDA A DOMINGO)
+  // 5A. PROMOÇÕES DA SEMANA PROGRAMADAS (GRADE DE 7 COLUNAS: SEG A DOM)
   // =========================================================================
-  const WEEK_DAYS_META = [
-    { day: 1, name: 'Segunda-feira' },
-    { day: 2, name: 'Terça-feira' },
-    { day: 3, name: 'Quarta-feira' },
-    { day: 4, name: 'Quinta-feira' },
-    { day: 5, name: 'Sexta-feira' },
-    { day: 6, name: 'Sábado' },
-    { day: 0, name: 'Domingo' },
-    { day: -1, name: '🌟 Todos os Dias' }
+  const WEEK_DAYS_7 = [
+    { day: 1, short: 'SEG', name: 'Segunda-feira' },
+    { day: 2, short: 'TER', name: 'Terça-feira' },
+    { day: 3, short: 'QUA', name: 'Quarta-feira' },
+    { day: 4, short: 'QUI', name: 'Quinta-feira' },
+    { day: 5, short: 'SEX', name: 'Sexta-feira' },
+    { day: 6, short: 'SÁB', name: 'Sábado' },
+    { day: 0, short: 'DOM', name: 'Domingo' }
   ];
 
   function renderWeeklyPromotionsSubTab() {
-    const prodSel = document.getElementById('wpProductSelect');
-    const daysGrid = document.getElementById('weeklyPromotionsDaysGrid');
+    const grid7 = document.getElementById('weeklyPromotions7ColumnsGrid');
     const todayBadge = document.getElementById('weeklyPromoTodayBadge');
+    const masterBtn = document.getElementById('btnWeeklyPromoMasterToggle');
     const todayDow = new Date().getDay();
     const todayNames = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+
     if (todayBadge) {
-      todayBadge.textContent = `📅 Hoje é ${todayNames[todayDow]} — Promoções de hoje já estão ativas no Cardápio & PDV!`;
+      todayBadge.textContent = `📅 Hoje é ${todayNames[todayDow]}`;
     }
 
-    if (prodSel && document.activeElement !== prodSel) {
-      const curVal = prodSel.value;
-      const sortedProds = [...flatProducts].sort((a, b) => String(a.category_name || '').localeCompare(String(b.category_name || '')) || String(a.name || '').localeCompare(String(b.name || '')));
-      prodSel.innerHTML = sortedProds.map(p => {
-        const baseP = (p.promo_from && p.promo_from > p.price) ? p.promo_from : p.price;
-        return `<option value="${p.id}" data-baseprice="${baseP}">[${p.category_name || 'Cardápio'}] ${p.name} — Preço Normal: R$ ${(baseP || 0).toFixed(2)}</option>`;
-      }).join('');
-      if (curVal && [...prodSel.options].some(o => o.value === curVal)) {
-        prodSel.value = curVal;
+    const isMasterActive = printerConfig && printerConfig.menu_enable_promotions !== false;
+    if (masterBtn) {
+      if (isMasterActive) {
+        masterBtn.className = 'btn btn-green';
+        masterBtn.style.color = '#fff';
+        masterBtn.style.borderColor = 'var(--green)';
+        masterBtn.innerHTML = '⚡ OFERTAS DA LOJA: ATIVAS';
+        masterBtn.title = 'Clique para pausar/desativar todas as ofertas da loja no cardápio e PDV';
+      } else {
+        masterBtn.className = 'btn';
+        masterBtn.style.color = '#fca5a5';
+        masterBtn.style.borderColor = 'var(--red)';
+        masterBtn.innerHTML = '⏸️ OFERTAS DA LOJA: DESATIVADAS';
+        masterBtn.title = 'Clique para ativar as ofertas da loja no cardápio e PDV';
       }
-      onWeeklyPromoProductSelectChange();
     }
 
-    if (!daysGrid) return;
-    daysGrid.innerHTML = WEEK_DAYS_META.map(dm => {
-      const isToday = dm.day === todayDow || dm.day === -1;
+    if (!grid7) return;
+
+    grid7.innerHTML = WEEK_DAYS_7.map(dm => {
+      const isToday = dm.day === todayDow;
       const dayPromos = (weeklyPromotionsList || []).filter(wp => Number(wp.day_of_week) === dm.day);
+      const dayAllActive = dayPromos.length > 0 && dayPromos.every(wp => wp.active);
+
       const itemsHtml = dayPromos.length === 0
-        ? `<div style="font-size:11.5px;color:var(--muted);padding:10px;background:#0b0b10;border-radius:8px;border:1px dashed var(--border);">Nenhum produto programado para ${dm.name}.</div>`
+        ? `<div style="font-size:11.5px;color:var(--muted);padding:14px 6px;text-align:center;background:#0d0d14;border-radius:8px;border:1px dashed var(--border);margin-top:4px;">Nenhuma oferta neste dia.</div>`
         : dayPromos.map(wp => {
             const origP = Math.max(Number(wp.original_price || 0), Number(wp.promo_price || 0));
             const promP = Math.min(Number(wp.original_price || 0), Number(wp.promo_price || 0));
+            const pObj = flatProducts.find(x => x.id === wp.product_id);
+            const catLabel = wp.category_name || (pObj ? pObj.category_name : 'Hamburgueria');
             return `
-              <div style="background:#0d0d14;border:1px solid ${wp.active ? '#f97316' : 'var(--border)'};border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;">
-                <div>
-                  <div style="font-size:13px;font-weight:800;color:#fff;">🍔 ${wp.product_name}</div>
-                  <div style="font-size:11.5px;margin-top:2px;">
-                    <span style="color:#9ca3af;text-decoration:line-through;margin-right:6px;">De R$ ${origP.toFixed(2)}</span>
+              <div style="background:#13131c;border:1.5px solid ${wp.active ? 'rgba(249,115,22,0.5)' : 'var(--border)'};border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">
+                  <div style="font-size:12.5px;font-weight:800;color:#fff;line-height:1.25;">
+                    🍔 ${wp.product_name}
+                  </div>
+                  <span class="badge" style="background:#1e293b;color:#94a3b8;font-size:9px;padding:2px 5px;white-space:nowrap;">${catLabel}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">
+                  <div>
+                    <span style="color:#94a3b8;text-decoration:line-through;font-size:11px;margin-right:4px;">De R$ ${origP.toFixed(2)}</span>
                     <strong style="color:#86efac;font-size:13px;">Por R$ ${promP.toFixed(2)}</strong>
                   </div>
-                </div>
-                <div style="display:flex;gap:4px;align-items:center;">
-                  <button type="button" class="btn ${wp.active ? 'btn-green' : ''}" style="padding:4px 8px;font-size:10.5px;" onclick="toggleWeeklyPromotionActive(${wp.id}, ${!wp.active})">
-                    ${wp.active ? '🟢 Ativa' : '⏸️ Pausada'}
-                  </button>
-                  <button type="button" class="btn" style="padding:4px 8px;font-size:10.5px;border-color:var(--red);color:#fca5a5;" onclick="deleteWeeklyPromotionById(${wp.id})">
-                    🗑️
-                  </button>
+                  <div style="display:flex;gap:4px;align-items:center;">
+                    <button type="button" class="btn ${wp.active ? 'btn-green' : ''}" style="padding:3px 7px;font-size:10px;font-weight:800;" title="${wp.active ? 'Pausar promoção do item' : 'Ativar promoção do item'}" onclick="toggleWeeklyPromotionActive(${wp.id}, ${!wp.active})">
+                      ${wp.active ? '🟢' : '⏸️'}
+                    </button>
+                    <button type="button" class="btn" style="padding:3px 6px;font-size:10px;border-color:var(--red);color:#fca5a5;" title="Excluir este produto da ${dm.name}" onclick="deleteWeeklyPromotionById(${wp.id})">
+                      🗑️
+                    </button>
+                  </div>
                 </div>
               </div>
             `;
           }).join('');
 
       return `
-        <div class="panel" style="border:1.5px solid ${isToday ? '#f97316' : 'var(--border)'};background:${isToday ? 'rgba(249,115,22,0.06)' : 'var(--panel)'};">
+        <div class="panel" style="border:1.5px solid ${isToday ? '#f97316' : 'var(--border)'};background:${isToday ? 'rgba(249,115,22,0.06)' : '#101018'};padding:10px;display:flex;flex-direction:column;min-width:210px;border-radius:10px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <strong style="font-size:15px;color:${isToday ? '#fdba74' : 'var(--gold-light)'};">📅 ${dm.name}</strong>
-            ${dm.day === todayDow ? `<span class="badge" style="background:#f97316;color:#000;">🔥 DIA DE HOJE (NO AR)</span>` : `<span class="badge" style="background:#1e293b;color:#93c5fd;">${dayPromos.length} item(ns)</span>`}
+            <strong style="font-size:14px;color:${isToday ? '#fdba74' : 'var(--gold-light)'};font-family:'Bayformance',sans-serif;letter-spacing:0.5px;">
+              [ ${dm.short} ] ${dm.name.replace('-feira', '')}
+            </strong>
+            ${isToday ? `<span class="badge" style="background:#f97316;color:#000;font-size:9.5px;font-weight:900;">HOJE</span>` : `<span class="badge" style="background:#1e293b;color:#94a3b8;font-size:9.5px;">${dayPromos.length}</span>`}
           </div>
-          ${itemsHtml}
+
+          <div style="display:flex;gap:4px;margin-bottom:8px;">
+            <button type="button" class="btn btn-gold" style="flex:1;padding:6px 6px;font-size:11px;font-weight:900;justify-content:center;" onclick="openAddWeeklyPromoModal(${dm.day}, '${dm.name}')">
+              ➕ Adicionar
+            </button>
+            <button type="button" class="btn ${dayAllActive ? 'btn-green' : ''}" style="padding:6px 8px;font-size:11px;font-weight:900;" title="${dayAllActive ? 'Pausar todas as promoções de ' + dm.name : 'Ativar todas as promoções de ' + dm.name}" onclick="toggleDayWeeklyPromos(${dm.day}, ${!dayAllActive})">
+              ${dayAllActive ? '🟢 Dia Ativo' : '⏸️ Dia Pausado'}
+            </button>
+          </div>
+
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:480px;">
+            ${itemsHtml}
+          </div>
         </div>
       `;
     }).join('');
   }
 
-  function onWeeklyPromoProductSelectChange() {
-    const sel = document.getElementById('wpProductSelect');
-    const prevInp = document.getElementById('wpOriginalPricePreview');
-    const promoInp = document.getElementById('wpPromoPriceInp');
+  function openAddWeeklyPromoModal(dayOfWeek, dayName) {
+    const modal = document.getElementById('addWeeklyPromoModal');
+    const dayInp = document.getElementById('addWpDayOfWeek');
+    const dayLbl = document.getElementById('addWpDayLabel');
+    const prodSel = document.getElementById('addWpProductSelect');
+    if (!modal || !dayInp || !dayLbl || !prodSel) return;
+
+    dayInp.value = dayOfWeek;
+    dayLbl.textContent = `📅 ${dayName}`;
+
+    // Popula com todos os produtos reais do cardápio (exceto categoria 137 que é espelho)
+    const validProds = flatProducts.filter(p => Number(p.category_id) !== 137);
+    const sortedProds = [...validProds].sort((a, b) => String(a.category_name || '').localeCompare(String(b.category_name || '')) || String(a.name || '').localeCompare(String(b.name || '')));
+
+    prodSel.innerHTML = sortedProds.map(p => {
+      const baseP = (p.promo_from && p.promo_from > p.price) ? p.promo_from : p.price;
+      return `<option value="${p.id}" data-baseprice="${baseP}">[${p.category_name || 'Hamburgueria'}] ${p.name} — R$ ${(baseP || 0).toFixed(2)}</option>`;
+    }).join('');
+
+    onAddWpProductChange();
+    modal.style.display = 'flex';
+  }
+
+  function onAddWpProductChange() {
+    const sel = document.getElementById('addWpProductSelect');
+    const origPrev = document.getElementById('addWpOrigPricePreview');
+    const promoInp = document.getElementById('addWpPromoPrice');
     if (!sel || !sel.selectedOptions || !sel.selectedOptions[0]) return;
     const baseP = parseFloat(sel.selectedOptions[0].getAttribute('data-baseprice') || '0');
-    if (prevInp) prevInp.value = `De R$ ${baseP.toFixed(2)}`;
-    if (promoInp && (!promoInp.value || document.activeElement !== promoInp)) {
+    if (origPrev) origPrev.value = `R$ ${baseP.toFixed(2)}`;
+    if (promoInp) {
       const suggested = Math.max(1, Math.round((baseP * 0.85) * 10) / 10);
       promoInp.value = suggested.toFixed(2);
     }
   }
 
-  async function saveWeeklyPromotionFromUI() {
-    const dayOfWeek = parseInt(document.getElementById('wpDaySelect').value || '1', 10);
-    const productId = parseInt(document.getElementById('wpProductSelect').value || '0', 10);
-    const promoPrice = parseFloat(document.getElementById('wpPromoPriceInp').value || '0');
+  async function confirmSaveWeeklyPromoFromModal() {
+    const dayOfWeek = parseInt(document.getElementById('addWpDayOfWeek').value || '1', 10);
+    const productId = parseInt(document.getElementById('addWpProductSelect').value || '0', 10);
+    const promoPrice = parseFloat(document.getElementById('addWpPromoPrice').value || '0');
+
     if (!productId || promoPrice <= 0) {
-      alert('Selecione um produto do estoque e informe o preço promocional (Por R$)!');
+      alert('Selecione um produto e informe o preço de oferta (Por R$)!');
       return;
     }
     const p = flatProducts.find(x => x.id === productId);
     const origPrice = p ? ((p.promo_from && p.promo_from > p.price) ? p.promo_from : p.price) : promoPrice;
     if (promoPrice >= origPrice) {
-      alert(`⚠️ O Preço de Promoção (Por R$ ${promoPrice.toFixed(2)}) deve ser MENOR que o preço normal (De R$ ${origPrice.toFixed(2)}) para não ficar invertido!`);
+      alert(`⚠️ O Preço de Oferta (Por R$ ${promoPrice.toFixed(2)}) deve ser MENOR que o preço normal (De R$ ${origPrice.toFixed(2)})!`);
       return;
     }
-    showPdvLoading('🔥 Programando Promoção da Semana...', 'Salvando promoção automática no calendário semanal...');
+
+    showPdvLoading('🔥 Adicionando Produto na Oferta...', 'Vinculando produto espelho na grade da semana...');
     try {
       const res = await fetch('/api/weekly-promotions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'SAVE',
-          promotion: {
-            day_of_week: dayOfWeek,
-            product_id: productId,
-            promo_price: promoPrice,
-            active: true
-          }
+          day_of_week: dayOfWeek,
+          product_id: productId,
+          original_price: origPrice,
+          promo_price: promoPrice,
+          active: true
         })
       });
       hidePdvLoading();
       if (res.ok) {
+        document.getElementById('addWeeklyPromoModal').style.display = 'none';
         await loadAllData();
       } else {
         const err = await res.json();
         alert(err.error || 'Erro ao programar promoção.');
       }
     } catch (e) {
+      hidePdvLoading();
+    }
+  }
+
+  async function toggleWeeklyPromoMasterFromUI() {
+    const curActive = printerConfig && printerConfig.menu_enable_promotions !== false;
+    const newActive = !curActive;
+    showPdvLoading('⚡ Atualizando Ofertas...', newActive ? 'Ativando categoria de ofertas da loja...' : 'Desativando categoria de ofertas...');
+    try {
+      await fetch('/api/weekly-promotions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'TOGGLE_MASTER', active: newActive })
+      });
+      if (printerConfig) printerConfig.menu_enable_promotions = newActive;
+      hidePdvLoading();
+      await loadAllData();
+    } catch(e) {
+      hidePdvLoading();
+    }
+  }
+
+  async function toggleDayWeeklyPromos(dayOfWeek, active) {
+    showPdvLoading('📅 Atualizando Dia...', active ? 'Ativando todas as promoções deste dia...' : 'Pausando promoções deste dia...');
+    try {
+      await fetch('/api/weekly-promotions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'TOGGLE_DAY', day_of_week: dayOfWeek, active: active })
+      });
+      hidePdvLoading();
+      await loadAllData();
+    } catch(e) {
       hidePdvLoading();
     }
   }
@@ -11302,9 +11416,20 @@
   }
 
   async function deleteWeeklyPromotionById(id) {
-    if (!confirm('Remover este produto da programação da semana?')) return;
-    await fetch('/api/weekly-promotions', {
-      method: 'POST',
+    if (!confirm('Remover este produto da promoção deste dia da semana?')) return;
+    showPdvLoading('🗑️ Removendo da Promoção...', 'Removendo produto espelho deste dia...');
+    try {
+      await fetch('/api/weekly-promotions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'DELETE', id })
+      });
+      hidePdvLoading();
+      await loadAllData();
+    } catch (e) {
+      hidePdvLoading();
+    }
+  }
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'DELETE', id })
     });
