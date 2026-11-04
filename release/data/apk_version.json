@@ -1,7 +1,7 @@
 {
-    "release_notes":  "v4.8.5 (Build #43): (1) Nova Grade de 7 Colunas para Ofertas da Semana (SEG a DOM) com produtos espelhados que imprimem no setor original (Burger na Cozinha, Chopp/Bebidas no Caixa); (2) Botoes de adicionar e excluir por dia, toggle individual e botao geral mestre; (3) Protecao da categoria Ofertas (imutavel/bloqueio de exclusao); (4) Trava anti-saida de tela cheia no PDV; (5) Cabecalho destacado MESA 15 gigante.",
-    "version_code":  43,
+    "release_notes":  "v4.8.6 (Build #44): (1) Nova Grade de 7 Colunas para Ofertas da Semana (SEG a DOM); (2) Botoes de adicionar e excluir produtos por dia e toggle geral mestre; (3) Categoria de Ofertas protegida contra exclusao; (4) Tela cheia permanente no PDV; (5) Autenticacao unificada com suporte a PIN e usuario.",
+    "version_code":  44,
     "file_size_bytes":  1823600,
-    "version_name":  "4.8.5",
-    "built_at":  "04/11/2026 19:17:00"
+    "version_name":  "4.8.6",
+    "built_at":  "04/11/2026 19:42:22"
 }
