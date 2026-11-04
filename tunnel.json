@@ -1,8 +1,8 @@
 {
   "apk_direct_url": "https://raw.githubusercontent.com/sirbeefnup/sirbeefnup.github.io/main/SirBeef-SuperApp.apk",
   "apk_fixed_url": "https://sirbeefnup.github.io/apk",
-  "apk_version_code": 38,
-  "apk_version_name": "4.8.0",
+  "apk_version_code": 39,
+  "apk_version_name": "4.8.1",
   "cardapio_fixed_url": "https://sirbeefnup.github.io/cardapio",
   "hostname_url": "http://gui",
   "lan_ips": [
@@ -13,6 +13,6 @@
   "lan_url": "http://192.168.18.53:8080",
   "pdv_fixed_url": "https://sirbeefnup.github.io/pdv",
   "rastreio_fixed_url": "https://sirbeefnup.github.io/rastreio",
-  "tunnel_url": "https://mba-quest-fusion-weblog.trycloudflare.com",
-  "updated_at": "2026-11-04T12:48:18-03:00"
+  "tunnel_url": "https://departments-assumption-past-update.trycloudflare.com",
+  "updated_at": "2026-11-04T12:57:51-03:00"
 }
