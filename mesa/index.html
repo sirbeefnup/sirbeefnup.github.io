@@ -1,45 +1,110 @@
 <!DOCTYPE html>
+<!-- SIRBEEF_FIXED_URL_SHELL_V2 -->
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sir Beef — Autoatendimento na Mesa (QR Code Exclusivo)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SIR BEEF — Autoatendimento na Mesa</title>
   <style>
-    body { margin:0; background:#0b0b0e; color:#f4f4f6; font-family:system-ui,-apple-system,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; text-align:center; padding:20px; }
-    .box { background:#131318; border:1px solid rgba(201,164,92,0.45); border-radius:18px; padding:28px 24px; max-width:420px; width:100%; box-shadow:0 12px 40px rgba(0,0,0,0.65); }
-    .gold { color:#e2c27d; font-weight:800; font-size:20px; margin-bottom:8px; }
-    .sub { color:#9ca3af; font-size:13.5px; line-height:1.5; margin-bottom:18px; }
-    .spinner { width:38px; height:38px; border:4px solid rgba(201,164,92,0.25); border-top-color:#c9a45c; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 14px; }
-    @keyframes spin { to { transform:rotate(360deg); } }
-    a.btn { display:inline-block; margin-top:10px; padding:11px 18px; border-radius:10px; background:linear-gradient(135deg,#c9a45c,#9e7a32); color:#09090b; font-weight:800; text-decoration:none; font-size:13.5px; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0a0d;
+      color: #f3d87d;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #sbSplash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0a0a0d;
+      z-index: 20;
+      transition: opacity 0.25s ease;
+      text-align: center;
+      padding: 20px;
+    }
+    #sbSplash.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 3px solid #272732;
+      border-top-color: #d4af37;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #sbLiveFrame {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      margin: 0;
+      padding: 0;
+      background: #0a0a0d;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
-  <div class="box">
+  <div id="sbSplash">
     <div class="spinner"></div>
-    <div class="gold" id="titleTxt">🍽️ Abrindo Autoatendimento da Mesa...</div>
-    <div class="sub" id="statusTxt">Conectando ao servidor Sir Beef da sua mesa...</div>
-    <div id="fallbackActions" style="display:none;"></div>
+    <div style="font-size:17px;font-weight:800;letter-spacing:0.5px;">🥩 SIR BEEF</div>
+    <div id="sbStatusText" style="color:#9ca3af;font-size:13px;margin-top:6px;">Conectando em tempo real...</div>
   </div>
+  <iframe
+    id="sbLiveFrame"
+    allow="clipboard-read; clipboard-write; geolocation; camera; microphone; autoplay; fullscreen"
+    allowfullscreen
+  ></iframe>
   <script>
-    (async function() {
-      const qs = window.location.search || '?m=13&autoatendimento=1';
-      const params = new URLSearchParams(qs);
-      const m = params.get('m') || params.get('mesa') || '13';
-      document.getElementById('titleTxt').textContent = '🍽️ Abrindo MESA ' + String(m).padStart(2, '0') + ' — Sir Beef';
-      try {
-        const res = await fetch('/tunnel.json?t=' + Date.now(), { cache: 'no-store' });
-        const data = await res.json();
-        const tUrl = (data.tunnel_url || '').replace(/\/$/, '');
-        const lanUrl = (data.lan_url || 'http://192.168.18.53:8080').replace(/\/$/, '');
-        if (tUrl) {
-          window.location.replace(tUrl + '/mesa' + qs);
-          return;
+    (function() {
+      const ROUTE_PATH = "/mesa";
+      const frame = document.getElementById("sbLiveFrame");
+      const splash = document.getElementById("sbSplash");
+      let activeTunnelBase = "";
+
+      frame.addEventListener("load", function() {
+        if (activeTunnelBase) {
+          splash.classList.add("hidden");
         }
-        window.location.replace(lanUrl + '/mesa' + qs);
-      } catch (e) {
-        window.location.replace('http://192.168.18.53:8080/mesa' + qs);
+      });
+
+      async function syncTunnelAndLoad(isInitial) {
+        try {
+          const r = await fetch("/tunnel.json?t=" + Date.now(), { cache: "no-store" });
+          if (!r.ok) return;
+          const d = await r.json();
+          const newBase = (d && d.tunnel_url ? d.tunnel_url : "").replace(/\/$/, "");
+          if (newBase && newBase.startsWith("https://")) {
+            if (newBase !== activeTunnelBase) {
+              activeTunnelBase = newBase;
+              const qs = window.location.search || "";
+              const hash = window.location.hash || "";
+              frame.src = activeTunnelBase + ROUTE_PATH + qs + hash;
+              setTimeout(function() { splash.classList.add("hidden"); }, 1800);
+            }
+            return;
+          }
+          if (isInitial && d && d.lan_url) {
+            window.location.replace(d.lan_url.replace(/\/$/, "") + ROUTE_PATH + (window.location.search || ""));
+          }
+        } catch (e) {}
       }
+
+      syncTunnelAndLoad(true);
+      setInterval(function() { syncTunnelAndLoad(false); }, 20000);
     })();
   </script>
 </body>
