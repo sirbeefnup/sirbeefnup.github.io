@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIR BEEF — Cardápio Digital | Hamburgueria & Boutique das Carnes</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Bayformance';
+      src: url('/assets/fonts/BayformanceBold.otf') format('opentype'),
+           url('/assets/fonts/Bayformance Bold.otf') format('opentype');
+      font-weight: bold;
+    }
+    :root {
+      --bg: #0b0b0e;
+      --panel: #131318;
+      --card: #17171f;
+      --card-hover: #20202b;
+      --gold: #d4af37;
+      --gold-light: #f3d87d;
+      --text: #f5f5f7;
+      --muted: #9ca3af;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #38bdf8;
+      --border: #2a2a36;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding-bottom: 110px;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(180deg, #18140b 0%, rgba(11,11,14,0.96) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .header-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand img {
+      height: 52px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(212,175,55,0.35));
+    }
+    .brand-title {
+      font-family: 'Bayformance', sans-serif;
+      font-size: 28px;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-sub {
+      font-size: 11px;
+      letter-spacing: 2.2px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: 0.18s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover { border-color: var(--gold); }
+    .btn.active, .btn-gold {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #0b0b0c;
+      border-color: var(--gold);
+    }
+    .btn-green {
+      background: var(--green);
+      color: #000;
+      border-color: var(--green);
+    }
+    .btn-red {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+    }
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 18px 20px;
+    }
+    /* Banner da Modalidade & Serviços de Mesa */
+    .mode-hero {
+      background: linear-gradient(135deg, #17140c 0%, #121218 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .mode-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .mesa-service-bar {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .search-and-cats {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .search-box {
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .cat-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+    }
+    .cat-pill {
+      white-space: nowrap;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: 0.15s;
+    }
+    .cat-pill.active {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #000;
+      border-color: var(--gold);
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
+    }
+    .prod-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.18s, border-color 0.18s;
+      cursor: pointer;
+    }
+    .prod-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+    }
+    .prod-top {
+      display: flex;
+      gap: 14px;
+      padding: 14px;
+    }
+    .prod-img {
+      width: 92px;
+      height: 92px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #222;
+      flex-shrink: 0;
+      border: 1px solid rgba(212,175,55,0.25);
+    }
+    .prod-info h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+    .prod-info p {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .prod-footer {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.015);
+    }
+    .price-tag {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+    .promo-old {
+      font-size: 12px;
+      text-decoration: line-through;
+      color: var(--muted);
+      margin-right: 6px;
+    }
+    .cart-bar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(660px, 94vw);
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #000;
+      padding: 14px 22px;
+      border-radius: 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.75);
+      cursor: pointer;
+      z-index: 200;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      padding: 16px;
+    }
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--gold);
+      width: min(680px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 18px;
+      padding: 20px;
+    }
+    .item-modal-box {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+      max-height: 90vh;
+    }
+    .item-modal-header {
+      padding: 14px 16px 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: #14141b;
+      flex-shrink: 0;
+    }
+    .item-modal-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 16px 14px 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .item-modal-floating-footer {
+      flex-shrink: 0;
+      background: rgba(16, 16, 22, 0.96);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(212, 175, 55, 0.4);
+      padding: 8px 14px 10px 14px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.55);
+      z-index: 10;
+    }
+    .mod-group {
+      background: #101015;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .mod-group h4 {
+      color: var(--gold-light);
+      font-size: 14px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .mod-opt {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13.5px;
+      cursor: pointer;
+    }
+    .mod-opt:last-child { border-bottom: none; }
+    input[type="text"], input[type="number"], input[type="tel"], select, textarea {
+      width: 100%;
+      background: #0e0e13;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 9px;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    #mapPin {
+      height: 220px;
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 10px;
+      border: 1px solid var(--gold);
+    }
+    .badge {
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    @keyframes sbSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #sbLoadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 8, 12, 0.86);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .sb-loading-card {
+      background: #14141b;
+      border: 2px solid var(--gold);
+      border-radius: 18px;
+      padding: 24px 28px;
+      max-width: 390px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.85);
+    }
+    .sb-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(212,175,55,0.22);
+      border-top-color: var(--gold-light);
+      border-radius: 50%;
+      animation: sbSpin 0.8s linear infinite;
+      margin: 0 auto 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="sbLoadingOverlay">
+  <div class="sb-loading-card">
+    <div class="sb-spinner"></div>
+    <div id="sbLoadingTitle" style="font-size:17px;font-weight:800;color:var(--gold-light);margin-bottom:6px;">⏳ Aguarde um instante...</div>
+    <div id="sbLoadingSub" style="font-size:13px;color:#d1d5db;line-height:1.4;">Enviando seu pedido para o Servidor Sir Beef...</div>
+  </div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <img src="/assets/logos/SIR BEEF 2.png" alt="Sir Beef" />
+      <div>
+        <div class="brand-title">SIR BEEF</div>
+        <div class="brand-sub">Hamburgueria & Boutique das Carnes</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn" onclick="openMyOrdersModal()">📦 Acompanhar Meu Pedido / Comanda</button>
+      <button class="btn btn-gold" onclick="openCheckoutModal()">🛒 Minha Sacola (<span id="headerCartCount">0</span>)</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Seletor de Modalidade (Delivery, Retirada no Balcão ou Autoatendimento Exclusivo na Mesa via QR Code) -->
+  <div class="mode-hero" id="modeHeroBox">
+    <div>
+      <div style="font-size:14px;font-weight:800;color:var(--gold-light);" id="modeHeroTitle">📍 Como você deseja receber seu pedido hoje?</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="modeHeroSub">
+        Escolha abaixo entre receber em casa (Delivery) ou retirar seu pedido no balcão.
+      </div>
+    </div>
+    <div class="mode-pills" id="modePillsWrap">
+      <button class="btn active" id="modeBtn-DELIVERY" onclick="selectCustomerMode('DELIVERY')">🛵 Delivery (Entrega)</button>
+      <button class="btn" id="modeBtn-RETIRADA" onclick="selectCustomerMode('RETIRADA')">🛍️ Retirada no Balcão</button>
+      <button class="btn" id="modeBtn-MESA" style="display:none;" onclick="selectCustomerMode('MESA')">🍽️ Autoatendimento na Mesa</button>
+    </div>
+  </div>
+
+    <!-- Barra de Atendimento na Mesa (Visível quando o cliente está na Mesa) -->
+  <div class="mesa-service-bar" id="mesaServiceBar">
+    <div>
+      <div style="font-weight:800;color:var(--gold-light);font-size:14.5px;" id="mesaBannerTitle">🍽️ ATENDIMENTO NA MESA</div>
+      <div style="font-size:12px;color:#d1d5db;margin-top:2px;">
+        Seus pedidos vão direto para a chapa na sua Comanda Individual (Nome + Celular).
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <select id="topTableSelect" onchange="syncSelectedTable(this.value)" style="width:auto;margin:0;padding:8px 12px;font-weight:700;"></select>
+      <button class="btn" onclick="callWaiterFromWeb()">🔔 Chamar Garçom</button>
+      <button class="btn btn-gold" onclick="openMyOrdersModal()">🧾 Ver Minha Comanda / Pedir Conta</button>
+    </div>
+  </div>
+
+  <!-- Aviso de Modalidade Indisponível / Fechado no Momento -->
+  <div id="closedModalityNoticeBox" style="display:none;background:linear-gradient(135deg,#2a0f14 0%,#160b0e 100%);border:2px solid var(--red);border-radius:16px;padding:24px 20px;margin-bottom:18px;text-align:center;box-shadow:0 10px 30px rgba(239,68,68,0.2);">
+    <div style="font-size:34px;margin-bottom:8px;">🔒</div>
+    <div id="closedModalityNoticeTitle" style="font-size:19px;font-weight:900;color:#fca5a5;letter-spacing:0.5px;">
+      ESTAMOS INDISPONÍVEIS NO MOMENTO OU FECHADOS
+    </div>
+    <div id="closedModalityNoticeSub" style="font-size:13.5px;color:#e5e7eb;margin-top:6px;line-height:1.5;">
+      No momento esta modalidade de atendimento está temporariamente desativada ou estamos fechados. Tente novamente mais tarde!
+    </div>
+  </div>
+
+  <!-- Busca + Abas de Categorias -->
+  <div class="search-and-cats">
+    <div class="search-box">
+      <input type="text" id="menuSearchInput" placeholder="🔎 Buscar burger, porção, bebida ou corte nobre Sir Beef..." oninput="renderProducts()" />
+    </div>
+    <div class="cat-bar" id="catBar"></div>
+  </div>
+
+  <!-- Grade de Produtos do Cardápio -->
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- Barra Flutuante da Sacola -->
+<div class="cart-bar" id="cartBar" onclick="openCheckoutModal()">
+  <span id="cartCountText">0 itens na sacola</span>
+  <span id="cartTotalText">Ver Sacola & Finalizar • R$ 0,00</span>
+</div>
+
+<!-- Modal de Personalização do Produto (Com Barra Flutuante Discreta de Observações + Botão Adicionar) -->
+<div class="modal-backdrop" id="itemModal" onclick="closeItemModal()">
+  <div class="modal-box item-modal-box" onclick="event.stopPropagation()">
+    <div class="item-modal-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+          <img id="modalProdPhoto" src="" alt="" style="display:none;width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid var(--gold);flex-shrink:0;" onerror="this.style.display='none'" />
+          <div style="min-width:0;flex:1;">
+            <h3 id="modalProdTitle" style="font-size:17.5px;color:var(--gold-light);line-height:1.2;">Produto</h3>
+            <p id="modalProdDesc" style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35;"></p>
+          </div>
+        </div>
+        <button class="btn" style="padding:5px 10px;font-size:12px;flex-shrink:0;" onclick="closeItemModal()">✕ Fechar</button>
+      </div>
+    </div>
+
+    <div class="item-modal-scroll" id="modalModifiersScrollBox">
+      <div id="modalModifiersContainer"></div>
+    </div>
+
+    <div class="item-modal-floating-footer">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;">
+        <input type="text" id="modalProdNotes" placeholder="📝 Obs p/ cozinha (Ex: Sem cebola, cortar ao meio, maionese à parte...)" style="margin-top:0;padding:7px 10px;font-size:12.5px;border-radius:8px;background:#0b0b10;border:1px solid #2b2b36;" />
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;background:#0b0b10;padding:4px 8px;border-radius:9px;border:1px solid var(--border);">
+          <button class="btn" style="padding:4px 10px;font-size:13px;" onclick="changeModalQty(-1)">−</button>
+          <strong id="modalQtyVal" style="font-size:14.5px;min-width:20px;text-align:center;">1</strong>
+          <button class="btn" style="padding:4px 10px;font-size:13px;" onclick="changeModalQty(1)">+</button>
+        </div>
+        <button class="btn btn-gold" style="flex:1;justify-content:center;padding:10px 12px;font-size:13.5px;font-weight:800;" id="modalAddBtn" onclick="confirmAddToCart()">
+          🛒 Adicionar ao Pedido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Checkout / Finalização do Pedido -->
+<div class="modal-backdrop" id="checkoutModal" onclick="closeCheckoutModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="color:var(--gold-light);font-family:'Bayformance',sans-serif;font-size:22px;letter-spacing:1px;">
+        🛒 FINALIZAR PEDIDO — SIR BEEF
+      </h3>
+      <button class="btn" onclick="closeCheckoutModal()">✕ Fechar</button>
+    </div>
+
+    <div id="checkoutItemsSummary" style="margin-bottom:14px;background:#101015;border:1px solid var(--border);border-radius:12px;padding:12px;"></div>
+
+    <div style="margin-bottom:12px;background:#101015;border:1px solid var(--border);padding:12px;border-radius:12px;">
+      <label style="font-size:12px;color:var(--gold-light);font-weight:800;display:block;margin-bottom:6px;">
+        📍 Modalidade do Pedido:
+      </label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <select id="chkOrderMode" onchange="selectCustomerMode(this.value)">
+          <option value="DELIVERY">🛵 Delivery (Receber em Casa)</option>
+          <option value="RETIRADA">🛍️ Retirada no Balcão (Sem Taxa)</option>
+          <option value="MESA">🍽️ Estou na Mesa (Comanda Individual)</option>
+        </select>
+        <select id="chkTableNumber" style="display:none;" onchange="syncSelectedTable(this.value)"></select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div>
+        <label style="font-size:12px;color:var(--muted);">Seu Nome *</label>
+        <input type="text" id="chkName" placeholder="Digite seu Nome" />
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);">Celular / WhatsApp *</label>
+        <input type="tel" id="chkPhone" placeholder="(00) 0 0000 0000" maxlength="16" oninput="this.value = formatPhoneMaskBR(this.value)" />
+      </div>
+    </div>
+
+    <!-- Endereço + GPS Automático + Mapa com Alfinete Arrastável (Exibido apenas para Delivery) -->
+    <div id="deliveryAddressSection" style="margin-top:12px;background:#101015;border:1px solid var(--gold);border-radius:12px;padding:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div>
+          <div style="font-size:13px;font-weight:800;color:var(--gold-light);">📍 Endereço de Entrega & Localização no Mapa</div>
+          <div style="font-size:11.5px;color:var(--muted);">Puxe sua localização atual pelo GPS, confira/edite o número da casa e acerte o alfinete no mapa!</div>
+        </div>
+        <button type="button" class="btn btn-green" style="padding:9px 14px;font-size:12.5px;" onclick="pullCurrentGpsLocation()">
+          📍 Puxar Minha Localização Atual (GPS)
+        </button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2.2fr 0.9fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <label style="font-size:11.5px;color:var(--muted);">Rua / Avenida *</label>
+          <input type="text" id="chkStreet" placeholder="Ex: Av. Paulista" oninput="syncCombinedAddressField()" />
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--gold-light);font-weight:800;">Número (Confira/Edite) *</label>
+          <input type="text" id="chkHouseNum" placeholder="Ex: 1200" style="border-color:var(--gold);font-weight:800;" oninput="syncCombinedAddressField()" />
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1.2fr auto;gap:8px;margin-bottom:8px;align-items:end;">
+        <div>
+          <label style="font-size:11.5px;color:var(--muted);">Bairro *</label>
+          <input type="text" id="chkNeighborhood" placeholder="Ex: Bela Vista" oninput="syncCombinedAddressField()" />
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--muted);">Complemento / Referência</label>
+          <input type="text" id="chkComplement" placeholder="Ex: Casa 2, Portão Preto, Apto 14" oninput="syncCombinedAddressField()" />
+        </div>
+        <button type="button" class="btn" style="padding:10px 12px;font-size:12px;height:40px;" onclick="geocodeTypedAddressToMap()" title="Buscar rua digitada no mapa">
+          🔎 Ver no Mapa
+        </button>
+      </div>
+
+      <input type="hidden" id="chkAddress" value="" />
+
+      <div style="margin-top:8px;">
+        <div style="font-size:11.5px;color:var(--gold-light);font-weight:700;margin-bottom:4px;">
+          📌 Arraste o alfinete azul (ou toque no mapa) exatamente em cima da sua casa/portão:
+        </div>
+        <div id="mapPin"></div>
+        <small id="coordsLabel" style="color:#86efac;display:block;margin-top:6px;font-size:11.5px;font-weight:700;">
+          📍 Pino no Mapa: Lat -23.56141, Lng -46.65588 (Toque em "Puxar Minha Localização Atual" ou arraste o pino)
+        </small>
+      </div>
+    </div>
+
+    <!-- Aviso de Retirada no Balcão -->
+    <div id="retiradaInfoSection" style="display:none;margin-top:12px;padding:12px;background:rgba(56,189,248,0.1);border:1px solid var(--blue);border-radius:10px;font-size:12.5px;color:#bae6fd;">
+      🛍️ <strong>Retirada no Balcão Sir Beef:</strong> Você receberá um aviso automático no WhatsApp assim que seu pedido sair da chapa e estiver pronto para retirada!
+    </div>
+
+    <!-- Forma de Pagamento (Para Delivery e Retirada) -->
+    <div id="paymentSectionBox" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+      <div>
+        <label style="font-size:12px;color:var(--muted);">Forma de Pagamento:</label>
+        <select id="chkPayment" onchange="toggleTrocoField()">
+          <option value="PIX">💠 PIX (Chave / QR Code)</option>
+          <option value="CARTAO_ENTREGA">💳 Cartão (Maquininha)</option>
+          <option value="DINHEIRO">💵 Dinheiro em Espécie</option>
+        </select>
+      </div>
+      <div id="trocoFieldWrap" style="display:none;">
+        <label style="font-size:12px;color:var(--muted);">Troco para quanto? (R$)</label>
+        <input type="number" id="chkChange" placeholder="Ex: 100" value="" />
+      </div>
+    </div>
+
+    <!-- Cupom de Desconto no Cardápio Online -->
+    <div style="margin-top:12px;background:#101015;border:1px dashed var(--gold);border-radius:12px;padding:10px 12px;">
+      <label style="font-size:12px;color:var(--gold-light);font-weight:800;display:block;margin-bottom:6px;">
+        🎟️ Possui um Cupom de Desconto?
+      </label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" id="chkCouponCodeInp" placeholder="Digite o código (Ex: SIRBEEF10)" style="flex:1;font-weight:800;text-transform:uppercase;" />
+        <button type="button" class="btn btn-gold" style="padding:10px 14px;font-size:12.5px;font-weight:800;" onclick="validateAndApplyWebCoupon()">Aplicar</button>
+        <button type="button" class="btn" id="btnRemoveWebCoupon" style="display:none;padding:10px 12px;font-size:12px;border-color:var(--red);color:#fca5a5;" onclick="clearAppliedWebCoupon()">✕</button>
+      </div>
+      <div id="chkAppliedCouponBanner" style="display:none;margin-top:6px;padding:6px 10px;border-radius:8px;background:rgba(34,197,94,0.16);border:1px solid var(--green);font-size:12px;color:#86efac;font-weight:800;justify-content:space-between;align-items:center;"></div>
+    </div>
+
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-size:12px;color:var(--muted);" id="chkFeeInfoLbl">Taxa de Entrega: R$ 8,00</div>
+        <div id="chkFinalTotal" style="font-size:24px;font-weight:900;color:var(--gold-light);">R$ 0,00</div>
+      </div>
+      <button class="btn btn-green" style="padding:14px 22px;font-size:15px;" onclick="submitWebOrder()">
+        ✅ Confirmar & Enviar Pedido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Acompanhar Meus Pedidos & Minha Comanda Individual -->
+<div class="modal-backdrop" id="myOrdersModal" onclick="document.getElementById('myOrdersModal').style.display='none'">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="color:var(--gold-light);font-family:'Bayformance',sans-serif;font-size:22px;letter-spacing:1px;">
+        📦 MEUS PEDIDOS & COMANDA EM TEMPO REAL
+      </h3>
+      <button class="btn" onclick="document.getElementById('myOrdersModal').style.display='none'">✕ Fechar</button>
+    </div>
+    <div id="myOrdersContent" style="font-size:13px;">Carregando seus pedidos...</div>
+  </div>
+</div>
+
+<script>
+  let catalog = [];
+  let activeCatId = null;
+  let cart = [];
+  let currentProduct = null;
+  let modalQty = 1;
+  let customerMode = 'DELIVERY';
+  let menuModalities = { DELIVERY: true, RETIRADA: true, MESA: true };
+  let storeScheduleState = { is_open_now: true, today_hours_label: '', closed_reason_message: '', operating_hours: null };
+  let selectedTableNum = 13;
+  let mapInstance = null;
+  let mapMarker = null;
+  let pinLat = -23.56141;
+  let pinLng = -46.65588;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const isMesaSelfServicePage = window.location.pathname.startsWith('/mesa') ||
+    (urlParams.get('autoatendimento') === '1' && !!(urlParams.get('m') || urlParams.get('mesa')));
+  const qrMesaNumParam = isMesaSelfServicePage ? (urlParams.get('m') || urlParams.get('mesa') || '13') : null;
+  let hostTablesList = [];
+
+  function formatPhoneMaskBR(raw) {
+    let digits = String(raw || '').replace(/\D/g, '');
+    if (digits.length > 11 && digits.startsWith('55')) {
+      digits = digits.slice(2);
+    }
+    digits = digits.slice(0, 11);
+    if (digits.length === 0) return '';
+    if (digits.length <= 2) return `(${digits}`;
+    if (digits.length === 3) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3, 7)} ${digits.slice(7, 11)}`;
+  }
+
+  document.addEventListener('input', function(e) {
+    const el = e.target;
+    if (el && el.tagName === 'INPUT' && (el.type === 'tel' || String(el.id || '').toLowerCase().includes('phone'))) {
+      const f = formatPhoneMaskBR(el.value);
+      if (el.value !== f) el.value = f;
+    }
+  });
+
+  function populateTableSelectors() {
+    const topSel = document.getElementById('topTableSelect');
+    const chkSel = document.getElementById('chkTableNumber');
+    let html = '';
+    if (hostTablesList && hostTablesList.length > 0) {
+      hostTablesList.filter(t => t.active !== false || Number(t.number) === Number(selectedTableNum)).forEach(t => {
+        const numPad = String(t.number).padStart(2, '0');
+        const lbl = t.complement ? `🍽️ MESA ${numPad} - "${t.complement}"` : `🍽️ MESA ${numPad}`;
+        html += `<option value="${t.number}">${lbl}</option>`;
+      });
+    } else {
+      const maxT = Math.max(30, selectedTableNum || 30);
+      for (let i = 1; i <= maxT; i++) {
+        const numPad = String(i).padStart(2, '0');
+        html += `<option value="${i}">🍽️ MESA ${numPad}</option>`;
+      }
+    }
+    topSel.innerHTML = html;
+    chkSel.innerHTML = html;
+    topSel.value = String(selectedTableNum);
+    chkSel.value = String(selectedTableNum);
+    if (isMesaSelfServicePage) {
+      topSel.disabled = true;
+      chkSel.disabled = true;
+      topSel.title = 'Mesa vinculada automaticamente pelo QR Code da sua mesa';
+    }
+  }
+
+  function syncSelectedTable(val) {
+    selectedTableNum = parseInt(val || '13', 10) || 13;
+    const topSel = document.getElementById('topTableSelect');
+    const chkSel = document.getElementById('chkTableNumber');
+    if (topSel) topSel.value = String(selectedTableNum);
+    if (chkSel) chkSel.value = String(selectedTableNum);
+    const tbObj = (hostTablesList || []).find(t => Number(t.number) === Number(selectedTableNum));
+    const compTxt = tbObj && tbObj.complement ? ` (${tbObj.complement})` : '';
+    document.getElementById('mesaBannerTitle').textContent = `🍽️ AUTOATENDIMENTO MESA ${String(selectedTableNum).padStart(2, '0')}${compTxt} — COMANDA INDIVIDUAL`;
+  }
+
+  function isCurrentModeAvailable() {
+    if (storeScheduleState && storeScheduleState.is_open_now === false) {
+      return false;
+    }
+    if (isMesaSelfServicePage) {
+      return menuModalities.MESA !== false;
+    }
+    return menuModalities[customerMode] !== false;
+  }
+
+  function updateClosedNoticeBanner() {
+    const box = document.getElementById('closedModalityNoticeBox');
+    const titleEl = document.getElementById('closedModalityNoticeTitle');
+    const subEl = document.getElementById('closedModalityNoticeSub');
+    const searchAndCats = document.querySelector('.search-and-cats');
+    if (!box) return;
+
+    if (storeScheduleState && storeScheduleState.is_open_now === false) {
+      box.style.display = 'block';
+      titleEl.textContent = '🕒 LOJA FECHADA NO MOMENTO (FORA DO HORÁRIO DE FUNCIONAMENTO)';
+      const schedDays = (storeScheduleState.operating_hours && Array.isArray(storeScheduleState.operating_hours.days))
+        ? storeScheduleState.operating_hours.days.map(d => `${d.day_name}: ${d.is_open ? `${d.open_time} às ${d.close_time}` : 'Fechado'}`).join(' • ')
+        : '';
+      subEl.textContent = (storeScheduleState.closed_reason_message || 'Estamos fora do horário de funcionamento no momento.') +
+        (schedDays ? ` | Horários: ${schedDays}` : '');
+      if (searchAndCats) searchAndCats.style.display = 'none';
+      renderProducts();
+      return;
+    }
+
+    if (isMesaSelfServicePage) {
+      if (!menuModalities.MESA) {
+        box.style.display = 'block';
+        titleEl.textContent = '🔒 ESTAMOS INDISPONÍVEIS NO MOMENTO OU FECHADOS';
+        subEl.textContent = 'O autoatendimento por QR Code na mesa está indisponível ou estamos fechados no momento. Caso esteja no salão, chame um garçom!';
+        if (searchAndCats) searchAndCats.style.display = 'none';
+      } else {
+        box.style.display = 'none';
+        if (searchAndCats) searchAndCats.style.display = 'flex';
+      }
+      renderProducts();
+      return;
+    }
+
+    const bothClosed = !menuModalities.DELIVERY && !menuModalities.RETIRADA;
+    const curClosed = !menuModalities[customerMode];
+    if (bothClosed || curClosed) {
+      box.style.display = 'block';
+      const modeLabel = bothClosed
+        ? 'Delivery e Retirada no Balcão'
+        : (customerMode === 'DELIVERY' ? 'Entrega (Delivery)' : 'Retirada no Balcão');
+      titleEl.textContent = '🔒 ESTAMOS INDISPONÍVEIS NO MOMENTO OU FECHADOS';
+      subEl.textContent = bothClosed
+        ? 'No momento estamos indisponíveis ou fechados para pedidos online (Delivery e Retirada). Volte em nosso horário de atendimento!'
+        : `No momento estamos indisponíveis ou fechados para ${modeLabel}. ${menuModalities.DELIVERY ? 'Você pode selecionar Delivery (Entrega) acima.' : (menuModalities.RETIRADA ? 'Você pode selecionar Retirada no Balcão acima.' : '')}`;
+      if (searchAndCats) searchAndCats.style.display = bothClosed ? 'none' : 'flex';
+    } else {
+      box.style.display = 'none';
+      if (searchAndCats) searchAndCats.style.display = 'flex';
+    }
+    renderProducts();
+  }
+
+  let configuredDefaultDeliveryFee = 8.00;
+  let appliedWebCoupon = null;
+
+  function getAppliedWebCouponDiscount(grossTotal) {
+    if (!appliedWebCoupon || !appliedWebCoupon.code || grossTotal <= 0) return 0;
+    let disc = 0;
+    if (String(appliedWebCoupon.discount_type || '').toUpperCase() === 'PERCENTUAL') {
+      disc = grossTotal * (Number(appliedWebCoupon.discount_value || 0) / 100.0);
+    } else {
+      disc = Number(appliedWebCoupon.discount_value || 0);
+    }
+    if (disc > grossTotal) disc = grossTotal;
+    return Math.round(disc * 100) / 100;
+  }
+
+  async function validateAndApplyWebCoupon() {
+    const inp = document.getElementById('chkCouponCodeInp');
+    const code = (inp ? inp.value : '').trim().toUpperCase();
+    if (!code) {
+      alert('🎟️ Digite o código do cupom de desconto!');
+      return;
+    }
+    const isDelivery = customerMode === 'DELIVERY';
+    const sub = cart.reduce((acc, i) => acc + i.total_price, 0);
+    const fee = isDelivery ? configuredDefaultDeliveryFee : 0.0;
+    const grossTot = Math.max(0.01, sub + fee);
+
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code, subtotal: grossTot })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.valid || !data.coupon) {
+        alert('🚫 ' + ((data && data.error) || 'Cupom inválido ou já utilizado!'));
+        return;
+      }
+      appliedWebCoupon = {
+        code: data.coupon.code,
+        discount_type: data.coupon.discount_type,
+        discount_value: data.coupon.discount_value,
+        discount_amount: data.discount_amount || 0
+      };
+      selectCustomerMode(customerMode, true);
+    } catch (e) {
+      alert('Erro ao validar cupom de desconto.');
+    }
+  }
+
+  function clearAppliedWebCoupon() {
+    appliedWebCoupon = null;
+    const inp = document.getElementById('chkCouponCodeInp');
+    if (inp) inp.value = '';
+    selectCustomerMode(customerMode, true);
+  }
+
+  function applyMenuModalities(cfg) {
+    if (!cfg) return;
+    if (typeof cfg.default_delivery_fee === 'number' && !isNaN(cfg.default_delivery_fee) && cfg.default_delivery_fee >= 0) {
+      configuredDefaultDeliveryFee = cfg.default_delivery_fee;
+    }
+    storeScheduleState = {
+      is_open_now: cfg.is_open_now !== false,
+      today_hours_label: cfg.today_hours_label || '',
+      closed_reason_message: cfg.closed_reason_message || '',
+      operating_hours: cfg.operating_hours || null
+    };
+    const openByClock = storeScheduleState.is_open_now !== false;
+    if (isMesaSelfServicePage) {
+      menuModalities.DELIVERY = false;
+      menuModalities.RETIRADA = false;
+      menuModalities.MESA = openByClock && cfg.menu_enable_mesa !== false;
+    } else {
+      // Link padrão do WhatsApp (/cardapio): NUNCA exibe Estou na Mesa nem Chamar Garçom
+      menuModalities.DELIVERY = openByClock && cfg.menu_enable_delivery !== false;
+      menuModalities.RETIRADA = openByClock && cfg.menu_enable_retirada !== false;
+      menuModalities.MESA = false;
+    }
+
+    const map = [
+      { key: 'DELIVERY', btnId: 'modeBtn-DELIVERY', labelOpen: '🛵 Delivery (Entrega)', labelClosed: '🔒 Delivery (Indisponível / Fechado)' },
+      { key: 'RETIRADA', btnId: 'modeBtn-RETIRADA', labelOpen: '🛍️ Retirada no Balcão', labelClosed: '🔒 Retirada (Indisponível / Fechado)' },
+      { key: 'MESA',     btnId: 'modeBtn-MESA',     labelOpen: '🍽️ Autoatendimento na Mesa', labelClosed: '🔒 Mesa QR (Indisponível / Fechado)' }
+    ];
+    const sel = document.getElementById('chkOrderMode');
+    map.forEach(m => {
+      const enabled = menuModalities[m.key];
+      const btn = document.getElementById(m.btnId);
+      if (btn) {
+        if (m.key === 'MESA' && !isMesaSelfServicePage) {
+          btn.style.display = 'none';
+        } else if (m.key !== 'MESA' && isMesaSelfServicePage) {
+          btn.style.display = 'none';
+        } else {
+          btn.style.display = 'inline-flex';
+          btn.textContent = enabled ? m.labelOpen : m.labelClosed;
+          btn.style.opacity = enabled ? '1' : '0.75';
+        }
+      }
+      if (sel) {
+        const opt = sel.querySelector(`option[value="${m.key}"]`);
+        if (opt) {
+          opt.disabled = !enabled;
+          opt.style.display = (m.key === 'MESA' && !isMesaSelfServicePage) ? 'none' : '';
+        }
+      }
+    });
+
+    if (isMesaSelfServicePage) {
+      const heroTitle = document.getElementById('modeHeroTitle');
+      const heroSub = document.getElementById('modeHeroSub');
+      const pad = String(selectedTableNum).padStart(2, '0');
+      if (heroTitle) heroTitle.textContent = `🍽️ Autoatendimento na MESA ${pad} (QR Code Exclusivo)`;
+      if (heroSub) {
+        heroSub.textContent = menuModalities.MESA
+          ? 'Faça seu pedido direto para a cozinha na sua Comanda Individual ou chame o garçom quando precisar.'
+          : '🔒 Estamos indisponíveis no momento ou fechados para pedidos na Mesa por QR Code.';
+      }
+      selectCustomerMode('MESA', true);
+      updateClosedNoticeBanner();
+      return;
+    }
+
+    if (!menuModalities[customerMode]) {
+      const firstActive = ['DELIVERY', 'RETIRADA'].find(k => menuModalities[k]);
+      if (firstActive) {
+        selectCustomerMode(firstActive, true);
+      }
+    }
+    updateClosedNoticeBanner();
+  }
+
+  function selectCustomerMode(mode, silent) {
+    if (!isMesaSelfServicePage && mode === 'MESA') {
+      mode = 'DELIVERY';
+    }
+    if (isMesaSelfServicePage) {
+      mode = 'MESA';
+    }
+    customerMode = mode;
+    ['DELIVERY', 'RETIRADA', 'MESA'].forEach(m => {
+      const btn = document.getElementById('modeBtn-' + m);
+      if (btn) btn.classList.toggle('active', m === mode);
+    });
+    const sel = document.getElementById('chkOrderMode');
+    if (sel) sel.value = mode;
+
+    if (!silent && menuModalities[mode] === false) {
+      updateClosedNoticeBanner();
+      alert('🔒 Estamos indisponíveis no momento ou fechados para esta modalidade.');
+    } else {
+      updateClosedNoticeBanner();
+    }
+
+    const mesaBar = document.getElementById('mesaServiceBar');
+    mesaBar.style.display = (isMesaSelfServicePage && mode === 'MESA' && menuModalities.MESA) ? 'flex' : 'none';
+
+    const isMesa = isMesaSelfServicePage && mode === 'MESA';
+    const isDelivery = mode === 'DELIVERY';
+    const isRetirada = mode === 'RETIRADA';
+
+    document.getElementById('chkTableNumber').style.display = isMesa ? 'block' : 'none';
+    document.getElementById('deliveryAddressSection').style.display = isDelivery ? 'block' : 'none';
+    document.getElementById('retiradaInfoSection').style.display = isRetirada ? 'block' : 'none';
+    document.getElementById('paymentSectionBox').style.display = isMesa ? 'none' : 'grid';
+
+    const sub = cart.reduce((acc, i) => acc + i.total_price, 0);
+    const fee = isDelivery ? configuredDefaultDeliveryFee : 0.0;
+    const grossTot = sub + fee;
+    const couponDisc = getAppliedWebCouponDiscount(grossTot);
+    const finalTot = Math.max(0, Math.round((grossTot - couponDisc) * 100) / 100);
+
+    const cpBan = document.getElementById('chkAppliedCouponBanner');
+    const cpRemBtn = document.getElementById('btnRemoveWebCoupon');
+    if (appliedWebCoupon && appliedWebCoupon.code) {
+      if (cpRemBtn) cpRemBtn.style.display = 'inline-flex';
+      if (cpBan) {
+        const valDesc = String(appliedWebCoupon.discount_type || '').toUpperCase() === 'PERCENTUAL'
+          ? `${Number(appliedWebCoupon.discount_value || 0)}% OFF`
+          : `R$ ${Number(appliedWebCoupon.discount_value || 0).toFixed(2)} OFF`;
+        cpBan.style.display = 'flex';
+        cpBan.innerHTML = `<span>🎟️ Cupom <strong>${appliedWebCoupon.code}</strong> (${valDesc}) aplicado!</span><span>- R$ ${couponDisc.toFixed(2)}</span>`;
+      }
+    } else {
+      if (cpRemBtn) cpRemBtn.style.display = 'none';
+      if (cpBan) {
+        cpBan.style.display = 'none';
+        cpBan.innerHTML = '';
+      }
+    }
+
+    document.getElementById('chkFeeInfoLbl').textContent = isDelivery
+      ? `Taxa de Entrega: R$ ${configuredDefaultDeliveryFee.toFixed(2).replace('.', ',')}${couponDisc > 0 ? ` • Desconto Cupom: -R$ ${couponDisc.toFixed(2).replace('.', ',')}` : ''}`
+      : (isRetirada
+        ? `Retirada no Balcão (Sem Taxa)${couponDisc > 0 ? ` • Desconto Cupom: -R$ ${couponDisc.toFixed(2).replace('.', ',')}` : ''}`
+        : `Lançamento direto na Comanda da MESA ${String(selectedTableNum).padStart(2, '0')}${couponDisc > 0 ? ` • Cupom: -R$ ${couponDisc.toFixed(2).replace('.', ',')}` : ''}`);
+    document.getElementById('chkFinalTotal').textContent = `R$ ${finalTot.toFixed(2)}`;
+
+    if (isDelivery && document.getElementById('checkoutModal').style.display === 'flex') {
+      initOrRefreshDeliveryMap();
+    }
+  }
+
+  function toggleTrocoField() {
+    const pay = document.getElementById('chkPayment').value;
+    document.getElementById('trocoFieldWrap').style.display = (pay === 'DINHEIRO') ? 'block' : 'none';
+  }
+
+  async function init() {
+    populateTableSelectors();
+
+    const savedName = localStorage.getItem('sirbeef_customer_name') || '';
+    const savedPhone = localStorage.getItem('sirbeef_customer_phone') || '';
+    const savedAddr = localStorage.getItem('sirbeef_customer_address') || '';
+    const savedStreet = localStorage.getItem('sirbeef_customer_street') || '';
+    const savedNum = localStorage.getItem('sirbeef_customer_num') || '';
+    const savedBairro = localStorage.getItem('sirbeef_customer_bairro') || '';
+    const savedComp = localStorage.getItem('sirbeef_customer_comp') || '';
+    const savedLat = parseFloat(localStorage.getItem('sirbeef_customer_lat') || '');
+    const savedLng = parseFloat(localStorage.getItem('sirbeef_customer_lng') || '');
+
+    if (savedName) document.getElementById('chkName').value = savedName;
+    if (savedPhone) document.getElementById('chkPhone').value = savedPhone;
+    if (savedStreet) document.getElementById('chkStreet').value = savedStreet;
+    if (savedNum) document.getElementById('chkHouseNum').value = savedNum;
+    if (savedBairro) document.getElementById('chkNeighborhood').value = savedBairro;
+    if (savedComp) document.getElementById('chkComplement').value = savedComp;
+    if (!isNaN(savedLat) && !isNaN(savedLng) && savedLat !== 0) {
+      pinLat = savedLat;
+      pinLng = savedLng;
+    }
+    if (savedAddr && !savedStreet) {
+      document.getElementById('chkStreet').value = savedAddr;
+    }
+    syncCombinedAddressField();
+
+    if (isMesaSelfServicePage && qrMesaNumParam) {
+      const mNum = parseInt(qrMesaNumParam, 10);
+      if (mNum >= 1) {
+        selectedTableNum = mNum;
+      }
+      try {
+        const tRes = await fetch('/api/tables');
+        if (tRes.ok) {
+          hostTablesList = await tRes.json();
+        }
+      } catch (_) {}
+      populateTableSelectors();
+      syncSelectedTable(selectedTableNum);
+      document.getElementById('modeBtn-DELIVERY').style.display = 'none';
+      document.getElementById('modeBtn-RETIRADA').style.display = 'none';
+      document.getElementById('modeBtn-MESA').style.display = 'inline-flex';
+      const chkModeSel = document.getElementById('chkOrderMode');
+      if (chkModeSel) {
+        chkModeSel.value = 'MESA';
+        chkModeSel.disabled = true;
+      }
+      selectCustomerMode('MESA');
+    } else {
+      // Link padrão do WhatsApp (/cardapio): bloqueia totalmente opção de Mesa
+      menuModalities.MESA = false;
+      const btnMesa = document.getElementById('modeBtn-MESA');
+      if (btnMesa) btnMesa.style.display = 'none';
+      const chkModeSel = document.getElementById('chkOrderMode');
+      if (chkModeSel) {
+        const optMesa = chkModeSel.querySelector('option[value="MESA"]');
+        if (optMesa) {
+          optMesa.disabled = true;
+          optMesa.style.display = 'none';
+        }
+      }
+      selectCustomerMode('DELIVERY');
+    }
+
+    await loadCatalog();
+    setInterval(loadCatalog, 8000);
+  }
+
+  async function loadCatalog() {
+    try {
+      fetch('/api/operational-settings').then(r => r.ok ? r.json() : null).then(cfg => {
+        if (cfg) applyMenuModalities(cfg);
+      }).catch(() => {});
+
+      const res = await fetch('/api/catalog');
+      const data = await res.json();
+      catalog = (data || []).map(c => ({
+        ...c,
+        items: (c.items || []).filter(p => p.active !== false && (typeof p.stock_qty !== 'number' || p.stock_qty < 0 || p.stock_qty > 0))
+      })).filter(c => c.items.length > 0);
+
+      if (catalog.length > 0 && (!activeCatId || !catalog.some(c => c.id === activeCatId) || activeCatId === 900)) {
+        const defaultCat = catalog.find(c => c.id === 134) || catalog.find(c => c.id === 137) || catalog[0];
+        activeCatId = defaultCat.id;
+      }
+      renderCategories();
+      renderProducts();
+    } catch (e) {
+      console.error('Erro ao carregar cardápio:', e);
+    }
+  }
+
+  function renderCategories() {
+    const bar = document.getElementById('catBar');
+    bar.innerHTML = catalog.map(c => `
+      <button class="cat-pill ${c.id === activeCatId ? 'active' : ''}" onclick="selectCategory(${c.id})">
+        ${c.sector === 'MERCADO' ? '🥩' : '🍔'} ${c.name} (${c.items.length})
+      </button>
+    `).join('');
+  }
+
+  function selectCategory(id) {
+    activeCatId = id;
+    document.getElementById('menuSearchInput').value = '';
+    renderCategories();
+    renderProducts();
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    if (!isCurrentModeAvailable()) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:42px 20px;background:#14141c;border:1px dashed var(--red);border-radius:16px;color:#fca5a5;">
+        <div style="font-size:32px;margin-bottom:8px;">🔒</div>
+        <strong style="font-size:17px;">Estamos indisponíveis no momento ou fechados</strong>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px;">No momento não estamos recebendo pedidos nesta modalidade.</div>
+      </div>`;
+      return;
+    }
+    const q = (document.getElementById('menuSearchInput').value || '').toLowerCase().trim();
+    let itemsToShow = [];
+
+    if (q) {
+      catalog.forEach(c => {
+        c.items.forEach(it => {
+          if (it.name.toLowerCase().includes(q) || (it.description || '').toLowerCase().includes(q)) {
+            itemsToShow.push(it);
+          }
+        });
+      });
+    } else {
+      const cat = catalog.find(c => c.id === activeCatId);
+      itemsToShow = cat ? cat.items : [];
+    }
+
+    if (itemsToShow.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">Nenhum item encontrado para esta busca.</div>';
+      return;
+    }
+
+    grid.innerHTML = itemsToShow.map(item => {
+      const hasPhoto = !!(item.image_url && String(item.image_url).trim() !== '' && !String(item.image_url).includes('SEM_FOTO'));
+      const descTxt = item.description || (item.sector === 'MERCADO' ? 'Produto selecionado Sir Beef Boutique & Mercado.' : 'Preparado com blend 100% Angus certificado Sir Beef.');
+      const varGrp = (item.modifier_groups || []).find(g => isVariationGroupInMenu(g));
+      let minVarPrice = item.price;
+      let hasMultiVarPrices = false;
+      if (varGrp) {
+        const visPrices = (varGrp.options || []).filter(o => o.visible !== false && o.disabled !== true).map(o => Number(o.price || 0)).filter(v => v > 0);
+        if (visPrices.length > 0) {
+          minVarPrice = Math.min(...visPrices);
+          hasMultiVarPrices = Math.max(...visPrices) > minVarPrice;
+        }
+      }
+      const displayPrice = (item.promo_from && item.promo_from > 0) ? Math.min(minVarPrice, item.promo_from) : minVarPrice;
+      return `
+      <div class="prod-card" onclick='openItemModal(${JSON.stringify(item).replace(/'/g, "&#39;")})'>
+        <div class="prod-top">
+          ${hasPhoto ? `<img class="prod-img" src="${item.image_url}" onerror="this.style.display='none'" />` : ''}
+          <div class="prod-info">
+            <h3>${item.name}</h3>
+            <p>${descTxt}</p>
+          </div>
+        </div>
+        <div class="prod-footer">
+          <div>
+            ${(item.promo_from && item.promo_from > 0 && item.promo_from !== item.price) ? `<span class="promo-old">R$ ${Math.max(item.price, item.promo_from).toFixed(2)}</span>` : ''}
+            <span class="price-tag">${hasMultiVarPrices ? '<small style="font-size:11px;color:var(--gold-light);font-weight:700;margin-right:3px;">A partir de</small>' : ''}R$ ${displayPrice.toFixed(2)}${item.is_weighted ? '/kg' : ''}</span>
+          </div>
+          <span class="btn btn-gold" style="padding:7px 14px;font-size:12px;">+ Adicionar</span>
+        </div>
+      </div>
+    `;
+    }).join('');
+  }
+
+  function isVariationGroupInMenu(g) {
+    if (!g) return false;
+    if (!g.required && Number(g.min || 0) < 1) return false;
+    const visOpts = (g.options || []).filter(o => o && o.visible !== false && o.disabled !== true);
+    if (visOpts.length === 0) return false;
+    return visOpts.every(o => Number(o.price || 0) > 0);
+  }
+
+  function openItemModal(item) {
+    if (!isCurrentModeAvailable()) {
+      alert('🔒 Estamos indisponíveis no momento ou fechados para esta modalidade.');
+      return;
+    }
+    currentProduct = item;
+    if (currentProduct.promo_from && currentProduct.promo_from > 0 && currentProduct.promo_from < currentProduct.price) {
+      const realOffer = currentProduct.promo_from;
+      currentProduct.promo_from = currentProduct.price;
+      currentProduct.price = realOffer;
+    }
+    modalQty = 1;
+    document.getElementById('modalQtyVal').textContent = '1';
+    document.getElementById('modalProdTitle').textContent = item.name;
+    document.getElementById('modalProdDesc').textContent = item.description || 'Padrão Sir Beef Boutique das Carnes.';
+    document.getElementById('modalProdNotes').value = '';
+    const photoEl = document.getElementById('modalProdPhoto');
+    if (photoEl) {
+      const hasPhoto = !!(item.image_url && String(item.image_url).trim() !== '' && !String(item.image_url).includes('SEM_FOTO') && String(item.image_url) !== 'NONE');
+      if (hasPhoto) {
+        photoEl.src = item.image_url;
+        photoEl.style.display = 'block';
+      } else {
+        photoEl.style.display = 'none';
+      }
+    }
+
+    const container = document.getElementById('modalModifiersContainer');
+    let groups = Array.isArray(item.modifier_groups) ? [...item.modifier_groups] : [];
+    const catLower = (item.category_name || '').toLowerCase();
+    const nameLower = (item.name || '').toLowerCase();
+    const isPorcaoOrNonBeef = catLower.includes('porç') || catLower.includes('porc') ||
+      catLower.includes('bebida') || catLower.includes('marmita') || catLower.includes('sobremesa') ||
+      nameLower.includes('batata') || nameLower.includes('onion') || nameLower.includes('chicken') ||
+      nameLower.includes('frango') || nameLower.includes('kitkat') || nameLower.includes('refrigerante') ||
+      nameLower.includes('coca') || nameLower.includes('fanta') || nameLower.includes('pepsi') ||
+      nameLower.includes('guaran') || nameLower.includes('suco') || nameLower.includes('água') || nameLower.includes('agua') ||
+      item.sector === 'MERCADO';
+
+    if (isPorcaoOrNonBeef) {
+      // Nunca exibe "Ponto da Carne" em Porções (Batata, Onion Rings, Big Chicken), Lanches de Frango, Marmitas ou Bebidas!
+      groups = groups.filter(g => !(g.name || '').toLowerCase().includes('ponto'));
+    }
+
+    container.innerHTML = groups.map((g, gIdx) => {
+      const visibleOpts = (g.options || []).filter(opt => opt.visible !== false && opt.disabled !== true).slice(0, 45);
+      if (visibleOpts.length === 0) return '';
+      const isVar = isVariationGroupInMenu(g);
+      const isRadio = isVar || g.max === 1;
+      return `
+        <div class="mod-group">
+          <h4>
+            <span>${g.name}</span>
+            <small>${isVar ? 'Variação • Escolha 1' : (g.required ? 'Obrigatório' : `Opcional (Até ${g.max})`)}</small>
+          </h4>
+          ${visibleOpts.map((opt, oIdx) => `
+            <label class="mod-opt">
+              <span>${opt.name} ${opt.price > 0 ? `<strong style="color:var(--gold-light)">(${isVar ? 'R$ ' : '+R$ '}${opt.price.toFixed(2)})</strong>` : ''}</span>
+              <input type="${isRadio ? 'radio' : 'checkbox'}"
+                     name="mod_group_${gIdx}"
+                     data-group="${g.name}"
+                     data-opt="${opt.name}"
+                     data-price="${opt.price}"
+                     data-is-variation="${isVar ? '1' : '0'}"
+                     onchange="updateModalLivePrice()"
+                     ${isRadio && oIdx === 0 ? 'checked' : ''} />
+            </label>
+          `).join('')}
+        </div>
+      `;
+    }).join('');
+
+    const scrollBox = document.getElementById('modalModifiersScrollBox');
+    if (scrollBox) scrollBox.scrollTop = 0;
+    updateModalLivePrice();
+    document.getElementById('itemModal').style.display = 'flex';
+  }
+
+  function updateModalLivePrice() {
+    if (!currentProduct) return;
+    const checked = document.querySelectorAll('#modalModifiersContainer input:checked');
+    let unitPrice = Number(currentProduct.price || 0);
+    let modAdd = 0;
+    checked.forEach(inp => {
+      const gName = inp.getAttribute('data-group');
+      const p = parseFloat(inp.getAttribute('data-price') || '0');
+      const isVar = inp.getAttribute('data-is-variation') === '1';
+      if ((isVar || gName === 'Tipo Burger') && p > 0) {
+        unitPrice = p;
+      } else {
+        modAdd += p;
+      }
+    });
+    const totalPrice = (unitPrice + modAdd) * modalQty;
+    const addBtn = document.getElementById('modalAddBtn');
+    if (addBtn) {
+      addBtn.innerHTML = `🛒 Adicionar • R$ ${totalPrice.toFixed(2)}`;
+    }
+  }
+
+  function closeItemModal() {
+    document.getElementById('itemModal').style.display = 'none';
+  }
+
+  function changeModalQty(delta) {
+    modalQty = Math.max(1, modalQty + delta);
+    document.getElementById('modalQtyVal').textContent = String(modalQty);
+    updateModalLivePrice();
+  }
+
+  function confirmAddToCart() {
+    const checked = document.querySelectorAll('#modalModifiersContainer input:checked');
+    let selectedMods = [];
+    let unitPrice = currentProduct.price;
+
+    checked.forEach(inp => {
+      const gName = inp.getAttribute('data-group');
+      const oName = inp.getAttribute('data-opt');
+      const p = parseFloat(inp.getAttribute('data-price') || '0');
+      const isVar = inp.getAttribute('data-is-variation') === '1';
+      if ((isVar || gName === 'Tipo Burger') && p > 0) {
+        unitPrice = p;
+        selectedMods.push({ group_name: gName, option_name: oName, price: 0 });
+      } else {
+        selectedMods.push({ group_name: gName, option_name: oName, price: p });
+      }
+    });
+
+    const modAdd = selectedMods.reduce((acc, m) => acc + m.price, 0);
+    const finalUnit = unitPrice + modAdd;
+    const totalPrice = Math.round(finalUnit * modalQty * 100) / 100;
+
+    cart.push({
+      product_id: currentProduct.id,
+      product_name: currentProduct.name,
+      quantity: modalQty,
+      unit_price: finalUnit,
+      total_price: totalPrice,
+      selected_modifiers: selectedMods,
+      notes: document.getElementById('modalProdNotes').value.trim(),
+      sector_abc: currentProduct.sector_abc || 'HAMBURGUERIA'
+    });
+
+    closeItemModal();
+    updateCartBar();
+  }
+
+  function updateCartBar() {
+    const bar = document.getElementById('cartBar');
+    const totalQty = cart.reduce((acc, i) => acc + i.quantity, 0);
+    document.getElementById('headerCartCount').textContent = String(totalQty);
+
+    if (cart.length === 0) {
+      bar.style.display = 'none';
+      return;
+    }
+    bar.style.display = 'flex';
+    const total = cart.reduce((acc, i) => acc + i.total_price, 0);
+    document.getElementById('cartCountText').textContent = `${totalQty} item(ns) na sacola`;
+    document.getElementById('cartTotalText').textContent = `Finalizar Pedido • R$ ${total.toFixed(2)}`;
+  }
+
+  function changeCartItemQty(idx, delta) {
+    if (!cart[idx]) return;
+    cart[idx].quantity += delta;
+    if (cart[idx].quantity <= 0) {
+      cart.splice(idx, 1);
+    } else {
+      cart[idx].total_price = Math.round(cart[idx].quantity * cart[idx].unit_price * 100) / 100;
+    }
+    updateCartBar();
+    renderCheckoutSummary();
+  }
+
+  function renderCheckoutSummary() {
+    const summary = document.getElementById('checkoutItemsSummary');
+    if (cart.length === 0) {
+      summary.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px;">Sua sacola está vazia. Adicione produtos do cardápio para pedir!</div>';
+    } else {
+      summary.innerHTML = cart.map((i, idx) => {
+        const mods = (i.selected_modifiers || []).map(m => m.option_name).join(' • ');
+        return `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222;gap:8px;">
+            <div>
+              <strong>${i.quantity}x ${i.product_name}</strong>
+              ${mods ? `<div style="font-size:11.5px;color:var(--gold-light);">+ ${mods}</div>` : ''}
+              ${i.notes ? `<div style="font-size:11px;color:var(--muted);">Obs: ${i.notes}</div>` : ''}
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <strong style="color:var(--gold-light);margin-right:4px;">R$ ${i.total_price.toFixed(2)}</strong>
+              <button class="btn" style="padding:3px 8px;font-size:12px;" onclick="changeCartItemQty(${idx}, -1)">−</button>
+              <button class="btn" style="padding:3px 8px;font-size:12px;" onclick="changeCartItemQty(${idx}, 1)">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    selectCustomerMode(customerMode);
+  }
+
+  function syncCombinedAddressField() {
+    const st = (document.getElementById('chkStreet')?.value || '').trim();
+    const num = (document.getElementById('chkHouseNum')?.value || '').trim();
+    const bai = (document.getElementById('chkNeighborhood')?.value || '').trim();
+    const comp = (document.getElementById('chkComplement')?.value || '').trim();
+    let parts = [];
+    if (st) parts.push(num ? `${st}, ${num}` : st);
+    if (bai) parts.push(bai);
+    if (comp) parts.push(`(${comp})`);
+    const combined = parts.join(' - ');
+    const hiddenAddr = document.getElementById('chkAddress');
+    if (hiddenAddr) hiddenAddr.value = combined;
+    return combined;
+  }
+
+  function updatePinPositionOnMap(lat, lng, zoomLevel, triggerReverseGeocode) {
+    pinLat = lat;
+    pinLng = lng;
+    localStorage.setItem('sirbeef_customer_lat', String(pinLat));
+    localStorage.setItem('sirbeef_customer_lng', String(pinLng));
+    if (mapInstance && mapMarker) {
+      mapMarker.setLatLng([pinLat, pinLng]);
+      mapInstance.setView([pinLat, pinLng], zoomLevel || mapInstance.getZoom() || 17);
+    }
+    document.getElementById('coordsLabel').textContent = `📍 Alfinete ajustado no Mapa: Lat ${pinLat.toFixed(5)}, Lng ${pinLng.toFixed(5)}`;
+    if (triggerReverseGeocode) {
+      reverseGeocodeCoords(pinLat, pinLng, false);
+    }
+  }
+
+  async function reverseGeocodeCoords(lat, lng, overwriteHouseNum) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1`;
+      const res = await fetch(url, { headers: { 'Accept-Language': 'pt-BR' } });
+      if (!res.ok) return;
+      const data = await res.json();
+      const addr = data.address || {};
+      const road = addr.road || addr.pedestrian || addr.residential || addr.suburb || '';
+      const houseNumber = addr.house_number || '';
+      const suburb = addr.suburb || addr.neighbourhood || addr.quarter || addr.city_district || addr.town || addr.city || '';
+
+      if (road) {
+        document.getElementById('chkStreet').value = road;
+      }
+      if (suburb) {
+        document.getElementById('chkNeighborhood').value = suburb;
+      }
+      const numInp = document.getElementById('chkHouseNum');
+      if (houseNumber && (overwriteHouseNum || !numInp.value.trim())) {
+        numInp.value = houseNumber;
+      } else if (overwriteHouseNum && !numInp.value.trim()) {
+        numInp.value = 'S/N';
+      }
+      syncCombinedAddressField();
+      document.getElementById('coordsLabel').textContent = `✅ Endereço puxado do Mapa (${road || 'Localização GPS'}${houseNumber ? ', Nº aprox. ' + houseNumber : ''}) — Confira o número e ajuste o alfinete se precisar!`;
+    } catch (e) {
+      console.warn('Reverse geocoding aviso:', e);
+    }
+  }
+
+  function pullCurrentGpsLocation() {
+    if (!navigator.geolocation) {
+      alert('⚠️ Seu navegador não suporta GPS automático. Digite sua rua e clique em "Ver no Mapa".');
+      return;
+    }
+    showLoading('📍 Obtendo sua Localização Atual...', 'Aguarde, puxando o GPS do seu aparelho e identificando a rua e número aproximado...');
+    navigator.geolocation.getCurrentPosition(
+      async function(pos) {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        updatePinPositionOnMap(lat, lng, 18, false);
+        await reverseGeocodeCoords(lat, lng, true);
+        hideLoading();
+        const numInp = document.getElementById('chkHouseNum');
+        if (numInp) {
+          numInp.focus();
+          numInp.select();
+        }
+      },
+      function(err) {
+        hideLoading();
+        alert('⚠️ Não foi possível acessar o GPS automaticamente (verifique se a permissão de Localização está liberada no navegador). Você também pode digitar sua Rua e Número e clicar em "🔎 Ver no Mapa"!');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  async function geocodeTypedAddressToMap() {
+    const st = (document.getElementById('chkStreet').value || '').trim();
+    const num = (document.getElementById('chkHouseNum').value || '').trim();
+    const bai = (document.getElementById('chkNeighborhood').value || '').trim();
+    if (!st) {
+      alert('⚠️ Digite pelo menos o nome da Rua/Avenida para buscar no mapa!');
+      return;
+    }
+    showLoading('🔎 Buscando Endereço no Mapa...', `Localizando ${st} ${num}...`);
+    try {
+      const q = encodeURIComponent(`${st} ${num}, ${bai}, Brasil`);
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${q}`, {
+        headers: { 'Accept-Language': 'pt-BR' }
+      });
+      const list = await res.json();
+      hideLoading();
+      if (list && list.length > 0) {
+        const lat = parseFloat(list[0].lat);
+        const lng = parseFloat(list[0].lon);
+        updatePinPositionOnMap(lat, lng, 18, false);
+        document.getElementById('coordsLabel').textContent = `📌 Alfinete movido para ${st}${num ? ', ' + num : ''}! Arraste o pino para acertar o ponto exato.`;
+      } else {
+        alert('ℹ️ Não encontramos o ponto exato pelo texto. Você pode arrastar o alfinete diretamente no mapa!');
+      }
+    } catch (e) {
+      hideLoading();
+    }
+  }
+
+  function initOrRefreshDeliveryMap() {
+    setTimeout(() => {
+      if (!mapInstance) {
+        mapInstance = L.map('mapPin').setView([pinLat, pinLng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap'
+        }).addTo(mapInstance);
+        mapMarker = L.marker([pinLat, pinLng], { draggable: true }).addTo(mapInstance);
+        mapMarker.on('dragend', function() {
+          const pos = mapMarker.getLatLng();
+          updatePinPositionOnMap(pos.lat, pos.lng, mapInstance.getZoom(), true);
+        });
+        mapInstance.on('click', function(e) {
+          if (e && e.latlng) {
+            updatePinPositionOnMap(e.latlng.lat, e.latlng.lng, mapInstance.getZoom(), true);
+          }
+        });
+      } else {
+        mapInstance.invalidateSize();
+        mapMarker.setLatLng([pinLat, pinLng]);
+      }
+    }, 220);
+  }
+
+  function openCheckoutModal() {
+    if (!isCurrentModeAvailable()) {
+      alert('🔒 Estamos indisponíveis no momento ou fechados no momento.');
+      return;
+    }
+    renderCheckoutSummary();
+    document.getElementById('checkoutModal').style.display = 'flex';
+    if (customerMode === 'DELIVERY') {
+      initOrRefreshDeliveryMap();
+    }
+  }
+
+  function closeCheckoutModal() {
+    document.getElementById('checkoutModal').style.display = 'none';
+  }
+
+  function showLoading(title, sub) {
+    document.getElementById('sbLoadingTitle').textContent = title || '⏳ Aguarde um instante...';
+    document.getElementById('sbLoadingSub').textContent = sub || 'Enviando para o Servidor Sir Beef...';
+    document.getElementById('sbLoadingOverlay').style.display = 'flex';
+  }
+
+  function hideLoading() {
+    document.getElementById('sbLoadingOverlay').style.display = 'none';
+  }
+
+  async function callWaiterFromWeb() {
+    if (!isMesaSelfServicePage) {
+      alert('⚠️ Para chamar o garçom, escaneie o QR Code exclusivo da sua mesa no salão.');
+      return;
+    }
+    if (menuModalities.MESA === false) {
+      alert('⚠️ O autoatendimento por QR Code está temporariamente desativado pela gerência.');
+      return;
+    }
+    showLoading('🔔 Chamando Garçom...', `Avisando a equipe Sir Beef na MESA ${String(selectedTableNum).padStart(2, '0')}...`);
+    try {
+      await fetch('/api/tables/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table_id: selectedTableNum, action: 'CALL_WAITER' })
+      });
+      hideLoading();
+      alert(`🔔 Garçom chamado na MESA ${String(selectedTableNum).padStart(2, '0')}! Um atendente já está indo até sua mesa.`);
+    } catch (e) {
+      hideLoading();
+      alert('Erro ao chamar garçom. Tente novamente.');
+    }
+  }
+
+  async function submitWebOrder() {
+    if (cart.length === 0) {
+      alert('🛒 Adicione pelo menos 1 item ao seu pedido antes de confirmar!');
+      return;
+    }
+
+    const mode = document.getElementById('chkOrderMode').value;
+    const isMesa = mode === 'MESA';
+    const isDelivery = mode === 'DELIVERY';
+    const isRetirada = mode === 'RETIRADA';
+
+    if (isMesa && !isMesaSelfServicePage) {
+      alert('⚠️ Pedidos na mesa só podem ser feitos escaneando o QR Code exclusivo colado na sua mesa no salão.');
+      return;
+    }
+    if ((isMesa && menuModalities.MESA === false) || (isDelivery && menuModalities.DELIVERY === false) || (isRetirada && menuModalities.RETIRADA === false)) {
+      alert('🔒 Estamos indisponíveis no momento ou fechados para esta modalidade.');
+      return;
+    }
+
+    const cName = (document.getElementById('chkName').value || '').trim();
+    const cPhone = (document.getElementById('chkPhone').value || '').trim();
+    const cStreet = (document.getElementById('chkStreet')?.value || '').trim();
+    const cNum = (document.getElementById('chkHouseNum')?.value || '').trim();
+    const cBairro = (document.getElementById('chkNeighborhood')?.value || '').trim();
+    const cComp = (document.getElementById('chkComplement')?.value || '').trim();
+    const cAddr = syncCombinedAddressField();
+    const tableNum = parseInt(document.getElementById('chkTableNumber').value || String(selectedTableNum), 10) || 13;
+
+    if (!cName || !cPhone) {
+      alert('⚠️ Informe seu Nome e seu Celular/WhatsApp para identificarmos seu pedido!');
+      return;
+    }
+    if (isDelivery && (!cStreet || !cNum)) {
+      alert('📍 Para entrega (Delivery), puxe sua localização no GPS ou preencha a Rua e o Número da residência!');
+      return;
+    }
+
+    localStorage.setItem('sirbeef_customer_name', cName);
+    localStorage.setItem('sirbeef_customer_phone', cPhone);
+    if (cAddr) localStorage.setItem('sirbeef_customer_address', cAddr);
+    if (cStreet) localStorage.setItem('sirbeef_customer_street', cStreet);
+    if (cNum) localStorage.setItem('sirbeef_customer_num', cNum);
+    if (cBairro) localStorage.setItem('sirbeef_customer_bairro', cBairro);
+    localStorage.setItem('sirbeef_customer_comp', cComp);
+
+    let headerTag = '[DELIVERY]';
+    if (isRetirada) headerTag = '[RETIRADA]';
+    if (isMesa) headerTag = `MESA ${String(tableNum).padStart(2, '0')} • ${cName} (${cPhone})`;
+
+    const sub = cart.reduce((acc, i) => acc + i.total_price, 0);
+    const fee = isDelivery ? configuredDefaultDeliveryFee : 0.0;
+    const couponDisc = getAppliedWebCouponDiscount(sub + fee);
+
+    const payload = {
+      origin_type: mode,
+      table_id: isMesa ? tableNum : null,
+      header_tag: headerTag,
+      customer_name: cName,
+      customer_phone: cPhone,
+      address_text: isMesa
+        ? `MESA ${String(tableNum).padStart(2, '0')} (Comanda Individual)`
+        : (isRetirada ? 'Retirada no Balcão Sir Beef' : cAddr),
+      latitude: pinLat,
+      longitude: pinLng,
+      status: 'PREPARANDO',
+      payment_method: isMesa ? 'CONTA_MESA' : document.getElementById('chkPayment').value,
+      status_pagamento: 'PENDENTE',
+      change_for: parseFloat(document.getElementById('chkChange').value || '0'),
+      delivery_fee: fee,
+      coupon_code: (appliedWebCoupon && appliedWebCoupon.code) ? appliedWebCoupon.code : '',
+      discount_amount: couponDisc,
+      items: cart
+    };
+
+    showLoading(
+      isMesa ? '🔥 Enviando Pedido para a Chapa...' : (isRetirada ? '🛍️ Registrando Pedido para Retirada...' : '🛵 Enviando Pedido de Delivery...'),
+      'Aguarde um instante, o servidor Sir Beef está processando seu pedido...'
+    );
+
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const created = await res.json();
+      if (!res.ok) {
+        hideLoading();
+        alert((created && created.error) ? created.error : '🔒 Estamos indisponíveis no momento ou fechados.');
+        return;
+      }
+
+      // Salva no histórico local do cliente para acompanhamento
+      const myIds = JSON.parse(localStorage.getItem('sirbeef_my_order_ids') || '[]');
+      if (created && created.id && !myIds.includes(created.id)) {
+        myIds.unshift(created.id);
+        localStorage.setItem('sirbeef_my_order_ids', JSON.stringify(myIds.slice(0, 15)));
+      }
+
+      cart = [];
+      clearAppliedWebCoupon();
+      updateCartBar();
+      closeCheckoutModal();
+      hideLoading();
+
+      await openMyOrdersModal();
+    } catch (err) {
+      hideLoading();
+      alert('⚠️ Falha de conexão ao enviar pedido. Tente novamente.');
+    }
+  }
+
+  async function openMyOrdersModal() {
+    document.getElementById('myOrdersModal').style.display = 'flex';
+    const box = document.getElementById('myOrdersContent');
+    box.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">⏳ Consultando servidor Sir Beef...</div>';
+
+    try {
+      const [ordRes, cmdRes] = await Promise.all([
+        fetch('/api/orders'),
+        fetch('/api/comandas')
+      ]);
+      const allOrders = await ordRes.json();
+      const allComandas = await cmdRes.json();
+
+      const savedPhone = (localStorage.getItem('sirbeef_customer_phone') || '').replace(/\D/g, '');
+      const savedName = (localStorage.getItem('sirbeef_customer_name') || '').toLowerCase().trim();
+      const myIds = JSON.parse(localStorage.getItem('sirbeef_my_order_ids') || '[]');
+
+      const myComandas = (allComandas || []).filter(c => {
+        const cPhone = (c.customer_phone || '').replace(/\D/g, '');
+        if (savedPhone && cPhone && cPhone.includes(savedPhone)) return true;
+        if (savedName && (c.customer_name || '').toLowerCase().includes(savedName)) return true;
+        if (customerMode === 'MESA' && c.table_number === selectedTableNum) return true;
+        return false;
+      });
+
+      const myOrders = (allOrders || []).filter(o => {
+        if (myIds.includes(o.id)) return true;
+        const oPhone = (o.customer_phone || '').replace(/\D/g, '');
+        if (savedPhone && oPhone && oPhone.includes(savedPhone)) return true;
+        return false;
+      });
+
+      let html = '';
+
+      if (myComandas.length > 0) {
+        html += `<div style="margin-bottom:14px;">
+          <h4 style="color:var(--gold-light);margin-bottom:8px;">🪪 Minha Comanda Individual na Mesa</h4>
+          ${myComandas.map(c => `
+            <div style="background:#101015;border:1px solid var(--gold);border-radius:12px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+                <strong>${c.table_label} • ${c.customer_name} (${c.comanda_code})</strong>
+                <span class="badge" style="background:${c.status === 'FECHAMENTO_SOLICITADO' ? 'var(--red)' : 'var(--green)'};color:#000;">${c.status}</span>
+              </div>
+              <div style="margin:8px 0;font-size:12.5px;color:#d1d5db;">
+                ${(c.items || []).map(i => `<div>• ${i.quantity}x ${i.product_name} — R$ ${(i.total_price || 0).toFixed(2)}</div>`).join('') || 'Nenhum item lançado ainda.'}
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:8px;">
+                <strong style="font-size:16px;color:var(--gold-light);">Total Parcial: R$ ${(c.total || 0).toFixed(2)}</strong>
+                ${c.status !== 'FECHAMENTO_SOLICITADO' ? `
+                  <button class="btn btn-gold" style="padding:6px 12px;font-size:12px;" onclick="requestCloseMyComanda(${c.id})">
+                    🧾 Pedir Fechamento da Conta
+                  </button>
+                ` : `<span style="color:#fca5a5;font-size:12px;font-weight:700;">⏳ Fechamento já solicitado ao Caixa/Garçom</span>`}
+              </div>
+            </div>
+          `).join('')}
+        </div>`;
+      }
+
+      if (myOrders.length > 0) {
+        html += `<div>
+          <h4 style="color:var(--gold-light);margin-bottom:8px;">📦 Histórico e Status dos Meus Pedidos</h4>
+          ${myOrders.map(o => `
+            <div style="background:#101015;border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong>Pedido #${o.order_code} • ${o.header_tag}</strong>
+                <span class="badge" style="background:var(--gold);color:#000;">${o.status}</span>
+              </div>
+              <div style="font-size:12px;color:var(--muted);margin:6px 0;">
+                ${(o.items || []).map(it => `${it.quantity}x ${it.product_name}`).join(', ')}
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--gold-light);">
+                <span>Forma Pagto: ${o.payment_method}</span>
+                <span>Total: R$ ${(o.total || 0).toFixed(2)}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>`;
+      }
+
+      if (!html) {
+        html = `<div style="text-align:center;padding:24px;color:var(--muted);">
+          Você ainda não possui pedidos ou comandas abertas neste dispositivo.<br/>
+          Escolha seus itens no cardápio e clique em <strong>Finalizar Pedido</strong>!
+        </div>`;
+      }
+
+      box.innerHTML = html;
+    } catch (e) {
+      box.innerHTML = '<div style="color:var(--red);padding:16px;">Erro ao consultar pedidos.</div>';
+    }
+  }
+
+  async function requestCloseMyComanda(comandaId) {
+    showLoading('🧾 Solicitando Fechamento...', 'Avisando o Garçom e o Caixa Sir Beef...');
+    try {
+      await fetch('/api/comandas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'REQUEST_CLOSE', comanda_id: comandaId })
+      });
+      hideLoading();
+      await openMyOrdersModal();
+      alert('✅ Solicitação enviada! O Garçom e o Caixa já receberam seu pedido de fechamento.');
+    } catch (e) {
+      hideLoading();
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

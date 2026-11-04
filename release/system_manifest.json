@@ -1,0 +1,22 @@
+{
+  "excluded_private_data": [
+    "sirbeef.db (Clientes/Vendas de Teste)",
+    "whatsapp_session.db"
+  ],
+  "published_at": "04/11/2026 13:19:25",
+  "published_files": [
+    "release/web/pdv.html",
+    "release/web/index.html",
+    "release/web/rastreio.html",
+    "release/data/apk_version.json",
+    "release/backend/main.go",
+    "release/backend/internal/models/models.go",
+    "release/backend/internal/db/db.go",
+    "release/backend/internal/whatsapp/engine.go",
+    "SirBeef-SuperApp.apk"
+  ],
+  "published_from_pc": "GUI",
+  "release_notes": "v4.8.1 (Build #39): Ambiente Teste vs Loja + Topo Fixo Kiosk + URL Fixa",
+  "version_code": 39,
+  "version_name": "4.8.1"
+}

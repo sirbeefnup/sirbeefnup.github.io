@@ -1,0 +1,7 @@
+{
+    "release_notes":  "v4.8.1 (Build #39): (1) Topo sempre fixo no modo Kiosk dos Tablets (Card da Mesa + Chamar Garcom/Conta/Descanso + Abas de Categorias permanecem fixos ao rolar os lanches); (2) Link https://sirbeefnup.github.io/pdv (e /cardapio e /rastreio) 100% fixo na barra de endereco do navegador, sem pular para trycloudflare.com!",
+    "version_code":  39,
+    "file_size_bytes":  1823600,
+    "version_name":  "4.8.1",
+    "built_at":  "04/11/2026 12:57:27"
+}
