@@ -6,13 +6,12 @@
   "cardapio_fixed_url": "https://sirbeefnup.github.io/cardapio",
   "hostname_url": "http://gui",
   "lan_ips": [
-    "192.168.18.29",
-    "192.168.18.53"
+    "192.168.1.36"
   ],
   "lan_no_port_url": "http://192.168.18.53",
   "lan_url": "http://192.168.18.53:8080",
   "pdv_fixed_url": "https://sirbeefnup.github.io/pdv",
   "rastreio_fixed_url": "https://sirbeefnup.github.io/rastreio",
-  "tunnel_url": "https://advances-roll-auction-remarkable.trycloudflare.com",
-  "updated_at": "2026-11-04T14:22:05-03:00"
+  "tunnel_url": "https://dont-mechanism-pdf-specifications.trycloudflare.com",
+  "updated_at": "2026-11-04T15:18:56-03:00"
 }

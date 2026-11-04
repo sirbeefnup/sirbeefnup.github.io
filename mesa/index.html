@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SIRBEEF_FIXED_URL_SHELL_V4 -->
+<!-- SIRBEEF_FIXED_URL_SHELL_V5 -->
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -73,7 +73,9 @@
       const ROUTE_PATH = "/mesa";
       const frame = document.getElementById("sbLiveFrame");
       const splash = document.getElementById("sbSplash");
+      const statusText = document.getElementById("sbStatusText");
       let activeTunnelBase = "";
+      let isChecking = false;
 
       frame.addEventListener("load", function() {
         if (activeTunnelBase) {
@@ -96,29 +98,58 @@
         return null;
       }
 
+      async function isTunnelHealthy(baseUrl) {
+        try {
+          const ctrl = new AbortController();
+          const timer = setTimeout(function() { ctrl.abort(); }, 3500);
+          const r = await fetch(baseUrl + "/api/health?t=" + Date.now(), {
+            mode: "cors",
+            cache: "no-store",
+            signal: ctrl.signal
+          });
+          clearTimeout(timer);
+          return r && r.ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
       async function syncTunnelAndLoad(isInitial) {
+        if (isChecking) return;
+        isChecking = true;
         try {
           const d = await fetchTunnelData();
           if (!d) return;
           const newBase = (d && d.tunnel_url ? d.tunnel_url : "").replace(/\/$/, "");
           if (newBase && newBase.startsWith("https://")) {
             if (newBase !== activeTunnelBase) {
-              activeTunnelBase = newBase;
-              const qs = window.location.search || "";
-              const hash = window.location.hash || "";
-              frame.src = activeTunnelBase + ROUTE_PATH + qs + hash;
-              setTimeout(function() { splash.classList.add("hidden"); }, 1800);
+              const healthy = await isTunnelHealthy(newBase);
+              if (healthy) {
+                activeTunnelBase = newBase;
+                const qs = window.location.search || "";
+                const hash = window.location.hash || "";
+                frame.src = activeTunnelBase + ROUTE_PATH + qs + hash;
+                setTimeout(function() { splash.classList.add("hidden"); }, 1400);
+              } else {
+                if (statusText) {
+                  statusText.textContent = "Sincronizando túnel do servidor... Conectando automaticamente em instantes...";
+                }
+                setTimeout(function() { syncTunnelAndLoad(false); }, 2500);
+              }
             }
             return;
           }
           if (isInitial && d && d.lan_url) {
             window.location.replace(d.lan_url.replace(/\/$/, "") + ROUTE_PATH + (window.location.search || ""));
           }
-        } catch (e) {}
+        } catch (e) {
+        } finally {
+          isChecking = false;
+        }
       }
 
       syncTunnelAndLoad(true);
-      setInterval(function() { syncTunnelAndLoad(false); }, 20000);
+      setInterval(function() { syncTunnelAndLoad(false); }, 10000);
     })();
   </script>
 </body>
