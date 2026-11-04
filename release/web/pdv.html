@@ -520,19 +520,20 @@
 
     <div style="text-align:left;margin-bottom:12px;">
       <label style="font-size:11.5px;color:var(--gold-light);font-weight:700;">👤 Usuário ou Nome de Operador</label>
-      <input type="text" id="loginUserInp" placeholder="Digite seu usuário" style="margin-top:4px;" onkeydown="if(event.key==='Enter') submitPdvLogin()" />
+      <input type="text" id="loginUserInp" placeholder="Digite seu usuário (Ex: admin ou caixa)" style="margin-top:4px;" onkeydown="if(event.key==='Enter') submitPdvLogin()" />
     </div>
     <div style="text-align:left;margin-bottom:16px;">
-      <label style="font-size:11.5px;color:var(--gold-light);font-weight:700;">🔑 Senha de Acesso</label>
-      <input type="password" id="loginPassInp" placeholder="Digite sua senha" style="margin-top:4px;" onkeydown="if(event.key==='Enter') submitPdvLogin()" />
+      <label style="font-size:11.5px;color:var(--gold-light);font-weight:700;">🔑 Senha ou PIN de Acesso</label>
+      <input type="password" id="loginPassInp" placeholder="Digite sua senha ou PIN (Ex: 1234)" style="margin-top:4px;" onkeydown="if(event.key==='Enter') submitPdvLogin()" />
     </div>
 
     <button class="btn btn-gold" style="width:100%;justify-content:center;padding:13px;font-size:15px;margin-bottom:12px;" onclick="submitPdvLogin()">
       🔓 ENTRAR NA CENTRAL DE PDVs
     </button>
 
-    <div style="border-top:1px solid var(--border);padding-top:10px;font-size:11px;color:var(--muted);line-height:1.45;">
-      🔐 Acesso restrito a colaboradores autorizados Sir Beef.
+    <div style="border-top:1px solid var(--border);padding-top:10px;font-size:11.5px;color:var(--muted);line-height:1.45;">
+      🔐 Operador Padrão ADM: <b>admin</b> | Senha: <b>1234</b> ou <b>admin</b><br>
+      🏪 Operador Caixa: <b>caixa</b> | Senha: <b>1234</b> ou <b>caixa</b>
     </div>
   </div>
 </div>
@@ -3250,7 +3251,7 @@
   let receiptCols = 48;
   let loggedPdvUser = null;
 
-  // Configurações Operacionais (Alarmes do Garçom + Modalidades do Cardápio Digital + Taxa de Entrega) e Alertas Ativos
+  // Configurações Operacionais (Alarmes do Garçom + Modalidades do Cardápio Digital + Taxa de Entrega + Promoções) e Alertas Ativos
   let operationalSettings = {
     waiter_alarm_table_call: true,
     waiter_alarm_drinks: true,
@@ -3260,9 +3261,11 @@
     menu_enable_retirada: true,
     menu_enable_mesa: true,
     menu_enable_kiosk: true,
+    menu_enable_promotions: true,
     default_delivery_fee: 8.00,
     allow_staff_edit_delivery_fee: true
   };
+  let printerConfig = operationalSettings;
   let lastSyncedDefaultDeliveryFee = 8.00;
   let waiterAlerts = [];
   let knownPrintedOrderIds = new Set();
@@ -11211,7 +11214,7 @@
       todayBadge.textContent = `📅 Hoje é ${todayNames[todayDow]}`;
     }
 
-    const isMasterActive = printerConfig && printerConfig.menu_enable_promotions !== false;
+    const isMasterActive = operationalSettings && operationalSettings.menu_enable_promotions !== false;
     if (masterBtn) {
       if (isMasterActive) {
         masterBtn.className = 'btn btn-green';
@@ -11374,7 +11377,7 @@
   }
 
   async function toggleWeeklyPromoMasterFromUI() {
-    const curActive = printerConfig && printerConfig.menu_enable_promotions !== false;
+    const curActive = operationalSettings && operationalSettings.menu_enable_promotions !== false;
     const newActive = !curActive;
     showPdvLoading('⚡ Atualizando Ofertas...', newActive ? 'Ativando categoria de ofertas da loja...' : 'Desativando categoria de ofertas...');
     try {
@@ -11383,7 +11386,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'TOGGLE_MASTER', active: newActive })
       });
-      if (printerConfig) printerConfig.menu_enable_promotions = newActive;
+      if (operationalSettings) operationalSettings.menu_enable_promotions = newActive;
       hidePdvLoading();
       await loadAllData();
     } catch(e) {
@@ -11429,11 +11432,6 @@
     } catch (e) {
       hidePdvLoading();
     }
-  }
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'DELETE', id })
-    });
-    await loadAllData();
   }
 
   // =========================================================================

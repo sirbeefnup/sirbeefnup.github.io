@@ -3,22 +3,22 @@
     "sirbeef.db (Clientes/Vendas de Teste)",
     "whatsapp_session.db"
   ],
-  "published_at": "04/11/2026 19:18:45",
+  "published_at": "04/11/2026 19:32:47",
   "published_files": [
+    "release/backend/internal/models/models.go",
+    "release/backend/internal/db/db.go",
     "release/backend/internal/escpos/escpos.go",
-    "release/data/apk_version.json",
-    "release/backend/internal/whatsapp/engine.go",
     "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat",
+    "release/web/index.html",
+    "release/backend/internal/whatsapp/engine.go",
     "release/backend/sirbeef-server.zip",
     "release/web/pdv.html",
-    "release/web/index.html",
     "release/web/rastreio.html",
-    "release/backend/main.go",
-    "release/backend/internal/models/models.go",
-    "release/backend/internal/db/db.go"
+    "release/data/apk_version.json",
+    "release/backend/main.go"
   ],
   "published_from_pc": "GUI",
-  "release_notes": "v4.8.5 (Build #43): (1) Grade de 7 Colunas para Ofertas da Semana (SEG a DOM) com produtos espelhados que imprimem no setor original (Burger na Cozinha, Chopp/Bebidas no Caixa); (2) Botoes de adicionar e excluir por dia, toggle individual e botao geral mestre; (3) Categoria de Ofertas protegida contra exclusao; (4) Trava anti-saida de tela cheia no PDV; (5) Cabecalho destacado MESA 15 gigante.",
-  "version_code": 43,
-  "version_name": "4.8.5"
+  "release_notes": "v4.8.6 (Build #44): (1) Correcao critica do botao de login do PDV (remocao de token inesperado no JS e sincronizacao de operationalSettings); (2) Autenticacao aprimorada aceitando senha mestre ou PIN (admin/1234, admin/admin, caixa/caixa, caixa/1234); (3) Dicas e placeholders de credenciais integrados na tela de acesso.",
+  "version_code": 44,
+  "version_name": "4.8.6"
 }
