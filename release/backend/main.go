@@ -1346,6 +1346,27 @@ func (s *Server) handleProducts(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		writeJSON(w, http.StatusCreated, saved)
+		return
+	}
+	if r.Method == http.MethodDelete {
+		id, _ := strconv.Atoi(r.URL.Query().Get("id"))
+		if id <= 0 {
+			var body struct {
+				ID int `json:"id"`
+			}
+			_ = json.NewDecoder(r.Body).Decode(&body)
+			id = body.ID
+		}
+		if id <= 0 {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "ID do produto inválido"})
+			return
+		}
+		if err := s.Store.DeleteProduct(id); err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{"status": "DELETED", "id": id})
+		return
 	}
 }
 
@@ -1356,12 +1377,21 @@ func (s *Server) handleProductQuickAction(w http.ResponseWriter, r *http.Request
 	}
 	var req struct {
 		ID       int     `json:"id"`
-		Action   string  `json:"action"` // TOGGLE_ACTIVE, SET_ACTIVE, SET_PRICE, SET_PROMO_FROM, SET_COST, SET_STOCK, TOGGLE_INFINITE_STOCK, ADJUST_STOCK, CLEAR_IMAGE, SET_IMAGE
+		Action   string  `json:"action"` // TOGGLE_ACTIVE, SET_ACTIVE, SET_PRICE, SET_PROMO_FROM, SET_COST, SET_STOCK, TOGGLE_INFINITE_STOCK, ADJUST_STOCK, CLEAR_IMAGE, SET_IMAGE, DELETE
 		Value    float64 `json:"value"`
 		ImageURL string  `json:"image_url"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.ID <= 0 {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "ID ou ação inválida"})
+		return
+	}
+	if strings.EqualFold(strings.TrimSpace(req.Action), "DELETE") {
+		if err := s.Store.DeleteProduct(req.ID); err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+		cats, _ := s.Store.GetCatalogAll(true)
+		writeJSON(w, http.StatusOK, cats)
 		return
 	}
 	if strings.EqualFold(strings.TrimSpace(req.Action), "SET_IMAGE") {

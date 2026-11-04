@@ -1953,6 +1953,16 @@ func (s *Store) CreateProduct(p models.Product) (*models.Product, error) {
 	return s.CreateOrUpdateProduct(p)
 }
 
+func (s *Store) DeleteProduct(id int) error {
+	if id <= 0 {
+		return fmt.Errorf("ID do produto inválido: %d", id)
+	}
+	// Remove vínculos de promoções semanais
+	_, _ = s.DB.Exec(`DELETE FROM weekly_promotions WHERE product_id = ?`, id)
+	_, err := s.DB.Exec(`DELETE FROM products WHERE id = ?`, id)
+	return err
+}
+
 func (s *Store) SetProductImageURL(id int, imageURL string) error {
 	img := strings.TrimSpace(imageURL)
 	if strings.EqualFold(img, "NONE") || strings.EqualFold(img, "SEM_FOTO") {

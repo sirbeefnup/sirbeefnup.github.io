@@ -2228,9 +2228,16 @@
       <div id="pfModifierGroupsCheckboxes" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:8px;max-height:240px;overflow-y:auto;padding-right:4px;"></div>
     </div>
 
-    <div style="display:flex;justify-content:flex-end;gap:8px;">
-      <button class="btn" onclick="document.getElementById('productFormModal').style.display='none'">Cancelar</button>
-      <button class="btn btn-gold" onclick="saveProductFromModal()">💾 Salvar Produto & Grupos de Adicionais</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;border-top:1px solid var(--border);padding-top:14px;flex-wrap:wrap;gap:10px;">
+      <div>
+        <button type="button" id="btnDeleteProductFromModal" class="btn btn-red" style="padding:10px 18px;font-size:13px;font-weight:900;display:none;" onclick="deleteProductFromModal()">
+          🗑️ EXCLUIR PRODUTO DEFINITIVO
+        </button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn" onclick="document.getElementById('productFormModal').style.display='none'">Cancelar</button>
+        <button type="button" class="btn btn-gold" onclick="saveProductFromModal()">💾 Salvar Produto & Grupos de Adicionais</button>
+      </div>
     </div>
   </div>
 </div>
@@ -11182,7 +11189,10 @@
                 <button class="btn" style="padding:4px 7px;font-size:11px;" onclick="quickProductAction(${p.id}, 'ADJUST_STOCK', 1)">➕ 1 un</button>
                 <button class="btn" style="padding:4px 7px;font-size:11px;" onclick="quickProductAction(${p.id}, 'ADJUST_STOCK', 10)">➕ 10 un</button>
               </div>
-              <button class="btn btn-gold" style="padding:4px 10px;font-size:11px;" onclick="openProductFormModal(${p.id})">✏️ Editar / Foto</button>
+              <div style="display:flex;gap:4px;">
+                <button class="btn btn-gold" style="padding:4px 10px;font-size:11px;" onclick="openProductFormModal(${p.id})">✏️ Editar / Foto</button>
+                <button class="btn btn-red" style="padding:4px 8px;font-size:11px;" title="Excluir produto definitivamente do cardápio e banco de dados" onclick="promptDeleteProductDirect(${p.id})">🗑️</button>
+              </div>
             </div>
           </div>
         </div>
@@ -11978,6 +11988,12 @@
       document.getElementById('pfDesc').value = p.description || '';
       renderPfImagePreviewUI(p.image_url || '');
       renderProductModalModifierCheckboxes(p);
+      const delBtn = document.getElementById('btnDeleteProductFromModal');
+      if (delBtn) {
+        delBtn.style.display = 'inline-flex';
+        delBtn.setAttribute('data-id', p.id);
+        delBtn.setAttribute('data-name', p.name || '');
+      }
     } else {
       document.getElementById('prodFormModalTitle').textContent = '➕ CADASTRAR NOVO PRODUTO (CARDÁPIO / MERCADO)';
       document.getElementById('pfId').value = '0';
@@ -12000,6 +12016,8 @@
       document.getElementById('pfDesc').value = '';
       renderPfImagePreviewUI('');
       renderProductModalModifierCheckboxes(null);
+      const delBtn = document.getElementById('btnDeleteProductFromModal');
+      if (delBtn) delBtn.style.display = 'none';
     }
     modal.style.display = 'flex';
   }
@@ -12096,6 +12114,61 @@
       await loadAllData();
     } else {
       alert('Erro ao salvar produto.');
+    }
+  }
+
+  async function deleteProductFromModal() {
+    const btn = document.getElementById('btnDeleteProductFromModal');
+    const id = parseInt(btn.getAttribute('data-id') || document.getElementById('pfId').value, 10);
+    const name = btn.getAttribute('data-name') || document.getElementById('pfName').value || 'este produto';
+    if (!id || id <= 0) return;
+    if (!confirm(`⚠️ EXCLUIR PRODUTO DEFINITIVAMENTE?\n\nTem certeza que deseja apagar o produto "${name}" (#${id}) do cardápio e do banco de dados?\n\nEsta ação é irreversível.`)) {
+      return;
+    }
+    showPdvLoading('🗑️ Excluindo Produto...', `Apagando "${name}" do banco de dados...`);
+    try {
+      const res = await fetch(`/api/products?id=${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      hidePdvLoading();
+      if (res.ok) {
+        document.getElementById('productFormModal').style.display = 'none';
+        await loadAllData();
+        alert(`✓ Produto "${name}" excluído definitivamente com sucesso!`);
+      } else {
+        alert('Erro ao excluir produto do banco de dados.');
+      }
+    } catch(e) {
+      hidePdvLoading();
+      alert('Erro de conexão ao excluir produto.');
+    }
+  }
+
+  async function promptDeleteProductDirect(prodId) {
+    const p = flatProducts.find(x => x.id === prodId);
+    const name = p ? p.name : ('Produto #' + prodId);
+    if (!confirm(`⚠️ EXCLUIR PRODUTO DEFINITIVAMENTE?\n\nTem certeza que deseja apagar o produto "${name}" (#${prodId}) do cardápio e do banco de dados?\n\nEsta ação é irreversível.`)) {
+      return;
+    }
+    showPdvLoading('🗑️ Excluindo Produto...', `Apagando "${name}" do banco de dados...`);
+    try {
+      const res = await fetch(`/api/products?id=${prodId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: prodId })
+      });
+      hidePdvLoading();
+      if (res.ok) {
+        await loadAllData();
+        alert(`✓ Produto "${name}" excluído definitivamente com sucesso!`);
+      } else {
+        alert('Erro ao excluir produto.');
+      }
+    } catch(e) {
+      hidePdvLoading();
+      alert('Erro de conexão ao excluir produto.');
     }
   }
 

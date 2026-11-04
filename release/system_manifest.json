@@ -3,19 +3,19 @@
     "sirbeef.db (Clientes/Vendas de Teste)",
     "whatsapp_session.db"
   ],
-  "published_at": "04/11/2026 19:43:34",
+  "published_at": "04/11/2026 19:55:06",
   "published_files": [
-    "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat",
-    "release/web/index.html",
-    "release/web/rastreio.html",
     "release/data/apk_version.json",
-    "release/backend/internal/models/models.go",
-    "release/backend/internal/escpos/escpos.go",
-    "release/backend/sirbeef-server.zip",
-    "release/web/pdv.html",
     "release/backend/main.go",
     "release/backend/internal/db/db.go",
-    "release/backend/internal/whatsapp/engine.go"
+    "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat",
+    "release/backend/sirbeef-server.zip",
+    "release/backend/internal/models/models.go",
+    "release/backend/internal/escpos/escpos.go",
+    "release/backend/internal/whatsapp/engine.go",
+    "release/web/pdv.html",
+    "release/web/index.html",
+    "release/web/rastreio.html"
   ],
   "published_from_pc": "GUI",
   "release_notes": "v4.8.6 (Build #44): (1) Correcao critica do botao de login do PDV (remocao de token inesperado no JS e sincronizacao de operationalSettings); (2) Autenticacao aprimorada aceitando senha mestre ou PIN (admin/1234, admin/admin, caixa/caixa, caixa/1234); (3) Dicas e placeholders de credenciais integrados na tela de acesso.",
