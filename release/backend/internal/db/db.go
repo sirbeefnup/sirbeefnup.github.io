@@ -4844,15 +4844,16 @@ func (s *Store) BuildOrderSectorTickets(o models.Order) []models.SectorTicketPre
 		if stID == "NAO_IMPRIMIR" {
 			continue
 		}
+		hasExplicitUsefulPrinter := strings.TrimSpace(stMap[stID].WindowsPrinterName) != ""
 		isDrink := stID == "BAR_COPA" || isDrinkText(catName+" "+it.ProductName)
-		if isDrink {
+		if isDrink && !hasExplicitUsefulPrinter {
 			if drinkStationID != "" {
 				stID = drinkStationID
 			} else if cfg.WaiterAlarmDrinks {
 				continue
 			}
 		}
-		if (strings.EqualFold(sector, "MERCADO") || strings.EqualFold(it.SectorABC, "MERCADO_CARNES")) && boutiqueStationID != "" {
+		if !hasExplicitUsefulPrinter && (strings.EqualFold(sector, "MERCADO") || strings.EqualFold(it.SectorABC, "MERCADO_CARNES")) && boutiqueStationID != "" {
 			stID = boutiqueStationID
 		}
 		if st, exists := stMap[stID]; exists && !st.Active {

@@ -427,8 +427,14 @@
     <button class="btn" id="nav-configuracoes" onclick="switchPdvTab('configuracoes')" style="border-color:var(--gold-light);color:var(--gold-light);">
       ⚙️ Configurações (<span id="openShiftsCount">0</span>) <span id="waHeaderBadgeDot" style="margin-left:3px;">🔴</span>
     </button>
-    <a class="btn" href="/cardapio" target="_blank">🍔 Cardápio Cliente</a>
+    <a class="btn" href="https://sirbeefnup.github.io/cardapio" target="_blank">🍔 Cardápio Cliente</a>
     <a class="btn btn-gold" href="/download/SirBeef-SuperApp-v4.6.0.apk?v=36">📲 APK Equipe (v4.6)</a>
+    <div style="display:inline-flex;align-items:center;gap:3px;background:#11131c;border:1.5px solid var(--gold);border-radius:10px;padding:3px 6px;" title="Ajuste de Tamanho da Tela neste Computador (Salvo individualmente neste PC)">
+      <button type="button" class="btn" id="hdrScaleAutoBtn" style="padding:4px 7px;font-size:11px;" onclick="setPdvScreenScaleMode('AUTO')">🔄 Auto</button>
+      <button type="button" class="btn" style="padding:4px 7px;font-size:11px;" onclick="stepPdvScreenScale(-5)" title="Diminuir tamanho da tela neste PC">➖</button>
+      <span id="hdrScalePctLabel" style="font-size:11px;font-weight:800;color:var(--gold-light);min-width:48px;text-align:center;">100%</span>
+      <button type="button" class="btn" style="padding:4px 7px;font-size:11px;" onclick="stepPdvScreenScale(5)" title="Aumentar tamanho da tela neste PC">➕</button>
+    </div>
     <button class="btn btn-red" style="padding:8px 11px;font-size:12px;" onclick="logoutPdvOperator()">🚪 Sair</button>
   </div>
 </header>
@@ -476,6 +482,30 @@
         🖥️ Log em Tempo Real
       </button>
     </div>
+
+    <!-- BARRA DE AJUSTE DE RESOLUÇÃO / AUTO-DIMENSIONAMENTO DE TELA POR COMPUTADOR -->
+    <div style="margin-top:12px;background:linear-gradient(135deg,#0c1524,#11131d);border:1.5px solid #38bdf8;border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div>
+        <strong style="font-size:13.5px;color:#7dd3fc;">🖥️ TAMANHO / AUTO-DIMENSIONAMENTO DA TELA NESTE COMPUTADOR:</strong>
+        <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px;">
+          Ajusta automaticamente ou manualmente o tamanho do PDV para monitores menores (salvo individualmente neste PC sem afetar o seu PC de casa).
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <button type="button" class="btn" id="cfgScaleBtn-AUTO" style="padding:6px 11px;font-size:11.5px;font-weight:800;" onclick="setPdvScreenScaleMode('AUTO')">
+          🔄 Auto-Dimensionar
+        </button>
+        <button type="button" class="btn" style="padding:6px 10px;font-size:11.5px;" onclick="stepPdvScreenScale(-5)">➖ Diminuir</button>
+        <span id="cfgScalePctBadge" class="badge" style="background:var(--gold);color:#000;font-size:12px;padding:6px 10px;">100%</span>
+        <button type="button" class="btn" style="padding:6px 10px;font-size:11.5px;" onclick="stepPdvScreenScale(5)">➕ Aumentar</button>
+        <button type="button" class="btn" id="cfgScaleBtn-75" style="padding:5px 8px;font-size:11px;" onclick="setPdvScreenScaleManual(75)">75%</button>
+        <button type="button" class="btn" id="cfgScaleBtn-80" style="padding:5px 8px;font-size:11px;" onclick="setPdvScreenScaleManual(80)">80%</button>
+        <button type="button" class="btn" id="cfgScaleBtn-85" style="padding:5px 8px;font-size:11px;" onclick="setPdvScreenScaleManual(85)">85%</button>
+        <button type="button" class="btn" id="cfgScaleBtn-90" style="padding:5px 8px;font-size:11px;" onclick="setPdvScreenScaleManual(90)">90%</button>
+        <button type="button" class="btn" id="cfgScaleBtn-100" style="padding:5px 8px;font-size:11px;" onclick="setPdvScreenScaleManual(100)">100%</button>
+      </div>
+    </div>
+
     <div id="adminSystemDeployEnvBox" style="margin-top:12px;"></div>
     <div id="adminCentralDeliveryFeeBox" style="margin-top:12px;"></div>
     <div id="adminFutureModulesBox" style="margin-top:12px;"></div>
@@ -1304,57 +1334,59 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
       <div>
         <h2 style="font-family:'Bayformance',sans-serif;color:var(--gold-light);font-size:24px;letter-spacing:1px;">
-          🖨️ CENTRAL DE IMPRESSORAS AUTODETECTÁVEIS (2 PCs: COZINHA WIN11 USB + CAIXA WIN10 REDE/BLUETOOTH) & SETORES
+          🖨️ CENTRAL DE IMPRESSORAS EM 3 PASSOS (DETECTAR ➔ MINHAS IMPRESSORAS ÚTEIS ➔ VINCULAR NO CARDÁPIO)
         </h2>
         <p style="font-size:12.5px;color:var(--muted);">
-          Crie setores personalizados no PDV, vincule a mesma impressora USB da Cozinha 2x para cortar <strong>Lanche e Porção em papéis separados</strong>, e configure as impressoras Bluetooth e Rede do PC do Caixa.
+          <strong>Passo 1:</strong> Veja todas as impressoras detectadas nos PCs e adicione as que você usa. &nbsp;•&nbsp;
+          <strong>Passo 2:</strong> Renomeie suas Impressoras Úteis no PDV. &nbsp;•&nbsp;
+          <strong>Passo 3:</strong> Vincule qual Impressora Útil imprime cada Área do Cardápio e Função!
         </p>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-blue" onclick="discoverAllPrintersFromPdv()">🔍 Autodetectar Impressoras dos 2 PCs</button>
+        <button class="btn btn-blue" onclick="discoverAllPrintersFromPdv()">🔍 1. Escanear Impressoras dos 2 PCs</button>
         <button class="btn" style="border-color:var(--green);color:#86efac;" onclick="window.open('/api/printers/download-cashier-bridge', '_blank')">📥 Baixar Instalador PC do Caixa (.BAT)</button>
-        <button class="btn btn-gold" onclick="openPrinterSectorModal('')">➕ Criar Novo Setor de Impressão</button>
       </div>
     </div>
 
     <div id="adminOperationalSettingsPanelImpressoras" class="panel" style="margin-bottom:14px;border:2px solid var(--green);background:linear-gradient(135deg,#0f1713,#13131b);"></div>
 
-    <!-- PAINEL DE AUTODETECÇÃO DOS 2 PCS (COZINHA WINDOWS 11 USB + CAIXA WINDOWS 10 BLUETOOTH E REDE) -->
+    <!-- PASSO 1: TODAS AS IMPRESSORAS DETECTADAS NOS 2 PCS (COZINHA E CAIXA) -->
     <div id="detectedPrintersTwoPcsPanel" class="panel" style="margin-bottom:14px;border:2px solid var(--blue);background:linear-gradient(135deg,#0c1322,#12131c);"></div>
 
-    <div style="display:grid;grid-template-columns:1.25fr 1fr 0.95fr;gap:14px;align-items:start;">
-      <!-- COLUNA 1: SETORES DE IMPRESSÃO (COZINHA LANCHES, COZINHA PORÇÕES, BAR BLUETOOTH, CAIXA REDE, BOUTIQUE) -->
+    <!-- PASSO 2 E PASSO 3 LADO A LADO -->
+    <div style="display:grid;grid-template-columns:1.05fr 1.25fr;gap:14px;align-items:start;margin-bottom:14px;">
+      <!-- PASSO 2: MINHAS IMPRESSORAS ÚTEIS (RENOMEADAS NO PDV) -->
       <div class="panel" style="border:2px solid var(--gold);">
         <h3>
-          <span>🖨️ 1. Setores de Impressão & Funções (Pode vincular a mesma impressora 2x c/ Corte Separado)</span>
-          <span style="font-size:11px;color:var(--gold-light);">USB / BT / Rede</span>
-        </h3>
-        <div id="printerStationsListBox" style="display:flex;flex-direction:column;gap:12px;"></div>
-      </div>
-
-      <!-- COLUNA 2: ROTEAMENTO POR CATEGORIA (LANCHES -> CHAPA, PORÇÕES -> PORÇÕES SEPARADO, BEBIDAS -> BAR BT) -->
-      <div class="panel" style="border:2px solid var(--green);">
-        <h3>
-          <span>🔀 2. Roteamento por Categoria (Papel Cortado por Setor)</span>
-          <span style="font-size:11px;color:var(--green);">Divisão Automática</span>
+          <span>⭐ PASSO 2 — Minhas Impressoras Úteis (Renomear no PDV)</span>
+          <span style="font-size:11px;color:var(--gold-light);">Sua Lista Limpa</span>
         </h3>
         <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">
-          Direcione <strong>Burgers/Lanches</strong> para o setor <em>Cozinha Lanches</em> e <strong>Porções</strong> para o setor <em>Cozinha Porções</em> (mesmo usando a mesma impressora USB da Cozinha, ela imprimirá e cortará 2 papéis separados!):
+          Aqui ficam apenas as impressoras úteis que você adicionou no Passo 1. Dê o nome que quiser para cada uma (ex: <em>Impressora Cozinha</em>, <em>Impressora Porções</em>, <em>Impressora Bebidas</em>, <em>Impressora Caixa</em>):
+        </p>
+        <div id="printerStationsListBox" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+
+      <!-- PASSO 3: VINCULAR IMPRESSORA ÚTIL EM CADA ÁREA DO CARDÁPIO E FUNÇÃO -->
+      <div class="panel" style="border:2px solid var(--green);">
+        <h3>
+          <span>🔗 PASSO 3 — Vincular Impressora em Cada Área do Cardápio e Função</span>
+          <span style="font-size:11px;color:var(--green);">Escolha na Caixinha</span>
+        </h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">
+          Escolha abaixo qual das suas <strong>Impressoras Úteis (do Passo 2)</strong> vai imprimir cada área do cardápio e cada função do sistema:
         </p>
         <div id="categoryPrinterRoutesBox" style="display:flex;flex-direction:column;gap:8px;"></div>
       </div>
+    </div>
 
-      <!-- COLUNA 3: SPOOLER TÉRMICO SEPARADO POR SETOR (EXCLUSIVO ADM) -->
-      <div class="panel">
-        <h3>
-          <span>🧾 3. Spooler Térmico & Preview de Corte (ADM)</span>
-          <span style="font-size:11px;color:var(--blue);">Preview Real</span>
-        </h3>
-        <p style="font-size:11.5px;color:var(--muted);margin-bottom:8px;">
-          Veja como os tickets são separados e cortados automaticamente entre <strong>Lanches</strong>, <strong>Porções</strong>, <strong>Bebidas/Garçom (Bluetooth)</strong> e <strong>Caixa/Boutique (Rede)</strong>:
-        </p>
-        <div id="adminSectorSpoolerBox" style="display:flex;flex-direction:column;gap:10px;max-height:680px;overflow-y:auto;"></div>
-      </div>
+    <!-- PREVIEW DE COMANDAS / SPOOLER (OPCIONAL NO RODAPÉ) -->
+    <div class="panel" style="border:1px solid var(--border);">
+      <h3>
+        <span>🧾 Preview das Últimas Comandas Separadas por Impressora</span>
+        <span style="font-size:11px;color:var(--blue);">Conferência Visual</span>
+      </h3>
+      <div id="adminSectorSpoolerBox" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;max-height:380px;overflow-y:auto;"></div>
     </div>
   </section>
 
@@ -8190,7 +8222,7 @@
   }
 
   function copyCouponShareText(code, valText, isSingleUse) {
-    const menuUrl = window.location.origin + '/cardapio';
+    const menuUrl = 'https://sirbeefnup.github.io/cardapio';
     const msg = `🎟️ *CUPOM DE DESCONTO SIR BEEF!*\n\nUse o código *${code}* para ganhar *${valText}* na sua próxima compra (${isSingleUse ? 'Cupom exclusivo de uso único' : 'Válido no Cardápio Online ou na Loja Presencial'}):\n👉 ${menuUrl}`;
     navigator.clipboard.writeText(msg).then(() => {
       alert(`✅ Mensagem do cupom ${code} copiada! Basta colar no WhatsApp do cliente.`);
@@ -8613,6 +8645,9 @@
               <button class="btn" style="padding:4px 8px;font-size:11px;border-color:${isActive ? 'var(--red)' : 'var(--green)'};color:${isActive ? '#fca5a5' : '#86efac'};" onclick="toggleSingleTableActiveInAdmin(${t.id}, ${!isActive})">
                 ${isActive ? '🔴 Inativar' : '🟢 Ativar'}
               </button>
+              <a class="btn" style="padding:4px 8px;font-size:11px;border-color:#38bdf8;color:#7dd3fc;text-decoration:none;" href="${isKiosk ? (`/cardapio?kiosk_mesa=${t.number}`) : (`/mesa?m=${t.number}&token=${encodeURIComponent(t.qr_token || ('SIRBEEF-MESA-' + pad))}`)}" target="_blank" title="Abrir e testar o Cardápio desta Mesa">
+                🔗 Abrir Mesa
+              </a>
               ${!isKiosk ? `
                 <button class="btn btn-green" style="padding:4px 9px;font-size:11px;" onclick="openSingleTableQrPrintModal(${t.id})">
                   🖨️ QR Code
@@ -9299,14 +9334,29 @@
   }
 
   // =========================================================================
-  // 4B. CONFIGURAR IMPRESSORAS AUTODETECTÁVEIS (2 PCs), SETORES E ROTEAMENTO POR CATEGORIA
+  // 4B. CENTRAL DE IMPRESSORAS EM 3 PASSOS (DETECTAR -> IMPRESSORAS ÚTEIS -> VINCULAR ÁREAS)
   // =========================================================================
+  let showUnlinkedDefaultPrinterSectors = false;
+
   function getConnectionTypeBadge(connType) {
     const c = String(connType || '').toUpperCase();
     if (c.includes('BLUETOOTH')) return '📶 Bluetooth';
     if (c.includes('COMPARTILHADA')) return '🌐 Rede Compartilhada';
     if (c.includes('USB')) return '🔌 USB Direto';
-    return '🌐 Rede TCP/IP 9100';
+    return '🌐 Rede / Spooler';
+  }
+
+  function getUsefulPrintersList() {
+    const all = printerStations || [];
+    const useful = all.filter(st => {
+      const hasWin = !!(st.windows_printer_name && String(st.windows_printer_name).trim() !== '');
+      const isCustom = !['COZINHA_CHAPA', 'COZINHA_PORCOES', 'BAR_COPA', 'ACOUGUE_MERCADO', 'CAIXA_EXPEDICAO'].includes(st.id);
+      return hasWin || isCustom;
+    });
+    if (showUnlinkedDefaultPrinterSectors) {
+      return all;
+    }
+    return useful;
   }
 
   function renderDetectedPrintersTwoPcsPanel() {
@@ -9316,32 +9366,43 @@
     const kitchenPrinters = allDet.filter(p => String(p.pc_name || '').toUpperCase().includes('COZINHA') || !String(p.pc_name || '').toUpperCase().includes('CAIXA'));
     const cashierPrinters = allDet.filter(p => String(p.pc_name || '').toUpperCase().includes('CAIXA'));
     const cashierPcStatus = (remotePrinterPCs || []).find(r => String(r.pc_name || '').toUpperCase().includes('CAIXA')) || (remotePrinterPCs || [])[0];
+    const usefulList = getUsefulPrintersList();
 
     const renderPrnBadgeList = (list, defaultPc) => {
       if (!list || list.length === 0) {
-        return `<div style="font-size:11.5px;color:var(--muted);padding:8px;background:#0a0e1a;border-radius:8px;border:1px dashed var(--border);">Nenhuma impressora detectada neste PC ainda. Clique em <strong>🔍 Autodetectar Impressoras dos 2 PCs</strong> no topo.</div>`;
+        return `<div style="font-size:11.5px;color:var(--muted);padding:10px;background:#0a0e1a;border-radius:8px;border:1px dashed var(--border);">Nenhuma impressora detectada neste PC ainda. Clique em <strong>🔄 Escanear Impressoras Agora</strong> no topo.</div>`;
       }
       return list.map(dp => {
-        const safeName = String(dp.windows_printer_name || '').replace(/'/g, "\\'");
+        const winName = String(dp.windows_printer_name || '');
+        const safeName = winName.replace(/'/g, "\\'");
         const safePc = String(dp.pc_name || defaultPc).replace(/'/g, "\\'");
         const safeConn = String(dp.connection_type || 'USB_WINDOWS').replace(/'/g, "\\'");
+        const linkedStations = usefulList.filter(st =>
+          String(st.windows_printer_name || '').toLowerCase() === winName.toLowerCase() &&
+          (String(st.pc_name || '').toUpperCase().includes('CAIXA') === String(dp.pc_name || defaultPc).toUpperCase().includes('CAIXA'))
+        );
+        const linkedBadges = linkedStations.map(st =>
+          `<span class="badge" style="background:rgba(34,197,94,0.2);color:#86efac;border:1px solid var(--green);font-size:10px;margin-left:4px;">⭐ No PDV: ${st.name}</span>`
+        ).join('');
+
         return `
-          <div style="background:#111827;border:1px solid #1e3a8a;border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <div style="background:#111827;border:1.5px solid ${linkedStations.length > 0 ? 'var(--green)' : '#1e3a8a'};border-radius:10px;padding:9px 11px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
             <div>
-              <div style="font-size:12.5px;font-weight:800;color:#fff;">
-                🖨️ ${dp.windows_printer_name}
-                ${dp.is_default ? `<span class="badge" style="background:var(--gold);color:#000;font-size:9.5px;margin-left:4px;">PADRÃO WINDOWS</span>` : ''}
+              <div style="font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+                <span>🖨️ ${winName}</span>
+                ${dp.is_default ? `<span class="badge" style="background:var(--gold);color:#000;font-size:9.5px;">PADRÃO WINDOWS</span>` : ''}
+                ${linkedBadges}
               </div>
-              <div style="font-size:11px;color:#93c5fd;margin-top:2px;">
+              <div style="font-size:11px;color:#93c5fd;margin-top:3px;">
                 ${getConnectionTypeBadge(dp.connection_type)} • Porta: <code>${dp.port_name || 'USB/Spooler'}</code> • Status: <strong style="color:#86efac;">${dp.status || 'PRONTA'}</strong>
               </div>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button type="button" class="btn btn-green" style="padding:4px 9px;font-size:11px;" title="Jogar uma impressão de teste diretamente nesta impressora encontrada" onclick="testDetectedPrinterDirect('${safePc}', '${safeName}', '${safeConn}')">
-                🖨️ Testar Impressão
+              <button type="button" class="btn" style="padding:5px 10px;font-size:11px;border-color:var(--blue);color:#93c5fd;" title="Imprimir folha de teste nesta impressora física para identificar qual ela é" onclick="testDetectedPrinterDirect('${safePc}', '${safeName}', '${safeConn}')">
+                🖨️ Testar
               </button>
-              <button type="button" class="btn btn-gold" style="padding:4px 9px;font-size:11px;" onclick="openPrinterSectorModalWithDetected('${safePc}', '${safeName}', '${safeConn}')">
-                🔗 Usar em Setor
+              <button type="button" class="btn btn-gold" style="padding:5px 11px;font-size:11.5px;font-weight:800;" title="Adicionar esta impressora na sua lista de Minhas Impressoras Úteis (Passo 2)" onclick="quickAddUsefulPrinterFromDetected('${safePc}', '${safeName}', '${safeConn}')">
+                ➕ Adicionar às Impressoras Úteis
               </button>
             </div>
           </div>
@@ -9353,11 +9414,10 @@
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
         <div>
           <h3 style="margin:0;font-size:16.5px;color:#93c5fd;">
-            🔍 AUTODETECÇÃO DE IMPRESSORAS NOS 2 COMPUTADORES (COZINHA WINDOWS 11 + CAIXA WINDOWS 10)
+            🔍 PASSO 1 — TODAS AS IMPRESSORAS ENCONTRADAS NOS 2 COMPUTADORES (COZINHA E CAIXA)
           </h3>
-          <div style="font-size:11.5px;color:#d1d5db;margin-top:2px;">
-            <strong>PC 1 (Cozinha Win11):</strong> Impressora Térmica USB (corta Lanche e Porção em 2 papéis separados). &nbsp;|&nbsp;
-            <strong>PC 2 (Caixa Win10):</strong> Impressora Bluetooth (Bebidas + Chamar Garçom) e Impressora Rede Compartilhada (Fechamento de Contas + Boutique + Notas).
+          <div style="font-size:12px;color:#d1d5db;margin-top:2px;">
+            Clique em <strong>🖨️ Testar</strong> para ver o papel sair, e depois clique em <strong>➕ Adicionar às Impressoras Úteis</strong> apenas nas impressoras que você realmente vai usar!
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -9365,7 +9425,7 @@
             🔄 Escanear Impressoras Agora
           </button>
           <button type="button" class="btn" style="padding:6px 12px;font-size:11.5px;border-color:var(--green);color:#86efac;" onclick="window.open('/api/printers/download-cashier-bridge', '_blank')">
-            📥 Baixar INSTALAR_PONTE_PC_CAIXA.bat (Rodar no PC Windows 10 do Caixa)
+            📥 Baixar INSTALAR_PONTE_PC_CAIXA.bat (Para o PC do Caixa)
           </button>
         </div>
       </div>
@@ -9373,23 +9433,102 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div style="background:#0b0f19;border:1px solid #1e293b;border-radius:10px;padding:10px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <strong style="font-size:12.5px;color:var(--gold-light);">💻 PC 1 — Cozinha (Windows 11 Local • USB)</strong>
-            <span class="badge" style="background:var(--green);color:#000;font-size:10px;">🟢 SERVIDOR PRINCIPAL ATIVO (${kitchenPrinters.length} detectada${kitchenPrinters.length === 1 ? '' : 's'})</span>
+            <strong style="font-size:12.5px;color:var(--gold-light);">💻 PC 1 — Cozinha (Servidor Principal)</strong>
+            <span class="badge" style="background:var(--green);color:#000;font-size:10px;">🟢 ATIVO (${kitchenPrinters.length} encontrada${kitchenPrinters.length === 1 ? '' : 's'})</span>
           </div>
           ${renderPrnBadgeList(kitchenPrinters, 'PC-COZINHA')}
         </div>
 
         <div style="background:#0b0f19;border:1px solid #1e293b;border-radius:10px;padding:10px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <strong style="font-size:12.5px;color:#93c5fd;">💻 PC 2 — Caixa de Pagamento (Windows 10 • Bluetooth & Rede)</strong>
+            <strong style="font-size:12.5px;color:#93c5fd;">💻 PC 2 — Caixa (Ponte de Impressoras)</strong>
             <span class="badge" style="background:${cashierPcStatus ? 'var(--green)' : '#374151'};color:${cashierPcStatus ? '#000' : '#fcd34d'};font-size:10px;">
-              ${cashierPcStatus ? `🟢 PONTE CONECTADA (${cashierPrinters.length} impressora${cashierPrinters.length === 1 ? '' : 's'})` : '⏳ AGUARDANDO INSTALAR_PONTE_PC_CAIXA.bat'}
+              ${cashierPcStatus ? `🟢 PONTE CONECTADA (${cashierPrinters.length} encontrada${cashierPrinters.length === 1 ? '' : 's'})` : '⏳ AGUARDANDO PONTE DO CAIXA'}
             </span>
           </div>
           ${renderPrnBadgeList(cashierPrinters, 'PC-CAIXA')}
         </div>
       </div>
     `;
+  }
+
+  async function quickAddUsefulPrinterFromDetected(pcName, winPrinterName, connType) {
+    const isCaixa = String(pcName || '').toUpperCase().includes('CAIXA');
+    const isBt = String(connType || '').toUpperCase().includes('BLUETOOTH') || String(winPrinterName || '').toUpperCase().includes('BT') || String(winPrinterName || '').toUpperCase().includes('MTP');
+    let suggestedName = `Impressora Cozinha (${winPrinterName})`;
+    if (isCaixa && isBt) {
+      suggestedName = `Impressora Bluetooth Bebidas`;
+    } else if (isCaixa) {
+      suggestedName = `Impressora Caixa`;
+    } else {
+      const existingKitchen = getUsefulPrintersList().filter(s => !String(s.pc_name || '').toUpperCase().includes('CAIXA'));
+      if (existingKitchen.length === 0) {
+        suggestedName = `Impressora Cozinha (Lanches)`;
+      } else if (existingKitchen.length === 1) {
+        suggestedName = `Impressora Cozinha (Porções)`;
+      }
+    }
+
+    const customName = prompt(
+      `⭐ ADICIONAR IMPRESSORA ÚTIL NO PDV\n\n` +
+      `Impressora física selecionada: ${winPrinterName} (${pcName})\n\n` +
+      `Qual nome você quer dar para ela no PDV?\n` +
+      `(Dica: Você pode adicionar a mesma impressora 2 vezes com nomes diferentes, ex: "Cozinha Lanches" e "Cozinha Porções", para cortar o papel separado!)`,
+      suggestedName
+    );
+    if (!customName || !customName.trim()) return;
+    const cleanName = customName.trim();
+
+    // Gera um ID único limpo
+    const slug = cleanName.toUpperCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^A-Z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .substring(0, 22);
+    const uniqueId = `UTIL_${slug || 'IMP'}_${Math.floor(100 + Math.random() * 899)}`;
+
+    showPdvLoading('⭐ Adicionando às Impressoras Úteis...', `Salvando "${cleanName}" na sua lista do Passo 2...`);
+    try {
+      const res = await fetch('/api/admin/printers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'STATION',
+          action: 'SAVE_STATION',
+          operator_role: loggedPdvUser ? loggedPdvUser.role : 'ADMIN',
+          admin_pin: '1111',
+          station: {
+            id: uniqueId,
+            name: cleanName,
+            sector_label: cleanName.toUpperCase(),
+            pc_name: isCaixa ? 'PC-CAIXA' : 'PC-COZINHA',
+            connection_type: connType || 'USB_WINDOWS',
+            windows_printer_name: winPrinterName,
+            ip_address: '127.0.0.1',
+            port: 9100,
+            columns: isBt ? 32 : 48,
+            cut_paper_separately: true,
+            print_waiter_calls: isCaixa && isBt,
+            print_drinks: isCaixa && isBt,
+            print_bill_closure: isCaixa && !isBt,
+            print_boutique: isCaixa && !isBt,
+            print_fiscal_notes: isCaixa && !isBt,
+            enabled: true
+          }
+        })
+      });
+      hidePdvLoading();
+      if (res.ok) {
+        const pData = await res.json();
+        printerStations = pData.stations || [];
+        categoryPrinterRoutes = pData.routes || [];
+        detectedPrintersList = pData.detected_printers || detectedPrintersList;
+        remotePrinterPCs = pData.remote_pcs || remotePrinterPCs;
+        renderPrintersAndRoutesView();
+      }
+    } catch (e) {
+      hidePdvLoading();
+    }
   }
 
   function renderPrintersAndRoutesView() {
@@ -9400,177 +9539,221 @@
     const spoolerBox = document.getElementById('adminSectorSpoolerBox');
     if (!stGrid || !rtList) return;
 
-    // Evita re-renderizar inputs de impressora enquanto o ADM está editando
+    // Evita re-renderizar inputs de impressora enquanto o ADM está digitando o nome
     const activeEl = document.activeElement;
     if (activeEl && activeEl.id && activeEl.id.startsWith('prnInp-')) {
       return;
     }
 
-    stGrid.innerHTML = (printerStations || []).map(st => {
-      const pcNameVal = st.pc_name || 'PC-COZINHA';
-      const winPrnVal = st.windows_printer_name || '';
-      const detOpts = [
-        `<option value="">-- Escolher Impressora Autodetectada ou Digitar Abaixo --</option>`,
-        ...(detectedPrintersList || []).map(dp => {
-          const val = `${dp.pc_name || 'PC-COZINHA'}||${dp.windows_printer_name || ''}||${dp.connection_type || 'USB_WINDOWS'}`;
-          const isSel = dp.windows_printer_name && dp.windows_printer_name === winPrnVal && (dp.pc_name === pcNameVal || !st.pc_name);
-          return `<option value="${val.replace(/"/g, '&quot;')}" ${isSel ? 'selected' : ''}>[${dp.pc_name}] ${dp.windows_printer_name} (${getConnectionTypeBadge(dp.connection_type)})</option>`;
-        })
-      ].join('');
+    const usefulPrinters = getUsefulPrintersList();
+    const totalStationsCount = (printerStations || []).length;
+    const hiddenDefaultsCount = Math.max(0, totalStationsCount - usefulPrinters.length);
 
-      const cutChecked = st.cut_paper_separately !== false;
-      return `
-        <div style="background:#0d0d12;border:1.5px solid ${st.enabled ? 'var(--gold)' : 'var(--border)'};border-radius:12px;padding:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
-            <div>
-              <strong style="color:var(--gold-light);font-size:14.5px;">${st.name}</strong>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px;">
-                Setor ID: <code>${st.id}</code> • PC: <strong style="color:#93c5fd;">${pcNameVal}</strong> • ${getConnectionTypeBadge(st.connection_type)}
-              </div>
-            </div>
-            <div style="display:flex;gap:5px;align-items:center;">
-              <span class="badge" style="background:${st.enabled ? 'var(--green)' : 'var(--red)'};color:${st.enabled ? '#000' : '#fff'};">
-                ${st.enabled ? '🟢 ATIVO' : '🔴 PAUSADO'}
-              </span>
-              <button type="button" class="btn" style="padding:4px 8px;font-size:11px;border-color:var(--blue);color:#93c5fd;" onclick="testPhysicalPrinterStation('${st.id}')" title="Imprimir ticket de teste físico e testar corte de papel">
-                🖨️ Testar
-              </button>
-              <button type="button" class="btn" style="padding:4px 8px;font-size:11px;border-color:var(--red);color:#fca5a5;" onclick="deletePrinterStationFromUI('${st.id}')" title="Excluir este setor de impressão">
-                🗑️
-              </button>
-            </div>
+    if (usefulPrinters.length === 0) {
+      stGrid.innerHTML = `
+        <div style="background:#0d111a;border:2px dashed var(--gold);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:15px;font-weight:800;color:var(--gold-light);margin-bottom:6px;">
+            ⭐ Sua lista de Impressoras Úteis ainda está vazia!
           </div>
-
-          <div style="margin-bottom:8px;">
-            <label style="font-size:10.5px;color:#86efac;font-weight:700;">🔍 Vincular Impressora Autodetectada (Pode usar a mesma impressora em 2+ setores!)</label>
-            <select id="prnInp-det-${st.id}" onchange="onStationDetectedPrinterChange('${st.id}')" style="font-size:12px;padding:6px;margin-top:3px;border-color:var(--green);">
-              ${detOpts}
-            </select>
+          <div style="font-size:12.5px;color:#d1d5db;line-height:1.5;margin-bottom:12px;">
+            Olhe no <strong>PASSO 1</strong> (logo acima) todas as impressoras que o sistema encontrou nos seus computadores e clique no botão dourado <strong>➕ Adicionar às Impressoras Úteis</strong> nas impressoras que você vai usar.
           </div>
-
-          <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:8px;margin-bottom:8px;">
-            <div>
-              <label style="font-size:10.5px;color:var(--muted);">Nome do Setor no PDV</label>
-              <input type="text" id="prnInp-name-${st.id}" value="${(st.name || '').replace(/"/g, '&quot;')}" style="font-size:12px;padding:6px 8px;" />
-            </div>
-            <div>
-              <label style="font-size:10.5px;color:var(--muted);">Título no Topo do Papel Cortado</label>
-              <input type="text" id="prnInp-sec-${st.id}" value="${(st.sector_label || '').replace(/"/g, '&quot;')}" style="font-size:12px;padding:6px 8px;" />
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr 1.15fr 72px;gap:8px;margin-bottom:8px;">
-            <div>
-              <label style="font-size:10.5px;color:var(--muted);">💻 Computador (PC)</label>
-              <select id="prnInp-pc-${st.id}" style="font-size:11.5px;padding:6px;">
-                <option value="PC-COZINHA" ${pcNameVal === 'PC-COZINHA' ? 'selected' : ''}>💻 PC 1 Cozinha (Win11)</option>
-                <option value="PC-CAIXA" ${pcNameVal === 'PC-CAIXA' ? 'selected' : ''}>💻 PC 2 Caixa (Win10)</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:10.5px;color:var(--muted);">🔌 Tipo de Conexão</label>
-              <select id="prnInp-conn-${st.id}" style="font-size:11.5px;padding:6px;">
-                <option value="USB_WINDOWS" ${(st.connection_type === 'USB_WINDOWS' || st.connection_type === 'USB_RAW') ? 'selected' : ''}>🔌 USB no Windows</option>
-                <option value="BLUETOOTH_WINDOWS" ${(st.connection_type === 'BLUETOOTH_WINDOWS' || st.connection_type === 'BLUETOOTH') ? 'selected' : ''}>📶 Bluetooth Windows</option>
-                <option value="REDE_COMPARTILHADA" ${st.connection_type === 'REDE_COMPARTILHADA' ? 'selected' : ''}>🌐 Rede Compartilhada</option>
-                <option value="REDE_ESC_POS" ${st.connection_type === 'REDE_ESC_POS' ? 'selected' : ''}>🌐 Rede IP (9100)</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:10.5px;color:var(--muted);">Nome da Impressora no Windows</label>
-              <input type="text" id="prnInp-win-${st.id}" value="${winPrnVal.replace(/"/g, '&quot;')}" placeholder="Ex: EPSON TM-T20X / \\\\CAIXA\\Termica" style="font-size:11.5px;padding:6px 8px;" />
-            </div>
-            <div>
-              <label style="font-size:10.5px;color:var(--muted);">Bobina</label>
-              <select id="prnInp-cols-${st.id}" style="font-size:11.5px;padding:6px;">
-                <option value="48" ${st.columns === 48 ? 'selected' : ''}>80mm</option>
-                <option value="32" ${st.columns === 32 ? 'selected' : ''}>58mm</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 90px;gap:8px;margin-bottom:8px;">
-            <div>
-              <label style="font-size:10px;color:var(--muted);">Endereço IP Opcional (se usar Rede TCP/IP 9100 direto)</label>
-              <input type="text" id="prnInp-ip-${st.id}" value="${st.ip_address || '127.0.0.1'}" style="font-size:11.5px;padding:5px 8px;font-family:monospace;" />
-            </div>
-            <div>
-              <label style="font-size:10px;color:var(--muted);">Porta TCP</label>
-              <input type="number" id="prnInp-port-${st.id}" value="${st.port || 9100}" style="font-size:11.5px;padding:5px;" />
-            </div>
-          </div>
-
-          <!-- CHECKBOXES DE CORTE SEPARADO E FUNÇÕES ESPECIAIS DESTE SETOR -->
-          <div style="background:#14141f;border:1px solid #262638;border-radius:8px;padding:8px 10px;margin-bottom:8px;">
-            <div style="font-size:10.5px;font-weight:800;color:var(--gold-light);margin-bottom:5px;">
-              ✂️ CORTE DE PAPEL & FUNÇÕES AUTOMÁTICAS DESTA IMPRESSORA:
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:11px;">
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:#fcd34d;font-weight:700;">
-                <input type="checkbox" id="prnInp-cut-${st.id}" ${cutChecked ? 'checked' : ''} style="width:14px;height:14px;" />
-                ✂️ Cortar papel separado (Lanche ≠ Porção)
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                <input type="checkbox" id="prnInp-waiter-${st.id}" ${st.print_waiter_calls ? 'checked' : ''} style="width:14px;height:14px;" />
-                🔔 Chamados de Garçom / Pediu Conta
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                <input type="checkbox" id="prnInp-drinks-${st.id}" ${st.print_drinks ? 'checked' : ''} style="width:14px;height:14px;" />
-                🍺 Pedidos de Bebidas (Bar / Bluetooth)
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                <input type="checkbox" id="prnInp-closure-${st.id}" ${st.print_bill_closure ? 'checked' : ''} style="width:14px;height:14px;" />
-                🧾 Fechamento de Contas / Mesas
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                <input type="checkbox" id="prnInp-boutique-${st.id}" ${st.print_boutique ? 'checked' : ''} style="width:14px;height:14px;" />
-                🥩 Cupons de Compras da Boutique
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                <input type="checkbox" id="prnInp-fiscal-${st.id}" ${st.print_fiscal_notes ? 'checked' : ''} style="width:14px;height:14px;" />
-                📄 Contas / Recibos / Notas Fiscais
-              </label>
-            </div>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
-              <input type="checkbox" id="prnInp-en-${st.id}" ${st.enabled ? 'checked' : ''} style="width:16px;height:16px;" />
-              Setor habilitado para impressão automática
-            </label>
-            <button class="btn btn-gold" style="padding:6px 12px;font-size:11.5px;" onclick="savePrinterStationFromUI('${st.id}')">
-              💾 Salvar Setor
+          ${hiddenDefaultsCount > 0 ? `
+            <button type="button" class="btn" style="padding:5px 10px;font-size:11px;" onclick="showUnlinkedDefaultPrinterSectors=true;renderPrintersAndRoutesView();">
+              👁️ Mostrar setores padrão antigos (${hiddenDefaultsCount})
             </button>
-          </div>
+          ` : ''}
         </div>
       `;
-    }).join('');
+    } else {
+      stGrid.innerHTML = usefulPrinters.map((st, idx) => {
+        const pcNameVal = String(st.pc_name || 'PC-COZINHA').toUpperCase().includes('CAIXA') ? 'PC-CAIXA' : 'PC-COZINHA';
+        const winPrnVal = st.windows_printer_name || '';
+        const cutChecked = st.cut_paper_separately !== false;
 
-    rtList.innerHTML = (categoryPrinterRoutes || []).map(rt => {
-      const stationOpts = (printerStations || []).map(st => `
-        <option value="${st.id}" ${rt.printer_station_id === st.id ? 'selected' : ''}>
-          ${st.name} [${st.pc_name || 'PC-COZINHA'}] ${st.cut_paper_separately !== false ? '✂️' : ''}
-        </option>
-      `).join('');
+        const detOpts = [
+          `<option value="${pcNameVal}||${winPrnVal.replace(/"/g, '&quot;')}||${st.connection_type || 'USB_WINDOWS'}">🖨️ ${winPrnVal || '(Nenhuma selecionada)'} [${pcNameVal}]</option>`,
+          ...(detectedPrintersList || []).map(dp => {
+            const dpPc = String(dp.pc_name || 'PC-COZINHA').toUpperCase().includes('CAIXA') ? 'PC-CAIXA' : 'PC-COZINHA';
+            const val = `${dpPc}||${dp.windows_printer_name || ''}||${dp.connection_type || 'USB_WINDOWS'}`;
+            const isSame = dp.windows_printer_name === winPrnVal && dpPc === pcNameVal;
+            if (isSame) return '';
+            return `<option value="${val.replace(/"/g, '&quot;')}">🔄 Trocar para: [${dpPc}] ${dp.windows_printer_name}</option>`;
+          })
+        ].join('');
 
-      const icon = getCategoryIconForPdv(rt.category_id, rt.category_name);
+        return `
+          <div style="background:#0d0d14;border:2px solid ${st.enabled ? 'var(--gold)' : 'var(--border)'};border-radius:12px;padding:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="badge" style="background:var(--gold);color:#000;font-weight:900;font-size:11px;">#${idx + 1}</span>
+                <strong style="color:var(--gold-light);font-size:15px;">${st.name}</strong>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <button type="button" class="btn" style="padding:5px 10px;font-size:11.5px;border-color:var(--blue);color:#93c5fd;" onclick="testPhysicalPrinterStation('${st.id}')" title="Imprimir teste nesta impressora útil">
+                  🖨️ Testar
+                </button>
+                <button type="button" class="btn" style="padding:5px 10px;font-size:11.5px;border-color:var(--red);color:#fca5a5;" onclick="deletePrinterStationFromUI('${st.id}')" title="Remover desta lista">
+                  🗑️ Remover
+                </button>
+              </div>
+            </div>
 
-      return `
-        <div style="background:#0d0d12;border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-          <div>
-            <div style="font-size:13.5px;font-weight:800;color:#fff;">${icon} ${rt.category_name} <span style="font-size:11px;color:var(--muted);">(#${rt.category_id})</span></div>
-            <div style="font-size:11px;color:var(--muted);">
-              Sai no setor: <strong style="color:var(--gold-light);">${rt.printer_name || rt.printer_station_id}</strong>
+            <!-- RENOMEAR IMPRESSORA NO PDV -->
+            <div style="background:#131520;border:1px solid #26293d;border-radius:9px;padding:9px 10px;margin-bottom:8px;">
+              <label style="font-size:11px;color:#86efac;font-weight:800;display:block;margin-bottom:4px;">
+                ✏️ Nome desta Impressora no PDV (Como você quer chamá-la):
+              </label>
+              <div style="display:flex;gap:6px;">
+                <input type="text" id="prnInp-name-${st.id}" value="${(st.name || '').replace(/"/g, '&quot;')}" placeholder="Ex: Impressora Cozinha / Impressora Bebidas / Impressora Caixa" style="font-size:13px;font-weight:800;padding:7px 10px;color:#fff;border-color:var(--gold);flex:1;" onkeydown="if(event.key==='Enter') savePrinterStationFromUI('${st.id}')" />
+                <button type="button" class="btn btn-gold" style="padding:7px 12px;font-size:12px;font-weight:800;flex-shrink:0;" onclick="savePrinterStationFromUI('${st.id}')">
+                  💾 Salvar Nome
+                </button>
+              </div>
+            </div>
+
+            <!-- IMPRESSORA FÍSICA DO WINDOWS + LARGURA + CORTE -->
+            <div style="display:grid;grid-template-columns:1.5fr 85px;gap:8px;margin-bottom:8px;">
+              <div>
+                <label style="font-size:10.5px;color:var(--muted);">🖨️ Impressora Física Vinculada no Windows:</label>
+                <select id="prnInp-det-${st.id}" onchange="onStationDetectedPrinterChange('${st.id}');savePrinterStationFromUI('${st.id}', true);" style="font-size:11.5px;padding:6px;margin-top:2px;">
+                  ${detOpts}
+                </select>
+              </div>
+              <div>
+                <label style="font-size:10.5px;color:var(--muted);">📏 Bobina:</label>
+                <select id="prnInp-cols-${st.id}" onchange="savePrinterStationFromUI('${st.id}', true)" style="font-size:11.5px;padding:6px;margin-top:2px;">
+                  <option value="48" ${st.columns !== 32 ? 'selected' : ''}>80mm</option>
+                  <option value="32" ${st.columns === 32 ? 'selected' : ''}>58mm</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- CAMPOS TÉCNICOS OCULTOS (MANTIDOS AUTOMATICAMENTE PARA O BACKEND) -->
+            <input type="hidden" id="prnInp-sec-${st.id}" value="${(st.sector_label || st.name || '').replace(/"/g, '&quot;')}" />
+            <input type="hidden" id="prnInp-pc-${st.id}" value="${pcNameVal}" />
+            <input type="hidden" id="prnInp-conn-${st.id}" value="${st.connection_type || 'USB_WINDOWS'}" />
+            <input type="hidden" id="prnInp-win-${st.id}" value="${winPrnVal.replace(/"/g, '&quot;')}" />
+            <input type="hidden" id="prnInp-ip-${st.id}" value="${st.ip_address || '127.0.0.1'}" />
+            <input type="hidden" id="prnInp-port-${st.id}" value="${st.port || 9100}" />
+            <input type="checkbox" id="prnInp-waiter-${st.id}" ${st.print_waiter_calls ? 'checked' : ''} style="display:none;" />
+            <input type="checkbox" id="prnInp-drinks-${st.id}" ${st.print_drinks ? 'checked' : ''} style="display:none;" />
+            <input type="checkbox" id="prnInp-closure-${st.id}" ${st.print_bill_closure ? 'checked' : ''} style="display:none;" />
+            <input type="checkbox" id="prnInp-boutique-${st.id}" ${st.print_boutique ? 'checked' : ''} style="display:none;" />
+            <input type="checkbox" id="prnInp-fiscal-${st.id}" ${st.print_fiscal_notes ? 'checked' : ''} style="display:none;" />
+
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:6px;border-top:1px solid #1e2230;font-size:11.5px;flex-wrap:wrap;">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:#fcd34d;font-weight:700;">
+                <input type="checkbox" id="prnInp-cut-${st.id}" ${cutChecked ? 'checked' : ''} onchange="savePrinterStationFromUI('${st.id}', true)" style="width:15px;height:15px;" />
+                ✂️ Cortar papel separado nesta impressora
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:#86efac;">
+                <input type="checkbox" id="prnInp-en-${st.id}" ${st.enabled ? 'checked' : ''} onchange="savePrinterStationFromUI('${st.id}', true)" style="width:15px;height:15px;" />
+                🟢 Ativa
+              </label>
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;min-width:255px;flex:1;max-width:340px;">
-            <select id="catRouteSel-${rt.category_id}" onchange="changeCategoryPrinterRoute(${rt.category_id}, '${(rt.category_name || '').replace(/'/g, "\\'")}', this.value)" style="font-size:12px;font-weight:700;border-color:var(--gold);width:100%;">
+        `;
+      }).join('') + (hiddenDefaultsCount > 0 ? `
+        <div style="text-align:right;margin-top:4px;">
+          <button type="button" class="btn" style="padding:4px 9px;font-size:10.5px;color:var(--muted);" onclick="showUnlinkedDefaultPrinterSectors=!showUnlinkedDefaultPrinterSectors;renderPrintersAndRoutesView();">
+            ${showUnlinkedDefaultPrinterSectors ? '🙈 Ocultar setores padrão sem impressora' : `👁️ Mostrar setores padrão antigos (${hiddenDefaultsCount})`}
+          </button>
+        </div>
+      ` : '');
+    }
+
+    // PASSO 3: VINCULAR CADA ÁREA DO CARDÁPIO E CADA FUNÇÃO DO SISTEMA A UMA IMPRESSORA ÚTIL
+    const optionListForStep3 = usefulPrinters.length > 0 ? usefulPrinters : (printerStations || []);
+
+    const categoriesHtml = (categoryPrinterRoutes || []).map(rt => {
+      const currentStId = rt.printer_station_id || 'NAO_IMPRIMIR';
+      const matchedUseful = optionListForStep3.find(s => s.id === currentStId);
+      const isNoPrint = currentStId === 'NAO_IMPRIMIR';
+
+      const stationOpts = [
+        ...(!matchedUseful && !isNoPrint ? [`<option value="${currentStId}" selected>⚠️ Selecione uma Impressora Útil...</option>`] : []),
+        ...optionListForStep3.map(st => `
+          <option value="${st.id}" ${currentStId === st.id ? 'selected' : ''}>
+            ⭐ ${st.name} (${st.windows_printer_name || st.pc_name || 'PC'})
+          </option>
+        `),
+        `<option value="NAO_IMPRIMIR" ${isNoPrint ? 'selected' : ''}>🚫 Não Imprimir esta área</option>`
+      ].join('');
+
+      const icon = getCategoryIconForPdv(rt.category_id, rt.category_name);
+      const statusColor = isNoPrint ? '#9ca3af' : (matchedUseful ? '#86efac' : '#fcd34d');
+      const statusText = isNoPrint
+        ? '🚫 Não imprime'
+        : (matchedUseful ? `🖨️ Imprime em: ${matchedUseful.name}` : '⚠️ Escolha qual Impressora Útil vai imprimir');
+
+      return `
+        <div style="background:#0d0d14;border:1px solid var(--border);border-left:4px solid ${matchedUseful ? 'var(--green)' : (isNoPrint ? '#4b5563' : 'var(--gold)')};border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:170px;">
+            <div style="font-size:13.5px;font-weight:800;color:#fff;">${icon} ${rt.category_name}</div>
+            <div style="font-size:11px;color:${statusColor};margin-top:2px;font-weight:700;">
+              ${statusText}
+            </div>
+          </div>
+          <div style="min-width:250px;flex:1;max-width:340px;">
+            <select id="catRouteSel-${rt.category_id}" onchange="changeCategoryPrinterRoute(${rt.category_id}, '${(rt.category_name || '').replace(/'/g, "\\'")}', this.value)" style="font-size:12.5px;font-weight:800;border-color:${matchedUseful ? 'var(--green)' : 'var(--gold)'};width:100%;padding:7px 9px;">
               ${stationOpts}
             </select>
           </div>
         </div>
       `;
     }).join('');
+
+    // Funções especiais do sistema (Garçom, Bebidas, Fechamento de Conta, Boutique, Notas)
+    const sysFunctions = [
+      { field: 'print_waiter_calls', icon: '🔔', title: 'Chamados de Garçom / Pediu a Conta', sub: 'Quando a mesa chama o garçom ou pede a conta pelo QR Code / Kiosk' },
+      { field: 'print_drinks', icon: '🍺', title: 'Atalho Automático de Bebidas (Bar / Copa)', sub: 'Direciona refrigerantes, sucos, cervejas e drinks automaticamente' },
+      { field: 'print_bill_closure', icon: '🧾', title: 'Fechamento de Conta da Mesa / Conferência', sub: 'Extrato detalhado para levar na mesa na hora de fechar a conta' },
+      { field: 'print_boutique', icon: '🥩', title: 'Cupom de Compras da Boutique / Empório', sub: 'Comprovante de carnes e itens passados na Boutique' },
+      { field: 'print_fiscal_notes', icon: '📄', title: 'Recibos do Caixa & Notas Fiscais (NFC-e)', sub: 'Impressão de recibos de pagamento e DANFE NFC-e no Caixa' }
+    ];
+
+    const sysFunctionsHtml = sysFunctions.map(fn => {
+      const activeSt = optionListForStep3.find(s => !!s[fn.field] && s.enabled !== false) || (printerStations || []).find(s => !!s[fn.field] && s.enabled !== false);
+      const curId = activeSt ? activeSt.id : 'NAO_IMPRIMIR';
+      const opts = [
+        ...optionListForStep3.map(st => `
+          <option value="${st.id}" ${curId === st.id ? 'selected' : ''}>
+            ⭐ ${st.name} (${st.windows_printer_name || st.pc_name || 'PC'})
+          </option>
+        `),
+        `<option value="NAO_IMPRIMIR" ${curId === 'NAO_IMPRIMIR' ? 'selected' : ''}>🚫 Não Imprimir</option>`
+      ].join('');
+
+      return `
+        <div style="background:#101420;border:1px solid #1e3a8a;border-left:4px solid #38bdf8;border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:170px;">
+            <div style="font-size:13px;font-weight:800;color:#93c5fd;">${fn.icon} ${fn.title}</div>
+            <div style="font-size:10.5px;color:#cbd5e1;margin-top:2px;">${fn.sub}</div>
+          </div>
+          <div style="min-width:250px;flex:1;max-width:340px;">
+            <select onchange="assignSystemFunctionToUsefulPrinter('${fn.field}', this.value)" style="font-size:12px;font-weight:800;border-color:#38bdf8;width:100%;padding:7px 9px;">
+              ${opts}
+            </select>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    rtList.innerHTML = `
+      <div style="font-size:12px;font-weight:900;color:var(--gold-light);letter-spacing:0.5px;margin-bottom:4px;">
+        🍔 3A. ÁREAS / CATEGORIAS DO CARDÁPIO:
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px;">
+        ${categoriesHtml}
+      </div>
+      <div style="font-size:12px;font-weight:900;color:#7dd3fc;letter-spacing:0.5px;margin-bottom:4px;padding-top:8px;border-top:1px solid var(--border);">
+        🔔 3B. FUNÇÕES DO SISTEMA (GARÇOM, FECHAMENTO DE CONTA, BOUTIQUE E CAIXA):
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        ${sysFunctionsHtml}
+      </div>
+    `;
 
     if (spoolerBox) {
       const latestWithTickets = (orders || []).find(o => o.sector_tickets && o.sector_tickets.length > 0) || (orders || [])[0];
@@ -9585,14 +9768,54 @@
                 ✂️ PAPEL CORTADO SEPARADO
               </span>
             </div>
-            <pre class="receipt-box" style="max-height:220px;font-size:11px;">${st.ticket_text || ''}</pre>
+            <pre class="receipt-box" style="max-height:200px;font-size:11px;">${st.ticket_text || ''}</pre>
           </div>
         `).join('');
       } else if (latestWithTickets) {
         spoolerBox.innerHTML = `<pre class="receipt-box">${latestWithTickets.receipt_preview || 'Sem tickets gerados ainda.'}</pre>`;
       } else {
-        spoolerBox.innerHTML = `<div style="color:var(--muted);font-size:12px;">Lance um pedido com Lanche e Porção para visualizar os 2 papéis cortados separadamente na Cozinha.</div>`;
+        spoolerBox.innerHTML = `<div style="color:var(--muted);font-size:12px;">Lance um pedido para visualizar aqui a prévia de impressão separada por impressora útil.</div>`;
       }
+    }
+  }
+
+  async function assignSystemFunctionToUsefulPrinter(fnField, targetStationId) {
+    showPdvLoading('🔗 Vinculando Função à Impressora Útil...', 'Atualizando impressora responsável por esta função...');
+    try {
+      const allStations = printerStations || [];
+      for (const st of allStations) {
+        const shouldHave = (st.id === targetStationId);
+        if (!!st[fnField] !== shouldHave) {
+          const updatedSt = {
+            ...st,
+            ip_address: st.ip_address || st.printer_ip || '127.0.0.1',
+            port: st.port || st.printer_port || 9100,
+            enabled: st.enabled !== false,
+            [fnField]: shouldHave
+          };
+          await fetch('/api/admin/printers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'STATION',
+              action: 'SAVE_STATION',
+              operator_role: loggedPdvUser ? loggedPdvUser.role : 'ADMIN',
+              admin_pin: '1111',
+              station: updatedSt
+            })
+          });
+        }
+      }
+      const res = await fetch('/api/admin/printers');
+      hidePdvLoading();
+      if (res.ok) {
+        const pData = await res.json();
+        printerStations = pData.stations || [];
+        categoryPrinterRoutes = pData.routes || [];
+        renderPrintersAndRoutesView();
+      }
+    } catch (e) {
+      hidePdvLoading();
     }
   }
 
@@ -9612,7 +9835,7 @@
   }
 
   async function discoverAllPrintersFromPdv() {
-    showPdvLoading('🔍 Autodetectando Impressoras...', 'Buscando impressoras USB no PC da Cozinha e Bluetooth/Rede no PC do Caixa...');
+    showPdvLoading('🔍 Escaneando Impressoras dos 2 PCs...', 'Buscando impressoras no PC da Cozinha e na Ponte do PC do Caixa...');
     try {
       const res = await fetch('/api/admin/printers', {
         method: 'POST',
@@ -9637,7 +9860,8 @@
     }
   }
 
-  async function savePrinterStationFromUI(stId) {
+  async function savePrinterStationFromUI(stId, silentMode = false) {
+    const newName = (document.getElementById('prnInp-name-' + stId) || {}).value?.trim() || stId;
     const payload = {
       type: 'STATION',
       action: 'SAVE_STATION',
@@ -9645,8 +9869,8 @@
       admin_pin: '1111',
       station: {
         id: stId,
-        name: (document.getElementById('prnInp-name-' + stId) || {}).value?.trim() || stId,
-        sector_label: (document.getElementById('prnInp-sec-' + stId) || {}).value?.trim() || stId,
+        name: newName,
+        sector_label: newName.toUpperCase(),
         pc_name: (document.getElementById('prnInp-pc-' + stId) || {}).value || 'PC-COZINHA',
         connection_type: (document.getElementById('prnInp-conn-' + stId) || {}).value || 'USB_WINDOWS',
         windows_printer_name: (document.getElementById('prnInp-win-' + stId) || {}).value?.trim() || '',
@@ -9662,14 +9886,16 @@
         enabled: !!(document.getElementById('prnInp-en-' + stId) || {}).checked
       }
     };
-    showPdvLoading('🖨️ Salvando Setor de Impressão...', 'Gravando impressora, PC alvo, funções e corte separado...');
+    if (!silentMode) {
+      showPdvLoading('💾 Salvando Impressora Útil...', `Gravando "${newName}" no PDV...`);
+    }
     try {
       const res = await fetch('/api/admin/printers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      hidePdvLoading();
+      if (!silentMode) hidePdvLoading();
       if (res.ok) {
         const pData = await res.json();
         printerStations = pData.stations || [];
@@ -9678,10 +9904,9 @@
         remotePrinterPCs = pData.remote_pcs || remotePrinterPCs;
         if (document.activeElement) document.activeElement.blur();
         renderPrintersAndRoutesView();
-        alert('✅ Setor de impressão salvo com sucesso!');
       }
     } catch (e) {
-      hidePdvLoading();
+      if (!silentMode) hidePdvLoading();
     }
   }
 
@@ -11615,7 +11840,7 @@
 
     const kpiGrid = document.getElementById('waKpiGrid');
     if (kpiGrid) {
-      const menuUrl = waStatusData.cardapio_url || (window.location.origin + '/cardapio');
+      const menuUrl = 'https://sirbeefnup.github.io/cardapio';
       kpiGrid.innerHTML = `
         <div class="kpi-card" style="border-color:${waStatusData.connected ? 'var(--green)' : 'var(--gold)'};">
           <div class="kpi-label">📱 Status do Aparelho WhatsApp</div>
@@ -12746,6 +12971,72 @@
     }
   }, 2500);
 
+  // =========================================================================
+  // 9. AUTO-DIMENSIONAMENTO DE TELA + ESCALA MANUAL POR COMPUTADOR (LOCALSTORAGE)
+  // =========================================================================
+  function computeAutoScreenScalePct() {
+    const screenW = (window.screen && window.screen.availWidth) ? window.screen.availWidth : 1920;
+    const outerW = window.outerWidth || screenW;
+    const w = Math.min(outerW, screenW);
+    if (w >= 1800) return 100;
+    if (w >= 1580) return 90;
+    if (w >= 1420) return 85;
+    if (w >= 1260) return 80;
+    if (w >= 1100) return 75;
+    return 70;
+  }
+
+  function applyPdvScreenScale() {
+    const mode = localStorage.getItem('sirbeef_pdv_ui_scale_mode') || 'AUTO';
+    let pct = parseInt(localStorage.getItem('sirbeef_pdv_ui_scale_pct') || '100', 10);
+    if (mode === 'AUTO' || isNaN(pct) || pct < 55 || pct > 130) {
+      pct = computeAutoScreenScalePct();
+    }
+    document.body.style.zoom = (pct / 100).toFixed(2);
+
+    const hdrLbl = document.getElementById('hdrScalePctLabel');
+    if (hdrLbl) hdrLbl.textContent = (mode === 'AUTO' ? `Auto ${pct}%` : `${pct}%`);
+    const hdrAutoBtn = document.getElementById('hdrScaleAutoBtn');
+    if (hdrAutoBtn) hdrAutoBtn.classList.toggle('btn-gold', mode === 'AUTO');
+
+    const cfgBadge = document.getElementById('cfgScalePctBadge');
+    if (cfgBadge) cfgBadge.textContent = (mode === 'AUTO' ? `🔄 Auto (${pct}%)` : `✋ Manual (${pct}%)`);
+    const cfgAutoBtn = document.getElementById('cfgScaleBtn-AUTO');
+    if (cfgAutoBtn) cfgAutoBtn.classList.toggle('btn-gold', mode === 'AUTO');
+    [75, 80, 85, 90, 100].forEach(p => {
+      const b = document.getElementById('cfgScaleBtn-' + p);
+      if (b) b.classList.toggle('btn-blue', mode !== 'AUTO' && pct === p);
+    });
+  }
+
+  function setPdvScreenScaleMode(mode) {
+    localStorage.setItem('sirbeef_pdv_ui_scale_mode', mode || 'AUTO');
+    applyPdvScreenScale();
+  }
+
+  function setPdvScreenScaleManual(pct) {
+    const clean = Math.max(55, Math.min(130, parseInt(pct, 10) || 100));
+    localStorage.setItem('sirbeef_pdv_ui_scale_mode', 'MANUAL');
+    localStorage.setItem('sirbeef_pdv_ui_scale_pct', String(clean));
+    applyPdvScreenScale();
+  }
+
+  function stepPdvScreenScale(delta) {
+    const mode = localStorage.getItem('sirbeef_pdv_ui_scale_mode') || 'AUTO';
+    let cur = parseInt(localStorage.getItem('sirbeef_pdv_ui_scale_pct') || '100', 10);
+    if (mode === 'AUTO' || isNaN(cur)) {
+      cur = computeAutoScreenScalePct();
+    }
+    setPdvScreenScaleManual(cur + delta);
+  }
+
+  window.addEventListener('resize', () => {
+    if ((localStorage.getItem('sirbeef_pdv_ui_scale_mode') || 'AUTO') === 'AUTO') {
+      applyPdvScreenScale();
+    }
+  });
+
+  applyPdvScreenScale();
   checkPdvLoginSession();
   switchPdvTab(activeTab);
   loadAllData();

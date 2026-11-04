@@ -245,11 +245,10 @@ func (s *Server) ensureCloudflareTunnelRunning(exeDir string) {
 	for {
 		// Se o túnel já estiver respondendo na porta de métricas 20241..20245, atualiza tunnel_url.txt e sincroniza com GitHub se mudou
 		if active := s.probeLiveQuickTunnel(); active != "" {
-			if active != s.lastSyncedTunnel {
-				s.lastSyncedTunnel = active
-				go s.syncGitHubTunnelURL(active)
+			if strings.TrimRight(active, "/") != strings.TrimRight(s.lastSyncedTunnel, "/") {
+				s.syncGitHubTunnelURL(active)
 			}
-			time.Sleep(15 * time.Second)
+			time.Sleep(10 * time.Second)
 			continue
 		}
 
@@ -262,12 +261,11 @@ func (s *Server) ensureCloudflareTunnelRunning(exeDir string) {
 		}
 		if err := cmd.Start(); err == nil {
 			// Aguarda alguns segundos para capturar a nova URL gerada
-			for i := 0; i < 12; i++ {
+			for i := 0; i < 15; i++ {
 				time.Sleep(1500 * time.Millisecond)
 				if u := s.probeLiveQuickTunnel(); u != "" {
 					fmt.Printf("☁️  [TÚNEL AUTO-ATIVO] %s/cardapio | %s/pdv\n", u, u)
-					if u != s.lastSyncedTunnel {
-						s.lastSyncedTunnel = u
+					if strings.TrimRight(u, "/") != strings.TrimRight(s.lastSyncedTunnel, "/") {
 						go s.syncGitHubTunnelURL(u)
 					}
 					break
@@ -287,9 +285,19 @@ func (s *Server) getServerEnvMode() string {
 		}
 		if json.Unmarshal(b, &parsed) == nil {
 			m := strings.ToUpper(strings.TrimSpace(parsed.EnvMode))
-			if m == "TESTE_LOCAL" || m == "PRODUCAO_LOJA" {
-				return m
+			if m == "TESTE_LOCAL" || m == "TESTE_DEV" {
+				return "TESTE_LOCAL"
 			}
+			if m == "PRODUCAO_LOJA" {
+				return "PRODUCAO_LOJA"
+			}
+		}
+	}
+	txtFile := filepath.Join(s.DataDir, "server_env_mode.txt")
+	if b2, err2 := os.ReadFile(txtFile); err2 == nil {
+		m2 := strings.ToUpper(strings.TrimSpace(string(b2)))
+		if m2 == "TESTE_LOCAL" || m2 == "TESTE_DEV" {
+			return "TESTE_LOCAL"
 		}
 	}
 	return "PRODUCAO_LOJA"
@@ -297,7 +305,9 @@ func (s *Server) getServerEnvMode() string {
 
 func (s *Server) setServerEnvMode(mode string) string {
 	m := strings.ToUpper(strings.TrimSpace(mode))
-	if m != "TESTE_LOCAL" {
+	if m == "TESTE_DEV" || m == "TESTE_LOCAL" {
+		m = "TESTE_LOCAL"
+	} else {
 		m = "PRODUCAO_LOJA"
 	}
 	envFile := filepath.Join(s.DataDir, "server_env.json")
@@ -307,6 +317,7 @@ func (s *Server) setServerEnvMode(mode string) string {
 	}
 	b, _ := json.MarshalIndent(payload, "", "  ")
 	_ = os.WriteFile(envFile, b, 0644)
+	_ = os.WriteFile(filepath.Join(s.DataDir, "server_env_mode.txt"), []byte(m), 0644)
 	return m
 }
 
@@ -315,11 +326,6 @@ func (s *Server) syncGitHubTunnelURL(tunnelURL string) {
 }
 
 func (s *Server) syncGitHubTunnelURLForce(tunnelURL string, force bool) {
-	if !force && s.getServerEnvMode() == "TESTE_LOCAL" {
-		fmt.Printf("🧪 [MODO TESTE LOCAL] Túnel local (%s) ativo — mantendo link oficial da Hamburgueria intacto no GitHub.\n", tunnelURL)
-		return
-	}
-
 	ghCfgFile := filepath.Join(s.DataDir, "github_config.json")
 	b, err := os.ReadFile(ghCfgFile)
 	if err != nil {
@@ -336,6 +342,41 @@ func (s *Server) syncGitHubTunnelURLForce(tunnelURL string, force bool) {
 	}
 	if cfg.Branch == "" {
 		cfg.Branch = "main"
+	}
+
+	if !force && s.getServerEnvMode() == "TESTE_LOCAL" {
+		// Verifica se o túnel atualmente publicado no GitHub (PC da Loja) está online.
+		// Se o PC da Loja estiver ligado e respondendo, preserva o link da loja;
+		// se o túnel publicado estiver desligado/offline (ex: você testando em casa antes de ligar na loja), atualiza automaticamente!
+		storeOnline := false
+		probeClient := &http.Client{Timeout: 3 * time.Second}
+		tApi := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/tunnel.json?t=%d", cfg.Owner, cfg.Repo, time.Now().Unix())
+		if reqT, errReq := http.NewRequest(http.MethodGet, tApi, nil); errReq == nil {
+			reqT.Header.Set("Authorization", "Bearer "+cfg.Token)
+			reqT.Header.Set("Accept", "application/vnd.github.raw+json")
+			reqT.Header.Set("User-Agent", "SirBeef-Host-Server")
+			if respT, errResp := probeClient.Do(reqT); errResp == nil && respT != nil {
+				var curT struct {
+					TunnelURL string `json:"tunnel_url"`
+				}
+				_ = json.NewDecoder(respT.Body).Decode(&curT)
+				respT.Body.Close()
+				remoteBase := strings.TrimRight(strings.TrimSpace(curT.TunnelURL), "/")
+				if remoteBase != "" && !strings.EqualFold(remoteBase, strings.TrimRight(tunnelURL, "/")) {
+					if hResp, errH := probeClient.Get(remoteBase + "/api/health"); errH == nil && hResp != nil {
+						hResp.Body.Close()
+						if hResp.StatusCode == http.StatusOK {
+							storeOnline = true
+						}
+					}
+				}
+			}
+		}
+		if storeOnline {
+			fmt.Printf("🧪 [MODO TESTE LOCAL] Servidor da Hamburgueria está ONLINE — mantendo link oficial da loja intacto no GitHub. Use http://localhost:8080/pdv neste PC.\n")
+			return
+		}
+		fmt.Printf("☁️ [MODO TESTE LOCAL] Nenhum outro servidor online detectado no link público — sincronizando https://%s.github.io/pdv com este PC (%s)!\n", cfg.Owner, tunnelURL)
 	}
 
 	vInfo := s.getCurrentAPKVersionInfo(nil)
@@ -362,7 +403,7 @@ func (s *Server) syncGitHubTunnelURLForce(tunnelURL string, force bool) {
 	// e leiam tunnel.json diretamente da GitHub API em tempo real (0s de atraso)!
 	buildFixedShellHTML := func(routePath string, pageTitle string) string {
 		return fmt.Sprintf(`<!DOCTYPE html>
-<!-- SIRBEEF_FIXED_URL_SHELL_V3 -->
+<!-- SIRBEEF_FIXED_URL_SHELL_V5 -->
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -436,7 +477,9 @@ func (s *Server) syncGitHubTunnelURLForce(tunnelURL string, force bool) {
       const ROUTE_PATH = %q;
       const frame = document.getElementById("sbLiveFrame");
       const splash = document.getElementById("sbSplash");
+      const statusText = document.getElementById("sbStatusText");
       let activeTunnelBase = "";
+      let isChecking = false;
 
       frame.addEventListener("load", function() {
         if (activeTunnelBase) {
@@ -459,29 +502,58 @@ func (s *Server) syncGitHubTunnelURLForce(tunnelURL string, force bool) {
         return null;
       }
 
+      async function isTunnelHealthy(baseUrl) {
+        try {
+          const ctrl = new AbortController();
+          const timer = setTimeout(function() { ctrl.abort(); }, 3500);
+          const r = await fetch(baseUrl + "/api/health?t=" + Date.now(), {
+            mode: "cors",
+            cache: "no-store",
+            signal: ctrl.signal
+          });
+          clearTimeout(timer);
+          return r && r.ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
       async function syncTunnelAndLoad(isInitial) {
+        if (isChecking) return;
+        isChecking = true;
         try {
           const d = await fetchTunnelData();
           if (!d) return;
           const newBase = (d && d.tunnel_url ? d.tunnel_url : "").replace(/\/$/, "");
           if (newBase && newBase.startsWith("https://")) {
             if (newBase !== activeTunnelBase) {
-              activeTunnelBase = newBase;
-              const qs = window.location.search || "";
-              const hash = window.location.hash || "";
-              frame.src = activeTunnelBase + ROUTE_PATH + qs + hash;
-              setTimeout(function() { splash.classList.add("hidden"); }, 1800);
+              const healthy = await isTunnelHealthy(newBase);
+              if (healthy) {
+                activeTunnelBase = newBase;
+                const qs = window.location.search || "";
+                const hash = window.location.hash || "";
+                frame.src = activeTunnelBase + ROUTE_PATH + qs + hash;
+                setTimeout(function() { splash.classList.add("hidden"); }, 1400);
+              } else {
+                if (statusText) {
+                  statusText.textContent = "Sincronizando túnel do servidor... Conectando automaticamente em instantes...";
+                }
+                setTimeout(function() { syncTunnelAndLoad(false); }, 2500);
+              }
             }
             return;
           }
           if (isInitial && d && d.lan_url) {
             window.location.replace(d.lan_url.replace(/\/$/, "") + ROUTE_PATH + (window.location.search || ""));
           }
-        } catch (e) {}
+        } catch (e) {
+        } finally {
+          isChecking = false;
+        }
       }
 
       syncTunnelAndLoad(true);
-      setInterval(function() { syncTunnelAndLoad(false); }, 20000);
+      setInterval(function() { syncTunnelAndLoad(false); }, 10000);
     })();
   </script>
 </body>
@@ -492,7 +564,7 @@ func (s *Server) syncGitHubTunnelURLForce(tunnelURL string, force bool) {
 		"tunnel.json": rawJSON,
 	}
 
-	// Verifica se pdv/index.html já está com SIRBEEF_FIXED_URL_SHELL_V3; se não estiver, inclui todos no commit único
+	// Verifica se pdv/index.html já está com SIRBEEF_FIXED_URL_SHELL_V5; se não estiver, inclui todos no commit único
 	client := &http.Client{Timeout: 12 * time.Second}
 	checkAPI := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/pdv/index.html", cfg.Owner, cfg.Repo)
 	needsShellUpdate := true
@@ -504,27 +576,52 @@ func (s *Server) syncGitHubTunnelURLForce(tunnelURL string, force bool) {
 			var buf bytes.Buffer
 			_, _ = buf.ReadFrom(gResp.Body)
 			gResp.Body.Close()
-			if strings.Contains(buf.String(), "SIRBEEF_FIXED_URL_SHELL_V3") {
+			if strings.Contains(buf.String(), "SIRBEEF_FIXED_URL_SHELL_V5") {
 				needsShellUpdate = false
 			}
 		}
 	}
 
 	if needsShellUpdate {
-		filesToCommit["pdv/index.html"] = []byte(buildFixedShellHTML("/pdv", "SIR BEEF — Central Web de PDVs (Geral, Expedição & Caixa)"))
-		filesToCommit["cardapio/index.html"] = []byte(buildFixedShellHTML("/cardapio", "SIR BEEF — Cardápio Digital Online"))
-		filesToCommit["mesa/index.html"] = []byte(buildFixedShellHTML("/mesa", "SIR BEEF — Autoatendimento na Mesa"))
-		filesToCommit["rastreio/index.html"] = []byte(buildFixedShellHTML("/rastreio", "SIR BEEF — Rastreio de Entrega em Tempo Real"))
-		filesToCommit["index.html"] = []byte(buildFixedShellHTML("/cardapio", "SIR BEEF — Cardápio Digital Online"))
+		pdvShell := []byte(buildFixedShellHTML("/pdv", "SIR BEEF — Central Web de PDVs (Geral, Expedição & Caixa)"))
+		cardapioShell := []byte(buildFixedShellHTML("/cardapio", "SIR BEEF — Cardápio Digital Online"))
+		mesaShell := []byte(buildFixedShellHTML("/mesa", "SIR BEEF — Autoatendimento na Mesa"))
+		rastreioShell := []byte(buildFixedShellHTML("/rastreio", "SIR BEEF — Rastreio de Entrega em Tempo Real"))
+
+		filesToCommit["pdv/index.html"] = pdvShell
+		filesToCommit["pdv.html"] = pdvShell
+		filesToCommit["cardapio/index.html"] = cardapioShell
+		filesToCommit["cardapio.html"] = cardapioShell
+		filesToCommit["mesa/index.html"] = mesaShell
+		filesToCommit["mesa.html"] = mesaShell
+		filesToCommit["rastreio/index.html"] = rastreioShell
+		filesToCommit["rastreio.html"] = rastreioShell
+		filesToCommit["index.html"] = cardapioShell
 		filesToCommit[".nojekyll"] = []byte("")
 	}
 
 	if _, err := s.pushFilesAtomicallyToGitHub(filesToCommit, "Auto-sync tunnel_url: "+tunnelURL); err == nil {
+		s.lastSyncedTunnel = strings.TrimRight(tunnelURL, "/")
 		fmt.Printf("🐙 [GITHUB PAGES FIXO] Sincronizado! Cardápio: https://%s.github.io/cardapio | Rastreio: https://%s.github.io/rastreio | PDV: https://%s.github.io/pdv\n", cfg.Owner, cfg.Owner, cfg.Owner)
+	} else {
+		fmt.Printf("⚠️ [GITHUB SYNC RETRY] Falha temporária ao sincronizar tunnel.json (%v) — tentará novamente no próximo ciclo.\n", err)
 	}
 }
 
 func (s *Server) pushFilesAtomicallyToGitHub(files map[string][]byte, commitMsg string) (string, error) {
+	var lastErr error
+	for attempt := 1; attempt <= 3; attempt++ {
+		sha, err := s.pushFilesAtomicallyToGitHubOnce(files, commitMsg)
+		if err == nil {
+			return sha, nil
+		}
+		lastErr = err
+		time.Sleep(time.Duration(attempt) * 1500 * time.Millisecond)
+	}
+	return "", lastErr
+}
+
+func (s *Server) pushFilesAtomicallyToGitHubOnce(files map[string][]byte, commitMsg string) (string, error) {
 	ghCfgFile := filepath.Join(s.DataDir, "github_config.json")
 	b, err := os.ReadFile(ghCfgFile)
 	if err != nil {
@@ -720,13 +817,35 @@ func ensureWindowsNetworkReady(port string, exeDir string) {
 	out, err := checkCmd.CombinedOutput()
 	ruleExists := err == nil && strings.Contains(string(out), ruleName)
 
-	if ruleExists && (!isSubnet18 || has53) {
+	rootDir := filepath.Dir(exeDir)
+	starterBat := filepath.Join(rootDir, "INICIAR_ECOSSISTEMA_SIRBEEF.bat")
+	envModeBytes, _ := os.ReadFile(filepath.Join(exeDir, "data", "server_env_mode.txt"))
+	isTestMode := strings.EqualFold(strings.TrimSpace(string(envModeBytes)), "TESTE_DEV")
+
+	if isTestMode {
+		_ = exec.Command("schtasks", "/Delete", "/TN", "SirBeef_AutoStart_Admin", "/F").Run()
+		_ = exec.Command("reg", "delete", `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, "/v", "SirBeef_Server_Admin", "/f").Run()
+	}
+
+	taskCheck := exec.Command("schtasks", "/Query", "/TN", "SirBeef_AutoStart_Admin")
+	taskExists := isTestMode || (taskCheck.Run() == nil)
+
+	if ruleExists && (!isSubnet18 || has53) && taskExists {
 		fmt.Println("🛡️  [REDE LOCAL] Regra de Firewall '" + ruleName + "' e IP Wi-Fi já estão ativos e liberados.")
 		return
 	}
 
-	fmt.Println("🛡️  [REDE LOCAL] Configurando Firewall do Windows, Perfil Privado e IP Wi-Fi como Administrador...")
+	fmt.Println("🛡️  [REDE LOCAL] Configurando Firewall do Windows e Permissões de Rede como Administrador...")
 	exePath := filepath.Join(exeDir, "sirbeef-server.exe")
+
+	autoStartCmds := ""
+	if !isTestMode {
+		autoStartCmds = fmt.Sprintf(
+			"schtasks /Create /TN \"SirBeef_AutoStart_Admin\" /TR \"`\"%s`\" --autostart\" /SC ONLOGON /RL HIGHEST /F | Out-Null\r\n"+
+				"reg add \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\" /v \"SirBeef_Server_Admin\" /t REG_SZ /d \"schtasks /Run /TN `\"SirBeef_AutoStart_Admin`\"\" /f | Out-Null\r\n",
+			starterBat,
+		)
+	}
 
 	psScriptContent := fmt.Sprintf(
 		"Get-NetFirewallApplicationFilter | Where-Object { $_.Program -like '*sirbeef*' } | Get-NetFirewallRule | Where-Object { $_.Action -eq 'Block' } | Remove-NetFirewallRule -ErrorAction SilentlyContinue\r\n"+
@@ -736,9 +855,8 @@ func ensureWindowsNetworkReady(port string, exeDir string) {
 			"netsh advfirewall firewall add rule name=\"%s_OUT\" dir=out action=allow protocol=TCP localport=%s,80 profile=any | Out-Null\r\n"+
 			"netsh advfirewall firewall add rule name=\"%s_EXE\" dir=in action=allow program=\"%s\" enable=yes profile=any | Out-Null\r\n"+
 			"Get-NetConnectionProfile | Where-Object { $_.NetworkCategory -ne 'Private' } | ForEach-Object { Set-NetConnectionProfile -InterfaceIndex $_.InterfaceIndex -NetworkCategory Private -ErrorAction SilentlyContinue }\r\n"+
-			"netsh interface ipv4 set interface \"Wi-Fi\" dhcpstaticipcoexistence=enabled | Out-Null\r\n"+
-			"netsh interface ipv4 add address \"Wi-Fi\" 192.168.18.53 255.255.255.0 | Out-Null\r\n",
-		ruleName, ruleName, port, ruleName, port, ruleName, port, ruleName, exePath,
+			"%s",
+		ruleName, ruleName, port, ruleName, port, ruleName, port, ruleName, exePath, autoStartCmds,
 	)
 
 	tmpScript := filepath.Join(os.TempDir(), "sirbeef_net_init.ps1")
@@ -3329,7 +3447,7 @@ func (s *Server) handleWhatsAppStatus(w http.ResponseWriter, r *http.Request) {
 			Connected:   false,
 			Status:      "DISCONNECTED",
 			LastError:   "Módulo WhatsApp não inicializado",
-			CardapioURL: s.getTunnelURL() + "/cardapio",
+			CardapioURL: "https://sirbeefnup.github.io/cardapio",
 		})
 		return
 	}
@@ -3422,7 +3540,7 @@ func (s *Server) handleWhatsAppSendTest(w http.ResponseWriter, r *http.Request) 
 	if strings.TrimSpace(req.CustomerName) == "" {
 		req.CustomerName = "Cliente Teste"
 	}
-	webLink := s.getTunnelURL() + "/cardapio"
+	webLink := "https://sirbeefnup.github.io/cardapio"
 	if strings.TrimSpace(req.Message) == "" {
 		req.Message = whatsapp.BuildStaticGreeting(req.CustomerName, webLink)
 	}
@@ -3674,11 +3792,7 @@ func (s *Server) handleWhatsAppWebhook(w http.ResponseWriter, r *http.Request) {
 	s.Store.LogWhatsApp(req.Phone, req.CustomerName, "INBOUND", "MENSAGEM_CLIENTE", req.Message)
 
 	cfg := s.Store.GetPrinterConfig()
-	webLink := s.getTunnelURL() + "/cardapio"
-	ips := getLocalIPv4s()
-	if len(ips) > 0 && s.getTunnelURL() == "" {
-		webLink = fmt.Sprintf("http://%s:%s/cardapio", ips[0], s.Port)
-	}
+	webLink := "https://sirbeefnup.github.io/cardapio"
 
 	reply, trigger := s.processIncomingWhatsAppBotMessage(req.Phone, req.CustomerName, req.Message, webLink)
 
@@ -4357,10 +4471,17 @@ func (s *Server) handleSystemDeploy(w http.ResponseWriter, r *http.Request) {
 	switch action {
 	case "SET_ENV_MODE":
 		newMode := s.setServerEnvMode(req.EnvMode)
-		msg := "🧪 Servidor configurado em MODO TESTE / DESENVOLVIMENTO (Seu PC). Este PC NÃO irá sobrescrever o link oficial da Hamburgueria e seus clientes de teste ficam 100% isolados!"
+		exeDir, _ := os.Getwd()
+		starterBat := filepath.Join(filepath.Dir(exeDir), "INICIAR_ECOSSISTEMA_SIRBEEF.bat")
+		msg := "🧪 Servidor configurado em MODO TESTE / DESENVOLVIMENTO (Seu PC). O início automático com o Windows foi desativado neste PC e seus clientes de teste ficam 100% isolados!"
 		if newMode == "PRODUCAO_LOJA" {
-			msg = "🏪 Servidor configurado em MODO LOJA OFICIAL (PC da Hamburgueria). O túnel deste PC alimenta automaticamente https://sirbeefnup.github.io/pdv e /cardapio!"
+			_ = exec.Command("schtasks", "/Create", "/TN", "SirBeef_AutoStart_Admin", "/TR", fmt.Sprintf(`"%s" --autostart`, starterBat), "/SC", "ONLOGON", "/RL", "HIGHEST", "/F").Run()
+			_ = exec.Command("reg", "add", `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, "/v", "SirBeef_Server_Admin", "/t", "REG_SZ", "/d", `schtasks /Run /TN "SirBeef_AutoStart_Admin"`, "/f").Run()
+			msg = "🏪 Servidor configurado em MODO LOJA OFICIAL (PC da Hamburgueria). Início automático com o Windows (Modo ADM) ativado e link fixo sincronizado!"
 			go s.syncGitHubTunnelURLForce(s.getTunnelURL(), true)
+		} else {
+			_ = exec.Command("schtasks", "/Delete", "/TN", "SirBeef_AutoStart_Admin", "/F").Run()
+			_ = exec.Command("reg", "delete", `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, "/v", "SirBeef_Server_Admin", "/f").Run()
 		}
 		writeJSON(w, http.StatusOK, map[string]any{
 			"server_env_mode": newMode,
@@ -4424,6 +4545,7 @@ func (s *Server) handleSystemDeploy(w http.ResponseWriter, r *http.Request) {
 			{filepath.Join(exeDir, "internal", "models", "models.go"), "release/backend/internal/models/models.go"},
 			{filepath.Join(exeDir, "internal", "db", "db.go"), "release/backend/internal/db/db.go"},
 			{filepath.Join(exeDir, "internal", "whatsapp", "engine.go"), "release/backend/internal/whatsapp/engine.go"},
+			{filepath.Join(rootDir, "INICIAR_ECOSSISTEMA_SIRBEEF.bat"), "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat"},
 			{filepath.Join(rootDir, "SirBeef-SuperApp.apk"), "SirBeef-SuperApp.apk"},
 		}
 
@@ -4487,6 +4609,7 @@ func (s *Server) handleSystemDeploy(w http.ResponseWriter, r *http.Request) {
 			{"release/backend/internal/models/models.go", filepath.Join(exeDir, "internal", "models", "models.go")},
 			{"release/backend/internal/db/db.go", filepath.Join(exeDir, "internal", "db", "db.go")},
 			{"release/backend/internal/whatsapp/engine.go", filepath.Join(exeDir, "internal", "whatsapp", "engine.go")},
+			{"release/INICIAR_ECOSSISTEMA_SIRBEEF.bat", filepath.Join(rootDir, "INICIAR_ECOSSISTEMA_SIRBEEF.bat")},
 			{"SirBeef-SuperApp.apk", filepath.Join(rootDir, "SirBeef-SuperApp.apk")},
 		}
 
