@@ -1,8 +1,8 @@
 {
   "apk_direct_url": "https://raw.githubusercontent.com/sirbeefnup/sirbeefnup.github.io/main/SirBeef-SuperApp.apk",
   "apk_fixed_url": "https://sirbeefnup.github.io/apk",
-  "apk_version_code": 31,
-  "apk_version_name": "4.1.0",
+  "apk_version_code": 32,
+  "apk_version_name": "4.2.0",
   "cardapio_fixed_url": "https://sirbeefnup.github.io/cardapio",
   "hostname_url": "http://gui",
   "lan_ips": [
@@ -12,6 +12,6 @@
   "lan_no_port_url": "http://192.168.18.53",
   "lan_url": "http://192.168.18.53:8080",
   "pdv_fixed_url": "https://sirbeefnup.github.io/pdv",
-  "tunnel_url": "https://targeted-taken-marco-vendor.trycloudflare.com",
-  "updated_at": "2026-11-04T09:09:14-03:00"
+  "tunnel_url": "https://griffin-gone-surrounding-discs.trycloudflare.com",
+  "updated_at": "2026-11-04T10:01:05-03:00"
 }
