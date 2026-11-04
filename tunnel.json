@@ -1,8 +1,8 @@
 {
   "apk_direct_url": "https://raw.githubusercontent.com/sirbeefnup/sirbeefnup.github.io/main/SirBeef-SuperApp.apk",
   "apk_fixed_url": "https://sirbeefnup.github.io/apk",
-  "apk_version_code": 43,
-  "apk_version_name": "4.8.5",
+  "apk_version_code": 44,
+  "apk_version_name": "4.8.6",
   "cardapio_fixed_url": "https://sirbeefnup.github.io/cardapio",
   "hostname_url": "http://gui",
   "lan_ips": [
@@ -14,5 +14,5 @@
   "pdv_fixed_url": "https://sirbeefnup.github.io/pdv",
   "rastreio_fixed_url": "https://sirbeefnup.github.io/rastreio",
   "tunnel_url": "https://born-barcelona-nations-shape.trycloudflare.com",
-  "updated_at": "2026-11-04T19:32:14-03:00"
+  "updated_at": "2026-11-04T19:54:56-03:00"
 }
