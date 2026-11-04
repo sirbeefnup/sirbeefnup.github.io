@@ -3,7 +3,7 @@
     "sirbeef.db (Clientes/Vendas de Teste)",
     "whatsapp_session.db"
   ],
-  "published_at": "04/11/2026 13:19:25",
+  "published_at": "04/11/2026 13:37:52",
   "published_files": [
     "release/web/pdv.html",
     "release/web/index.html",
@@ -16,7 +16,7 @@
     "SirBeef-SuperApp.apk"
   ],
   "published_from_pc": "GUI",
-  "release_notes": "v4.8.1 (Build #39): Ambiente Teste vs Loja + Topo Fixo Kiosk + URL Fixa",
+  "release_notes": "v4.8.1 (Build #39): (1) Topo sempre fixo no modo Kiosk dos Tablets (Card da Mesa + Chamar Garcom/Conta/Descanso + Abas de Categorias permanecem fixos ao rolar os lanches); (2) Link https://sirbeefnup.github.io/pdv (e /cardapio e /rastreio) 100% fixo na barra de endereco do navegador, sem pular para trycloudflare.com!",
   "version_code": 39,
   "version_name": "4.8.1"
 }

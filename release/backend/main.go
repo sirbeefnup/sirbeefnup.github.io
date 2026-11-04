@@ -2089,9 +2089,30 @@ func (s *Server) handleOrderStatus(w http.ResponseWriter, r *http.Request) {
 		if updated != nil && len(req.ExtraItems) > 0 {
 			extraOrd := *updated
 			extraOrd.Items = req.ExtraItems
-			go s.dispatchOrderPhysicalPrint(extraOrd)
+			go s.dispatchOrderPhysicalPrintWithBanner(extraOrd, "*** ITEM ADICIONAL / ALTERADO ***")
 		}
 		writeJSON(w, http.StatusOK, updated)
+		return
+	case "REPRINT_ORDER":
+		ord, err := s.Store.GetOrderByIDOrQR(strconv.Itoa(req.OrderID))
+		if err != nil || ord == nil {
+			writeJSON(w, http.StatusNotFound, map[string]string{"error": "Pedido não encontrado para reimpressão."})
+			return
+		}
+		sectorTickets := s.Store.BuildOrderSectorTickets(*ord)
+		var sectorNames []string
+		for _, tk := range sectorTickets {
+			sectorNames = append(sectorNames, tk.StationName)
+		}
+		go s.dispatchOrderPhysicalPrintWithBanner(*ord, "*** REIMPRESSAO ***")
+		_ = s.Store.AddSystemLog("INFO", "REIMPRESSAO", fmt.Sprintf("Reimpressão disparada para o Pedido #%s em todos os setores (%s)", ord.OrderCode, strings.Join(sectorNames, ", ")), "", "")
+		writeJSON(w, http.StatusOK, map[string]any{
+			"reprinted":  true,
+			"order_id":   ord.ID,
+			"order_code": ord.OrderCode,
+			"sectors":    sectorNames,
+			"message":    fmt.Sprintf("🖨️ Reimpressão enviada com cabeçalho 'REIMPRESSÃO' para todos os setores do Pedido #%s!", ord.OrderCode),
+		})
 		return
 	case "EDIT_ORDER", "EXPEDICAO_EDIT_ORDER", "CONVERT_TO_DELIVERY":
 		extraOrd := models.Order{
@@ -2111,6 +2132,10 @@ func (s *Server) handleOrderStatus(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 			return
 		}
+		if updated != nil {
+			go s.dispatchOrderPhysicalPrintWithBanner(*updated, "*** PEDIDO ALTERADO / EDITADO ***")
+			_ = s.Store.AddSystemLog("INFO", "PEDIDO-EDITADO", fmt.Sprintf("Pedido #%s editado e reimpresso nos setores com aviso de PEDIDO ALTERADO", updated.OrderCode), "", "")
+		}
 		shifts, _ := s.Store.ListCashierShifts()
 		newTotVal := req.Total
 		if updated != nil {
@@ -2120,7 +2145,7 @@ func (s *Server) handleOrderStatus(w http.ResponseWriter, r *http.Request) {
 			"order":          updated,
 			"new_total":      newTotVal,
 			"cashier_shifts": shifts,
-			"message":        "Pedido atualizado e valor total recalculado no sistema!",
+			"message":        "Pedido atualizado, valor recalculado e reimpresso nos setores com aviso de PEDIDO ALTERADO!",
 		})
 		return
 	case "DELETE_ORDER":
@@ -2154,6 +2179,21 @@ func (s *Server) handleOrderStatus(w http.ResponseWriter, r *http.Request) {
 			"message": "🔔 Alarme enviado para o APK do Garçom avisando que o pedido está pronto na Cozinha!",
 		})
 		return
+	}
+	if strings.EqualFold(strings.TrimSpace(req.Status), "ENTREGUE") {
+		if curOrd, errOrd := s.Store.GetOrderByIDOrQR(strconv.Itoa(req.OrderID)); errOrd == nil && curOrd != nil {
+			origUp := strings.ToUpper(strings.TrimSpace(curOrd.OriginType))
+			tagUp := strings.ToUpper(strings.TrimSpace(curOrd.HeaderTag))
+			isDel := origUp == "DELIVERY" && !strings.Contains(tagUp, "RETIRADA")
+			isMesa := (curOrd.TableID != nil && *curOrd.TableID > 0) || origUp == "MESA" || origUp == "GARCOM" || origUp == "TABLET" || strings.Contains(tagUp, "MESA") || strings.Contains(tagUp, "BISTR")
+			isPaid := strings.EqualFold(strings.TrimSpace(curOrd.StatusPagamento), "PAGO")
+			if !isDel && !isMesa && !isPaid {
+				writeJSON(w, http.StatusBadRequest, map[string]string{
+					"error": "🔒 Pedidos de Retirada ou Balcão só podem ir para Entregues quando o Caixa Geral der baixa como PAGO!",
+				})
+				return
+			}
+		}
 	}
 	updated, err := s.Store.UpdateOrderStatus(req.OrderID, req.Status, req.MotoboyID, req.MotoboyName)
 	if err != nil {
@@ -2556,7 +2596,35 @@ func (s *Server) sendTicketToStation(st models.PrinterStation, ticketText string
 	return nil
 }
 
+func prependPrintBanner(ticketText string, banner string, cols int) string {
+	banner = strings.TrimSpace(banner)
+	if banner == "" {
+		return ticketText
+	}
+	if cols != 32 && cols != 48 {
+		cols = 48
+	}
+	div := strings.Repeat("=", cols)
+	pad := (cols - len(banner)) / 2
+	if pad < 0 {
+		pad = 0
+	}
+	centered := strings.Repeat(" ", pad) + banner
+	nowStr := time.Now().Format("02/01 15:04:05")
+	timeLabel := "HORA: " + nowStr
+	padTime := (cols - len(timeLabel)) / 2
+	if padTime < 0 {
+		padTime = 0
+	}
+	centeredTime := strings.Repeat(" ", padTime) + timeLabel
+	return fmt.Sprintf("%s\n%s\n%s\n%s\n", div, centered, centeredTime, div) + ticketText
+}
+
 func (s *Server) dispatchOrderPhysicalPrint(o models.Order) {
+	s.dispatchOrderPhysicalPrintWithBanner(o, "")
+}
+
+func (s *Server) dispatchOrderPhysicalPrintWithBanner(o models.Order, banner string) {
 	stations, _ := s.Store.ListPrinterStations()
 	stMap := map[string]models.PrinterStation{}
 	for _, st := range stations {
@@ -2574,7 +2642,8 @@ func (s *Server) dispatchOrderPhysicalPrint(o models.Order) {
 			// Pequena pausa entre setores para que a mesma impressora térmica USB processe e corte os 2 papéis separadamente (ex: 1 papel Lanche + 1 papel Porção)
 			time.Sleep(350 * time.Millisecond)
 		}
-		_ = s.sendTicketToStation(st, tk.TicketText)
+		txt := prependPrintBanner(tk.TicketText, banner, st.Columns)
+		_ = s.sendTicketToStation(st, txt)
 		printedStations[st.ID] = true
 	}
 
@@ -2587,7 +2656,7 @@ func (s *Server) dispatchOrderPhysicalPrint(o models.Order) {
 				if cols != 32 && cols != 48 {
 					cols = 48
 				}
-				receiptText := escpos.RenderTextReceipt(o, cols)
+				receiptText := prependPrintBanner(escpos.RenderTextReceipt(o, cols), banner, cols)
 				time.Sleep(350 * time.Millisecond)
 				_ = s.sendTicketToStation(st, receiptText)
 			}

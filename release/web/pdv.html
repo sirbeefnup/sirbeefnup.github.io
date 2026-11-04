@@ -5107,16 +5107,23 @@
               </div>
             `;
           } else {
+            const isOrderPaid = String(o.status_pagamento || '').toUpperCase() === 'PAGO';
             actionButtons = `
-              <div style="display:flex;gap:6px;margin-top:8px;">
+              <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
                 <button class="btn btn-red" style="padding:6px 10px;font-size:11.5px;font-weight:800;"
                         onclick="changeOrderStatus(${o.id}, 'PREPARANDO', true)">
                   ⬅️ Voltar Etapa
                 </button>
+                ${isOrderPaid ? `
                 <button class="btn btn-blue" style="flex:1;justify-content:center;font-size:11.5px;"
                         onclick="changeOrderStatus(${o.id}, 'ENTREGUE', false)">
-                  ➡️ Entregue no Balcão
+                  ➡️ Entregue no Balcão (Pago)
                 </button>
+                ` : `
+                <div style="flex:1;display:flex;align-items:center;justify-content:center;background:rgba(245,158,11,0.12);border:1px dashed #f59e0b;color:#fcd34d;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:800;text-align:center;" title="Dê baixa como PAGO na aba Caixa Geral para liberar e enviar automaticamente para Entregues">
+                  🔒 Aguardando PAGO no Caixa Geral
+                </div>
+                `}
               </div>
             `;
           }
@@ -5165,8 +5172,9 @@
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;gap:6px;flex-wrap:wrap;">
               <span><strong>R$ ${o.total.toFixed(2)}</strong> (${o.payment_method})</span>
-              <div style="display:flex;gap:5px;align-items:center;">
-                <button class="btn" style="padding:3px 8px;font-size:11px;border-color:var(--gold);color:var(--gold-light);" title="Editar pedido, adicionar lanches ou alterar adicionais" onclick="openExpedicaoEditOrderModal(${o.id})">✏️ Editar / + Lanche</button>
+              <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">
+                <button class="btn" style="padding:3px 8px;font-size:11px;border-color:var(--gold);color:var(--gold-light);" title="Editar pedido, adicionar lanches, mudar p/ Entrega ou alterar adicionais" onclick="openExpedicaoEditOrderModal(${o.id})">✏️ Editar / + Lanche</button>
+                <button class="btn" style="padding:3px 8px;font-size:11px;border-color:#38bdf8;color:#7dd3fc;font-weight:800;" title="Reimprimir pedido em todas as impressoras/setores (Lanches, Porções, Bebidas e Caixa) com aviso de REIMPRESSÃO no topo" onclick="reprintOrderAllSectorsFromExpedicao(${o.id})">🖨️ Reimprimir</button>
                 <button class="btn" style="padding:3px 8px;font-size:11px;" onclick="openReceiptModal(${o.id})">🖨️ Nota</button>
               </div>
             </div>
@@ -5176,6 +5184,36 @@
         `;
       }).join('') || '<p style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">Vazio</p>';
     });
+  }
+
+  async function reprintOrderAllSectorsFromExpedicao(orderId) {
+    const ord = (orders || []).find(o => o.id === orderId);
+    const codeLabel = ord ? `#${ord.order_code} (${ord.customer_name || ord.header_tag})` : `#${orderId}`;
+    if (!confirm(`🖨️ REIMPRIMIR PEDIDO EM TODOS OS SETORES?\n\nPedido: ${codeLabel}\n\nIsso enviará novamente as vias para todas as impressoras ativas dos itens deste pedido (Cozinha Lanches, Porções, Bebidas e Caixa) com o cabeçalho "*** REIMPRESSAO ***" no topo de cada papel.`)) {
+      return;
+    }
+    showPdvLoading('🖨️ Reimprimindo Pedido...', 'Enviando comandas com aviso de REIMPRESSÃO para todos os setores...');
+    try {
+      const res = await fetch('/api/orders/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'REPRINT_ORDER',
+          order_id: orderId
+        })
+      });
+      const data = await res.json();
+      hidePdvLoading();
+      if (!res.ok) {
+        alert(data.error || 'Erro ao reimprimir pedido.');
+        return;
+      }
+      const secTxt = Array.isArray(data.sectors) && data.sectors.length > 0 ? `\nSetores acionados: ${data.sectors.join(', ')}` : '';
+      alert(`${data.message || '🖨️ Reimpressão enviada com sucesso!'}${secTxt}`);
+    } catch (e) {
+      hidePdvLoading();
+      alert('Erro de comunicação ao solicitar reimpressão.');
+    }
   }
 
   function showPdvLoading(title, sub) {
@@ -12123,7 +12161,7 @@
     const feeInp = document.getElementById('eoDeliveryFeeInp');
     if (feeInp) {
       feeInp.value = Number(ord.delivery_fee || 0).toFixed(2);
-      const canEditFee = isLoggedUserAdmin() || (printerConfig && printerConfig.allow_staff_edit_delivery_fee !== false);
+      const canEditFee = isLoggedUserAdmin() || (operationalSettings && operationalSettings.allow_staff_edit_delivery_fee !== false);
       feeInp.readOnly = !canEditFee;
     }
     const statusMsg = document.getElementById('eoAddressLookupStatus');
@@ -12243,7 +12281,7 @@
     const feeInp = document.getElementById('eoDeliveryFeeInp');
     const curFee = parseFloat(feeInp?.value || '0');
     if (feeInp && (isNaN(curFee) || curFee <= 0)) {
-      const defFee = (printerConfig && typeof printerConfig.default_delivery_fee === 'number') ? printerConfig.default_delivery_fee : 8.00;
+      const defFee = (operationalSettings && typeof operationalSettings.default_delivery_fee === 'number') ? operationalSettings.default_delivery_fee : 8.00;
       feeInp.value = Number(defFee).toFixed(2);
     }
     refreshEditingOrderModalityUI(true);
@@ -12432,7 +12470,7 @@
       }
       document.getElementById('adminEditOrderModal').style.display = 'none';
       await loadAllData();
-      alert(`✅ Pedido atualizado com sucesso! Novo Valor Total: R$ ${Number(data.new_total ?? newTotal).toFixed(2)} recalculado em todo o sistema.`);
+      alert(`✅ Pedido atualizado com sucesso!\n💰 Novo Valor Total: R$ ${Number(data.new_total ?? newTotal).toFixed(2)} recalculado no sistema.\n🖨️ Comandas reimpressas automaticamente nos setores com aviso "*** PEDIDO ALTERADO / EDITADO ***" no topo!`);
     } catch (e) {
       hidePdvLoading();
       alert('Erro de comunicação ao salvar pedido.');
