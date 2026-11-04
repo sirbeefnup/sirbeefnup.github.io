@@ -3,22 +3,22 @@
     "sirbeef.db (Clientes/Vendas de Teste)",
     "whatsapp_session.db"
   ],
-  "published_at": "04/11/2026 18:31:08",
+  "published_at": "04/11/2026 18:48:09",
   "published_files": [
+    "release/web/pdv.html",
     "release/web/index.html",
     "release/web/rastreio.html",
-    "release/data/apk_version.json",
-    "release/backend/internal/escpos/escpos.go",
-    "release/web/pdv.html",
-    "release/backend/main.go",
     "release/backend/internal/models/models.go",
     "release/backend/internal/db/db.go",
     "release/backend/internal/whatsapp/engine.go",
+    "release/data/apk_version.json",
+    "release/backend/main.go",
+    "release/backend/internal/escpos/escpos.go",
     "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat",
     "release/backend/sirbeef-server.zip"
   ],
   "published_from_pc": "GUI",
-  "release_notes": "v4.8.3 (Build #41): (1) Cabecalho destacado MESA 15 em tamanho gigante nas comandas termicas ESC/POS; (2) Resolucao 1366x768 compactada perfeitamente no PDV (cupom e menus sem cortes verticais); (3) Auto-roteamento das impressoras uteis do Caixa (bebidas/fechamento); (4) Alinhamento automatico Mesa 15 QR Code.",
-  "version_code": 41,
-  "version_name": "4.8.3"
+  "release_notes": "v4.8.4 (Build #42): (1) Bloqueio anti-saida de tela cheia no PDV com modais nativos Sir Beef; (2) Cabecalho destacado MESA 15 em tamanho gigante nas comandas termicas ESC/POS; (3) Resolucao 1366x768 compactada perfeitamente no PDV (cupom e menus sem cortes verticais); (4) Auto-roteamento das impressoras uteis do Caixa (bebidas/fechamento); (5) Alinhamento automatico Mesa 15 QR Code.",
+  "version_code": 42,
+  "version_name": "4.8.4"
 }

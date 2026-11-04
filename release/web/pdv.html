@@ -489,6 +489,18 @@
 </head>
 <body>
 
+<!-- MODAL DE AVISO ANTI-SAÍDA DE TELA CHEIA (SIR BEEF CUSTOM ALERT) -->
+<div id="sirbeefCustomAlertBackdrop" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9999999;padding:16px;">
+  <div style="background:#13131a;border:2px solid #eab308;border-radius:16px;max-width:440px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,0.95);padding:24px;text-align:center;animation:sbAlertPop 0.18s ease-out;">
+    <div style="font-size:38px;margin-bottom:8px;">⚠️</div>
+    <div style="font-family:'Bayformance',sans-serif;font-size:20px;color:#eab308;letter-spacing:1px;margin-bottom:12px;">AVISO DO SISTEMA</div>
+    <div id="sirbeefCustomAlertMsg" style="color:#f1f5f9;font-size:14.5px;font-weight:600;line-height:1.55;margin-bottom:22px;white-space:pre-wrap;max-height:60vh;overflow-y:auto;padding:0 8px;"></div>
+    <button id="sirbeefCustomAlertBtn" onclick="closeSirBeefCustomAlert()" style="background:linear-gradient(135deg, #eab308, #ca8a04);color:#09090c;font-weight:900;font-size:15px;padding:11px 32px;border:none;border-radius:10px;cursor:pointer;box-shadow:0 6px 16px rgba(234,179,8,0.4);transition:transform 0.1s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+      ✓ ENTENDI
+    </button>
+  </div>
+</div>
+
 <div id="pdvLoadingOverlay">
   <div class="pdv-loading-card">
     <div class="pdv-spinner"></div>
@@ -3104,6 +3116,59 @@
 </div>
 
 <script>
+  // =========================================================================
+  // ANTI-SAÍDA DE TELA CHEIA: Substituição de window.alert por Modal Nativo do PDV
+  // Evita que o Chrome/Edge saia do modo Tela Cheia ao disparar alertas/avisos
+  // =========================================================================
+  (function setupAntiExitFullscreenAlerts() {
+    window.alert = function(msg) {
+      try {
+        const el = document.getElementById('sirbeefCustomAlertBackdrop');
+        const txt = document.getElementById('sirbeefCustomAlertMsg');
+        const btn = document.getElementById('sirbeefCustomAlertBtn');
+        if (el && txt && btn) {
+          txt.textContent = String(msg || '');
+          el.style.display = 'flex';
+          setTimeout(() => { try { btn.focus(); } catch(e){} }, 50);
+          return;
+        }
+      } catch(e) {}
+      console.warn("[PDV Alert]", msg);
+    };
+
+    window.closeSirBeefCustomAlert = function() {
+      const el = document.getElementById('sirbeefCustomAlertBackdrop');
+      if (el) el.style.display = 'none';
+    };
+
+    window.addEventListener('keydown', function(e) {
+      const el = document.getElementById('sirbeefCustomAlertBackdrop');
+      if (el && el.style.display === 'flex') {
+        if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+          window.closeSirBeefCustomAlert();
+        }
+      }
+    }, true);
+
+    const _origConfirm = window.confirm.bind(window);
+    window.confirm = function(msg) {
+      const wasFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      const res = _origConfirm(msg);
+      if (wasFs) {
+        setTimeout(() => {
+          const docEl = document.documentElement;
+          const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
+          if (reqFs && !document.fullscreenElement) {
+            reqFs.call(docEl).catch(() => {});
+          }
+        }, 150);
+      }
+      return res;
+    };
+  })();
+
   // =========================================================================
   // AUTO-CONEXÃO INTELIGENTE: Funciona tanto via http://localhost:8080/pdv
   // quanto se o arquivo pdv.html for aberto diretamente via file:/// no Windows!

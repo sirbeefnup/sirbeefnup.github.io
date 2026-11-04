@@ -1,7 +1,7 @@
 {
-    "release_notes":  "v4.8.3 (Build #41): (1) Cabecalho destacado MESA 15 em tamanho gigante nas comandas termicas ESC/POS; (2) Resolucao 1366x768 compactada perfeitamente no PDV (cupom e menus sem cortes verticais); (3) Auto-roteamento das impressoas uteis do Caixa (bebidas/fechamento); (4) Alinhamento automatico Mesa 15 QR Code.",
-    "version_code":  41,
+    "release_notes":  "v4.8.4 (Build #42): (1) Bloqueio anti-saida de tela cheia no PDV com modais nativos Sir Beef; (2) Cabecalho destacado MESA 15 em tamanho gigante nas comandas termicas ESC/POS; (3) Resolucao 1366x768 compactada perfeitamente no PDV (cupom e menus sem cortes verticais); (4) Auto-roteamento das impressoras uteis do Caixa (bebidas/fechamento); (5) Alinhamento automatico Mesa 15 QR Code.",
+    "version_code":  42,
     "file_size_bytes":  1823600,
-    "version_name":  "4.8.3",
-    "built_at":  "04/11/2026 18:24:00"
+    "version_name":  "4.8.4",
+    "built_at":  "04/11/2026 18:47:00"
 }
