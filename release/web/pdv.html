@@ -632,6 +632,21 @@
 </header>
 
 <main>
+  <!-- BARRA DE CONTINGÊNCIA DE IMPRESSÃO (POKA-YOKE FALHA COZINHA / BAR) -->
+  <div id="pdvPrintAlertBar" style="display:none;background:linear-gradient(135deg,#450a0a,#2b0d0d);border:2px solid #ef4444;border-radius:14px;padding:12px 18px;margin-bottom:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 8px 24px rgba(239,68,68,0.25);">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:26px;">⚠️</span>
+      <div>
+        <div style="font-size:15px;font-weight:900;color:#fca5a5;" id="pdvPrintAlertTitle">FALHA DE IMPRESSÃO NA COZINHA / BAR DETECTADA!</div>
+        <div style="font-size:12px;color:#fecaca;margin-top:2px;" id="pdvPrintAlertDesc">A impressora remota não respondeu. Clique ao lado para imprimir uma via de contingência imediatamente no Balcão/Caixa!</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn btn-green" id="btnReprintCounterAlert" style="padding:8px 16px;font-size:13px;font-weight:900;background:#22c55e;color:#052e16;" onclick="reprintCounterActiveAlert()">🖨️ Reimprimir no Balcão (1-Clique)</button>
+      <button type="button" class="btn" style="padding:8px 12px;font-size:12px;" onclick="dismissActivePrintAlert()">✕ Dispensar Alerta</button>
+    </div>
+  </div>
+
   <!-- BARRA DE AVISO AUTOMÁTICO QUANDO A LOJA ESTIVER FECHADA PELO HORÁRIO DE FUNCIONAMENTO -->
   <div id="storeHoursClosedBannerPdv" style="display:none;background:linear-gradient(135deg,#3b1111,#1a0c0c);border:2px solid var(--red);border-radius:14px;padding:12px 16px;margin-bottom:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
     <div>
@@ -2714,9 +2729,12 @@
 
     <div id="closeCashierExpectedSummary" style="background:#0d0d12;border:1px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:12px;font-size:12.5px;"></div>
 
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-      <span style="font-size:12px;font-weight:800;color:var(--gold-light);">🧮 VALORES CONFERIDOS PELO ADM:</span>
-      <button class="btn" style="padding:3px 9px;font-size:11px;border-color:var(--green);color:#86efac;" onclick="fillExactCloseCashierValues()">⚡ Preencher Valores Exatos</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gold-light);cursor:pointer;user-select:none;">
+        <input type="checkbox" id="closeBlindDropChk" onchange="toggleCloseCashierBlindMode()" style="width:16px;height:16px;" />
+        <span>🙈 <strong>Fechamento Cego</strong> (Ocultar Totais do Sistema)</span>
+      </label>
+      <button class="btn" id="btnFillExactCashier" style="padding:3px 9px;font-size:11px;border-color:var(--green);color:#86efac;" onclick="fillExactCloseCashierValues()">⚡ Preencher Valores Exatos</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
       <div>
@@ -3783,9 +3801,69 @@
       }
 
       renderAll();
+      checkActivePrintAlerts();
     } catch (e) {
       console.error('Erro ao sincronizar PDV:', e);
     }
+  }
+
+  // =========================================================================
+  // ALERTA DE CONTINGÊNCIA DE IMPRESSÃO (POKA-YOKE PARA FALHA NA COZINHA / BAR)
+  // =========================================================================
+  let currentActivePrintAlert = null;
+  async function checkActivePrintAlerts() {
+    try {
+      const res = await fetch('/api/admin/print-alerts');
+      if (!res.ok) return;
+      const data = await res.json();
+      const alerts = (data && data.alerts) || [];
+      const bar = document.getElementById('pdvPrintAlertBar');
+      if (!bar) return;
+      if (alerts.length > 0) {
+        currentActivePrintAlert = alerts[alerts.length - 1];
+        const titleEl = document.getElementById('pdvPrintAlertTitle');
+        const descEl = document.getElementById('pdvPrintAlertDesc');
+        if (titleEl) titleEl.textContent = `⚠️ FALHA DE IMPRESSÃO: Pedido #${currentActivePrintAlert.order_code} (${currentActivePrintAlert.sector_name})`;
+        if (descEl) descEl.textContent = `A impressora '${currentActivePrintAlert.target_info}' falhou: ${currentActivePrintAlert.error_msg || 'inacessível'}. Clique ao lado para imprimir a via de contingência no Balcão!`;
+        bar.style.display = 'flex';
+      } else {
+        currentActivePrintAlert = null;
+        bar.style.display = 'none';
+      }
+    } catch (e) {}
+  }
+
+  async function reprintCounterActiveAlert() {
+    if (!currentActivePrintAlert) return;
+    const btn = document.getElementById('btnReprintCounterAlert');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Reimprimindo no Balcão...'; }
+    try {
+      const res = await fetch('/api/admin/print-alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'REPRINT_COUNTER', alert_id: currentActivePrintAlert.id, order_id: currentActivePrintAlert.order_id })
+      });
+      alert('✅ Via de contingência impressa com sucesso no Balcão!');
+      document.getElementById('pdvPrintAlertBar').style.display = 'none';
+      currentActivePrintAlert = null;
+    } catch (e) {
+      alert('Erro ao enviar reimpressão para o balcão.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '🖨️ Reimprimir no Balcão (1-Clique)'; }
+    }
+  }
+
+  async function dismissActivePrintAlert() {
+    if (!currentActivePrintAlert) return;
+    try {
+      await fetch('/api/admin/print-alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'DISMISS', alert_id: currentActivePrintAlert.id })
+      });
+      document.getElementById('pdvPrintAlertBar').style.display = 'none';
+      currentActivePrintAlert = null;
+    } catch (e) {}
   }
 
   function populatePdvTableSelect() {
@@ -7074,11 +7152,31 @@
     document.getElementById('adminCloseCashierModal').style.display = 'flex';
   }
 
+  let isCashierBlindModeActive = false;
+  function toggleCloseCashierBlindMode() {
+    isCashierBlindModeActive = !!(document.getElementById('closeBlindDropChk') && document.getElementById('closeBlindDropChk').checked);
+    const btnFill = document.getElementById('btnFillExactCashier');
+    if (btnFill) {
+      btnFill.style.display = isCashierBlindModeActive ? 'none' : 'inline-block';
+    }
+    syncCloseCashierExpectedBox();
+  }
+
   function syncCloseCashierExpectedBox() {
     const cashierId = parseInt((document.getElementById('closeCashierSelect') || {}).value || '2', 10);
     const shift = cashierShifts.find(s => s.cashier_id === cashierId) || getCurrentOperatorCashierShift();
     const box = document.getElementById('closeCashierExpectedSummary');
     if (!box || !shift) return;
+    if (isCashierBlindModeActive) {
+      box.innerHTML = `
+        <div style="background:rgba(59,130,246,0.12);border:1px solid #3b82f6;border-radius:8px;padding:10px;color:#bfdbfe;font-size:12.5px;">
+          🔒 <strong>MODO FECHAMENTO CEGO ATIVO (POKA-YOKE ANTI-FRAUDE):</strong><br>
+          Os totais calculados pelo sistema estão ocultos para evitar lançamentos forçados. Conte as cédulas e moedas físicas na gaveta e os comprovantes e preencha abaixo. A conferência completa e divergências serão impressas no cupom de auditoria.
+        </div>
+      `;
+      checkCloseCashierDiffLive();
+      return;
+    }
     box.innerHTML = `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
         <div>💵 Troco Inicial: <strong>R$ ${(shift.opening_float || 0).toFixed(2)}</strong></div>
@@ -7106,6 +7204,14 @@
     const shift = cashierShifts.find(s => s.cashier_id === cashierId) || getCurrentOperatorCashierShift();
     const alertEl = document.getElementById('closeCashierDiffAlert');
     if (!alertEl || !shift) return;
+
+    if (isCashierBlindModeActive) {
+      alertEl.style.background = 'rgba(59,130,246,0.14)';
+      alertEl.style.border = '1px solid #3b82f6';
+      alertEl.style.color = '#93c5fd';
+      alertEl.textContent = '🔒 Fechamento Cego: Os valores informados serão auditados contra o movimento e impressos no comprovante.';
+      return;
+    }
 
     const rawCash = document.getElementById('closeCountedCashInp').value.trim();
     const rawCard = document.getElementById('closeCountedCardInp').value.trim();
@@ -7210,7 +7316,9 @@
   }
 
   // Salva apenas os novos itens adicionados no Caixa dentro da Comanda/Mesa aberta (sem fechar a conta ainda)
+  let isSavingNewItemsToComanda = false;
   async function saveNewItemsToOpenComanda() {
+    if (isSavingNewItemsToComanda) return;
     if (pdvCart.length === 0) {
       alert('Adicione pelo menos 1 novo produto no catálogo ou leitor antes de lançar na comanda.');
       return;
@@ -7239,6 +7347,7 @@
       items: pdvCart
     };
 
+    isSavingNewItemsToComanda = true;
     showPdvLoading('➕ Adicionando Itens na Comanda...', 'Enviando novos itens para a comanda e roteando para as impressoras (Bar / Cozinha)...');
     try {
       const res = await fetch('/api/orders', {
@@ -7262,6 +7371,8 @@
     } catch (e) {
       hidePdvLoading();
       alert('Erro ao adicionar itens na comanda.');
+    } finally {
+      isSavingNewItemsToComanda = false;
     }
   }
 
@@ -7530,7 +7641,13 @@
     }
   }
 
+  let isFinalizingCaixaSale = false;
+
   async function confirmBalloonFinalizeSale() {
+    if (isFinalizingCaixaSale) {
+      console.warn('⚠️ Operação de finalização já em andamento. Clique duplo ignorado.');
+      return;
+    }
     const orig = document.getElementById('pdvOriginSelect').value;
     const activeCmd = activeCupomComandaId ? comandas.find(c => c.id === activeCupomComandaId) : null;
     const activeTbl = (!activeCmd && activeCupomTableId) ? tables.find(t => t.id === activeCupomTableId) : null;
@@ -7579,10 +7696,18 @@
       if (balloonPayMode === 'DINHEIRO_PIX') {
         finalPayMethod = `DINHEIRO R$ ${v1.toFixed(2)} + PIX R$ ${v2.toFixed(2)}`;
         const handed = parseFloat(document.getElementById('balloonSplitCashHandedInp').value || '0');
+        if (handed > 0 && handed < v1 - 0.01) {
+          alert(`💵 O dinheiro entregue em mãos (R$ ${handed.toFixed(2)}) é menor que a parcela em dinheiro da venda (R$ ${v1.toFixed(2)})!`);
+          return;
+        }
         finalReceived = handed > v1 ? handed : v1;
       } else if (balloonPayMode === 'DINHEIRO_CARTAO') {
         finalPayMethod = `DINHEIRO R$ ${v1.toFixed(2)} + ${cardTag} R$ ${v2.toFixed(2)}`;
         const handed = parseFloat(document.getElementById('balloonSplitCashHandedInp').value || '0');
+        if (handed > 0 && handed < v1 - 0.01) {
+          alert(`💵 O dinheiro entregue em mãos (R$ ${handed.toFixed(2)}) é menor que a parcela em dinheiro da venda (R$ ${v1.toFixed(2)})!`);
+          return;
+        }
         finalReceived = handed > v1 ? handed : v1;
       } else if (balloonPayMode === 'PIX_CARTAO') {
         finalPayMethod = `PIX R$ ${v1.toFixed(2)} + ${cardTag} R$ ${v2.toFixed(2)}`;
@@ -7606,259 +7731,273 @@
   }
 
   async function finalizeCaixaSale(overridePayMethod, overrideReceivedVal) {
+    if (isFinalizingCaixaSale) return;
     if (!ensureCashierShiftOpenBeforeSale()) return;
 
-    const orig = document.getElementById('pdvOriginSelect').value;
-    const pay = overridePayMethod || document.getElementById('pdvPaymentSelect').value || 'PIX';
-    const rec = typeof overrideReceivedVal === 'number' ? overrideReceivedVal : parseFloat(document.getElementById('pdvReceivedInput').value || '0');
-    const activeCmd = activeCupomComandaId ? comandas.find(c => c.id === activeCupomComandaId) : null;
-    const activeTbl = (!activeCmd && activeCupomTableId) ? tables.find(t => t.id === activeCupomTableId) : null;
-    const activeRet = (!activeCmd && !activeTbl && activeCupomRetiradaOrderId) ? orders.find(o => o.id === activeCupomRetiradaOrderId) : null;
-    const curCashierId = loggedPdvUser ? loggedPdvUser.id : 2;
-    const curCashierName = loggedPdvUser ? loggedPdvUser.name : 'Operador Caixa';
-
-    const existingTotal = activeCmd ? (activeCmd.total || 0) : (activeTbl ? (activeTbl.current_total || 0) : (activeRet ? (activeRet.total || 0) : 0));
-    const newSub = pdvCart.reduce((a, i) => a + i.total_price, 0);
-    const curFee = (orig === 'DELIVERY') ? parseFloat(document.getElementById('pdvDeliveryFee').value || '0') : 0;
-    const grossTot = existingTotal + newSub + curFee;
-    const activeCouponCode = (appliedPdvCoupon && appliedPdvCoupon.code) ? appliedPdvCoupon.code : '';
-    const activeCouponDisc = getAppliedPdvCouponDiscount(grossTot);
-
-    // CASO 0: Recebendo e entregando um Pedido de Retirada carregado no Cupom
-    if (activeRet) {
-      showPdvLoading(`🛍️ Recebendo Retirada #${activeRet.order_code}...`, 'Contabilizando no caixa, somando pontos de fidelidade e liberando entrega...');
-      try {
-        const res = await fetch('/api/orders/status', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'PAY_RETIRADA',
-            order_id: activeRet.id,
-            payment_method: pay,
-            cashier_id: curCashierId,
-            extra_items: pdvCart,
-            coupon_code: activeCouponCode,
-            discount_amount: activeCouponDisc
-          })
-        });
-        const updatedOrd = await res.json();
-        clearPdvCart();
-        await loadAllData();
-        hidePdvLoading();
-        if (updatedOrd && updatedOrd.id) {
-          openReceiptModal(updatedOrd.id);
-        }
-        return;
-      } catch (e) {
-        hidePdvLoading();
-        alert('Erro ao finalizar recebimento da Retirada.');
-        return;
-      }
-    }
-
-    // CASO 1: Fechando uma Comanda Individual carregada no Cupom de Venda — Caixa Geral
-    if (activeCmd) {
-      if ((activeCmd.items || []).length === 0 && pdvCart.length === 0) {
-        alert('Esta comanda ainda não possui itens. Adicione um item antes de fechar.');
-        return;
-      }
-      const shortCode = cleanComandaShortCode(activeCmd.comanda_code);
-      showPdvLoading(`💰 Fechando Comanda ${shortCode}...`, 'Registrando pagamento no turno do operador e gerando cupom...');
-      try {
-        if (pdvCart.length > 0) {
-          const hasKitchen = orderHasKitchenItems({ items: pdvCart });
-          await fetch('/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              origin_type: 'MESA',
-              table_id: activeCmd.table_id,
-              comanda_id: activeCmd.id,
-              comanda_code: shortCode,
-              header_tag: `${shortCode} ${firstTwoNamesJS(activeCmd.customer_name)}`.trim(),
-              customer_name: activeCmd.customer_name,
-              customer_phone: activeCmd.customer_phone,
-              status: hasKitchen ? 'PREPARANDO' : 'ENTREGUE',
-              payment_method: pay,
-              status_pagamento: 'PAGO',
-              cashier_id: curCashierId,
-              cashier_name: curCashierName,
-              items: pdvCart
-            })
-          });
-        }
-
-        // Agora encerra e marca a Comanda como PAGA vinculando ao turno do operador de caixa logado
-        const payRes = await fetch('/api/comandas', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'PAY',
-            comanda_id: activeCmd.id,
-            payment_method: pay,
-            cashier_id: curCashierId,
-            coupon_code: activeCouponCode,
-            discount_amount: activeCouponDisc
-          })
-        });
-        const closedCmd = await payRes.json();
-
-        previewComandaThermalInSpooler(closedCmd || activeCmd);
-        const receiptTxt = document.getElementById('caixaReceiptPreview').textContent;
-
-        clearPdvCart();
-        await loadAllData();
-        hidePdvLoading();
-
-        document.getElementById('modalReceiptPre').textContent = receiptTxt;
-        document.getElementById('modalQrBox').style.display = 'none';
-        document.getElementById('receiptModal').style.display = 'flex';
-        return;
-      } catch (e) {
-        hidePdvLoading();
-        alert('Erro ao fechar comanda no caixa.');
-        return;
-      }
-    }
-
-    // CASO 2: Fechando uma Mesa inteira carregada no Cupom de Venda — Caixa Geral
-    if (activeTbl) {
-      showPdvLoading(`💰 Fechando ${activeTbl.label}...`, 'Recebendo conta da mesa e liberando sessão do Tablet/Salão...');
-      try {
-        if (pdvCart.length > 0) {
-          const hasKitchen = orderHasKitchenItems({ items: pdvCart });
-          await fetch('/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              origin_type: 'MESA',
-              table_id: activeTbl.id,
-              header_tag: activeTbl.label,
-              customer_name: activeTbl.label,
-              status: hasKitchen ? 'PREPARANDO' : 'ENTREGUE',
-              payment_method: pay,
-              status_pagamento: 'PAGO',
-              cashier_id: curCashierId,
-              cashier_name: curCashierName,
-              items: pdvCart
-            })
-          });
-        }
-        await fetch('/api/tables/status', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            table_id: activeTbl.id,
-            status: 'LIVRE',
-            reset_total: true,
-            payment_method: pay,
-            cashier_id: curCashierId,
-            coupon_code: activeCouponCode,
-            discount_amount: activeCouponDisc
-          })
-        });
-        clearPdvCart();
-        await loadAllData();
-        hidePdvLoading();
-        alert(`✅ ${activeTbl.label} recebida e liberada com sucesso!`);
-        return;
-      } catch (e) {
-        hidePdvLoading();
-        return;
-      }
-    }
-
-    // CASO 3: Venda Balcão/Mercado, Pedido para Retirada (RETIRADA), Pedido para Entrega (DELIVERY) ou Nova Mesa
-    if (pdvCart.length === 0) {
-      alert('Adicione pelo menos 1 produto ao cupom antes de finalizar.');
-      return;
-    }
-
-    const rawCustName = (document.getElementById('pdvCustomerName').value || '').trim();
-    const custName = rawCustName || (orig === 'RETIRADA' ? 'Cliente Retirada Balcão' : 'Consumidor Balcão');
-    const custPhone = (document.getElementById('pdvCustomerPhone').value || '').trim();
-    const addrText = (document.getElementById('pdvAddressText').value || '').trim();
-    const fee = (orig === 'DELIVERY') ? parseFloat(document.getElementById('pdvDeliveryFee').value || '0') : 0;
-
-    if (orig === 'DELIVERY' && !addrText) {
-      alert('📍 Informe o Endereço Completo de Entrega para criar o pedido de Delivery!');
-      document.getElementById('pdvAddressText').focus();
-      return;
-    }
-    if (orig === 'DELIVERY' && (!custName || custName === 'Consumidor Balcão')) {
-      alert('👤 Informe o Nome do Cliente para identificar o pedido de Entrega!');
-      document.getElementById('pdvCustomerName').focus();
-      return;
-    }
-
-    const hasKitchen = orderHasKitchenItems({ items: pdvCart });
-    let headerTag = hasKitchen ? '[BALCÃO COZINHA]' : '[PDV MERCADO]';
-    let status = hasKitchen ? 'PREPARANDO' : 'ENTREGUE';
-    let tableId = null;
-
-    if (orig === 'RETIRADA') {
-      headerTag = '[RETIRADA]';
-      status = 'PREPARANDO';
-    } else if (orig === 'DELIVERY') {
-      headerTag = '[DELIVERY]';
-      status = 'PREPARANDO';
-    } else if (orig === 'MESA') {
-      tableId = parseInt(document.getElementById('pdvTableSelect').value || '1', 10) || 1;
-      headerTag = `MESA ${String(tableId).padStart(2, '0')}`;
-      status = 'PREPARANDO';
-    }
-
-    const payload = {
-      origin_type: orig,
-      table_id: tableId,
-      header_tag: headerTag,
-      customer_name: custName,
-      customer_phone: custPhone,
-      address_text: orig === 'DELIVERY' ? addrText : (orig === 'RETIRADA' ? 'Retirada no Balcão Sir Beef' : (hasKitchen ? 'Consumo / Retirada no Balcão' : '')),
-      status: status,
-      payment_method: pay,
-      status_pagamento: (orig === 'DELIVERY' || orig === 'MESA') ? 'PENDENTE' : 'PAGO',
-      change_for: rec,
-      delivery_fee: fee,
-      coupon_code: activeCouponCode,
-      discount_amount: activeCouponDisc,
-      cashier_id: curCashierId,
-      cashier_name: curCashierName,
-      items: pdvCart
-    };
-
-    showPdvLoading(
-      orig === 'RETIRADA' ? '🛍️ Criando Pedido p/ Retirada e Enviando p/ Cozinha...' : (orig === 'DELIVERY' ? '🛵 Criando Pedido p/ Entrega (Delivery)...' : (hasKitchen ? '🍔 Finalizando Balcão e Enviando p/ Cozinha...' : '🛒 Finalizando Venda no Caixa...')),
-      'Registrando no turno do caixa, baixando estoque e enviando para a Cozinha / Expedição...'
-    );
+    isFinalizingCaixaSale = true;
     try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const created = await res.json();
-      if (!res.ok) {
-        hidePdvLoading();
-        alert((created && created.error) || 'Erro ao lançar pedido no servidor.');
+      const orig = document.getElementById('pdvOriginSelect').value;
+      const pay = overridePayMethod || document.getElementById('pdvPaymentSelect').value || 'PIX';
+      const rec = typeof overrideReceivedVal === 'number' ? overrideReceivedVal : parseFloat(document.getElementById('pdvReceivedInput').value || '0');
+      const activeCmd = activeCupomComandaId ? comandas.find(c => c.id === activeCupomComandaId) : null;
+      const activeTbl = (!activeCmd && activeCupomTableId) ? tables.find(t => t.id === activeCupomTableId) : null;
+      const activeRet = (!activeCmd && !activeTbl && activeCupomRetiradaOrderId) ? orders.find(o => o.id === activeCupomRetiradaOrderId) : null;
+      const curCashierId = loggedPdvUser ? loggedPdvUser.id : 2;
+      const curCashierName = loggedPdvUser ? loggedPdvUser.name : 'Operador Caixa';
+
+      const existingTotal = activeCmd ? (activeCmd.total || 0) : (activeTbl ? (activeTbl.current_total || 0) : (activeRet ? (activeRet.total || 0) : 0));
+      const newSub = pdvCart.reduce((a, i) => a + i.total_price, 0);
+      const curFee = (orig === 'DELIVERY') ? parseFloat(document.getElementById('pdvDeliveryFee').value || '0') : 0;
+      const grossTot = existingTotal + newSub + curFee;
+      const activeCouponCode = (appliedPdvCoupon && appliedPdvCoupon.code) ? appliedPdvCoupon.code : '';
+      const activeCouponDisc = getAppliedPdvCouponDiscount(grossTot);
+
+      if (pay === 'DINHEIRO') {
+        const activeTotal = Math.max(0, Math.round((grossTot - activeCouponDisc) * 100) / 100);
+        if (rec > 0 && rec < activeTotal - 0.01) {
+          alert(`💵 O valor recebido em dinheiro (R$ ${rec.toFixed(2)}) é menor que o total a pagar (R$ ${activeTotal.toFixed(2)})!`);
+          return;
+        }
+      }
+
+      // CASO 0: Recebendo e entregando um Pedido de Retirada carregado no Cupom
+      if (activeRet) {
+        showPdvLoading(`🛍️ Recebendo Retirada #${activeRet.order_code}...`, 'Contabilizando no caixa, somando pontos de fidelidade e liberando entrega...');
+        try {
+          const res = await fetch('/api/orders/status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'PAY_RETIRADA',
+              order_id: activeRet.id,
+              payment_method: pay,
+              cashier_id: curCashierId,
+              extra_items: pdvCart,
+              coupon_code: activeCouponCode,
+              discount_amount: activeCouponDisc
+            })
+          });
+          const updatedOrd = await res.json();
+          clearPdvCart();
+          await loadAllData();
+          hidePdvLoading();
+          if (updatedOrd && updatedOrd.id) {
+            openReceiptModal(updatedOrd.id);
+          }
+          return;
+        } catch (e) {
+          hidePdvLoading();
+          alert('Erro ao finalizar recebimento da Retirada.');
+          return;
+        }
+      }
+
+      // CASO 1: Fechando uma Comanda Individual carregada no Cupom de Venda — Caixa Geral
+      if (activeCmd) {
+        if ((activeCmd.items || []).length === 0 && pdvCart.length === 0) {
+          alert('Esta comanda ainda não possui itens. Adicione um item antes de fechar.');
+          return;
+        }
+        const shortCode = cleanComandaShortCode(activeCmd.comanda_code);
+        showPdvLoading(`💰 Fechando Comanda ${shortCode}...`, 'Registrando pagamento no turno do operador e gerando cupom...');
+        try {
+          if (pdvCart.length > 0) {
+            const hasKitchen = orderHasKitchenItems({ items: pdvCart });
+            await fetch('/api/orders', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                origin_type: 'MESA',
+                table_id: activeCmd.table_id,
+                comanda_id: activeCmd.id,
+                comanda_code: shortCode,
+                header_tag: `${shortCode} ${firstTwoNamesJS(activeCmd.customer_name)}`.trim(),
+                customer_name: activeCmd.customer_name,
+                customer_phone: activeCmd.customer_phone,
+                status: hasKitchen ? 'PREPARANDO' : 'ENTREGUE',
+                payment_method: pay,
+                status_pagamento: 'PAGO',
+                cashier_id: curCashierId,
+                cashier_name: curCashierName,
+                items: pdvCart
+              })
+            });
+          }
+
+          // Agora encerra e marca a Comanda como PAGA vinculando ao turno do operador de caixa logado
+          const payRes = await fetch('/api/comandas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'PAY',
+              comanda_id: activeCmd.id,
+              payment_method: pay,
+              cashier_id: curCashierId,
+              coupon_code: activeCouponCode,
+              discount_amount: activeCouponDisc
+            })
+          });
+          const closedCmd = await payRes.json();
+
+          previewComandaThermalInSpooler(closedCmd || activeCmd);
+          const receiptTxt = document.getElementById('caixaReceiptPreview').textContent;
+
+          clearPdvCart();
+          await loadAllData();
+          hidePdvLoading();
+
+          document.getElementById('modalReceiptPre').textContent = receiptTxt;
+          document.getElementById('modalQrBox').style.display = 'none';
+          document.getElementById('receiptModal').style.display = 'flex';
+          return;
+        } catch (e) {
+          hidePdvLoading();
+          alert('Erro ao fechar comanda no caixa.');
+          return;
+        }
+      }
+
+      // CASO 2: Fechando uma Mesa inteira carregada no Cupom de Venda — Caixa Geral
+      if (activeTbl) {
+        showPdvLoading(`💰 Fechando ${activeTbl.label}...`, 'Recebendo conta da mesa e liberando sessão do Tablet/Salão...');
+        try {
+          if (pdvCart.length > 0) {
+            const hasKitchen = orderHasKitchenItems({ items: pdvCart });
+            await fetch('/api/orders', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                origin_type: 'MESA',
+                table_id: activeTbl.id,
+                header_tag: activeTbl.label,
+                customer_name: activeTbl.label,
+                status: hasKitchen ? 'PREPARANDO' : 'ENTREGUE',
+                payment_method: pay,
+                status_pagamento: 'PAGO',
+                cashier_id: curCashierId,
+                cashier_name: curCashierName,
+                items: pdvCart
+              })
+            });
+          }
+          await fetch('/api/tables/status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              table_id: activeTbl.id,
+              status: 'LIVRE',
+              reset_total: true,
+              payment_method: pay,
+              cashier_id: curCashierId,
+              coupon_code: activeCouponCode,
+              discount_amount: activeCouponDisc
+            })
+          });
+          clearPdvCart();
+          await loadAllData();
+          hidePdvLoading();
+          alert(`✅ ${activeTbl.label} recebida e liberada com sucesso!`);
+          return;
+        } catch (e) {
+          hidePdvLoading();
+          return;
+        }
+      }
+
+      // CASO 3: Venda Balcão/Mercado, Pedido para Retirada (RETIRADA), Pedido para Entrega (DELIVERY) ou Nova Mesa
+      if (pdvCart.length === 0) {
+        alert('Adicione pelo menos 1 produto ao cupom antes de finalizar.');
         return;
       }
-      clearPdvCart();
-      await loadAllData();
-      hidePdvLoading();
-      document.getElementById('caixaReceiptPreview').textContent = created.receipt_preview || '';
-      const nfceActive = !!(operationalSettings && operationalSettings.nfce_enabled === true);
-      const nfceEmitChk = document.getElementById('balloonNfceEmitChk');
-      const nfceCpfVal = ((document.getElementById('balloonNfceCpfInp') || {}).value || '').trim();
-      // Emite NFC-e na hora somente se o operador do caixa marcou a opção na confirmação
-      if (nfceActive && nfceEmitChk && nfceEmitChk.checked) {
-        await emitAndPrintNFCeForOrder(created.id, nfceCpfVal, true);
-      } else {
-        openReceiptModal(created.id);
+
+      const rawCustName = (document.getElementById('pdvCustomerName').value || '').trim();
+      const custName = rawCustName || (orig === 'RETIRADA' ? 'Cliente Retirada Balcão' : 'Consumidor Balcão');
+      const custPhone = (document.getElementById('pdvCustomerPhone').value || '').trim();
+      const addrText = (document.getElementById('pdvAddressText').value || '').trim();
+      const fee = (orig === 'DELIVERY') ? parseFloat(document.getElementById('pdvDeliveryFee').value || '0') : 0;
+
+      if (orig === 'DELIVERY' && !addrText) {
+        alert('📍 Informe o Endereço Completo de Entrega para criar o pedido de Delivery!');
+        document.getElementById('pdvAddressText').focus();
+        return;
       }
-    } catch (e) {
-      hidePdvLoading();
-      alert('Erro de conexão ao finalizar venda.');
+      if (orig === 'DELIVERY' && (!custName || custName === 'Consumidor Balcão')) {
+        alert('👤 Informe o Nome do Cliente para identificar o pedido de Entrega!');
+        document.getElementById('pdvCustomerName').focus();
+        return;
+      }
+
+      const hasKitchen = orderHasKitchenItems({ items: pdvCart });
+      let headerTag = hasKitchen ? '[BALCÃO COZINHA]' : '[PDV MERCADO]';
+      let status = hasKitchen ? 'PREPARANDO' : 'ENTREGUE';
+      let tableId = null;
+
+      if (orig === 'RETIRADA') {
+        headerTag = '[RETIRADA]';
+        status = 'PREPARANDO';
+      } else if (orig === 'DELIVERY') {
+        headerTag = '[DELIVERY]';
+        status = 'PREPARANDO';
+      } else if (orig === 'MESA') {
+        tableId = parseInt(document.getElementById('pdvTableSelect').value || '1', 10) || 1;
+        headerTag = `MESA ${String(tableId).padStart(2, '0')}`;
+        status = 'PREPARANDO';
+      }
+
+      const payload = {
+        origin_type: orig,
+        table_id: tableId,
+        header_tag: headerTag,
+        customer_name: custName,
+        customer_phone: custPhone,
+        address_text: orig === 'DELIVERY' ? addrText : (orig === 'RETIRADA' ? 'Retirada no Balcão Sir Beef' : (hasKitchen ? 'Consumo / Retirada no Balcão' : '')),
+        status: status,
+        payment_method: pay,
+        status_pagamento: (orig === 'DELIVERY' || orig === 'MESA') ? 'PENDENTE' : 'PAGO',
+        change_for: rec,
+        delivery_fee: fee,
+        coupon_code: activeCouponCode,
+        discount_amount: activeCouponDisc,
+        cashier_id: curCashierId,
+        cashier_name: curCashierName,
+        items: pdvCart
+      };
+
+      showPdvLoading(
+        orig === 'RETIRADA' ? '🛍️ Criando Pedido p/ Retirada e Enviando p/ Cozinha...' : (orig === 'DELIVERY' ? '🛵 Criando Pedido p/ Entrega (Delivery)...' : (hasKitchen ? '🍔 Finalizando Balcão e Enviando p/ Cozinha...' : '🛒 Finalizando Venda no Caixa...')),
+        'Registrando no turno do caixa, baixando estoque e enviando para a Cozinha / Expedição...'
+      );
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const created = await res.json();
+        if (!res.ok) {
+          hidePdvLoading();
+          alert((created && created.error) || 'Erro ao lançar pedido no servidor.');
+          return;
+        }
+        clearPdvCart();
+        await loadAllData();
+        hidePdvLoading();
+        document.getElementById('caixaReceiptPreview').textContent = created.receipt_preview || '';
+        const nfceActive = !!(operationalSettings && operationalSettings.nfce_enabled === true);
+        const nfceEmitChk = document.getElementById('balloonNfceEmitChk');
+        const nfceCpfVal = ((document.getElementById('balloonNfceCpfInp') || {}).value || '').trim();
+        // Emite NFC-e na hora somente se o operador do caixa marcou a opção na confirmação
+        if (nfceActive && nfceEmitChk && nfceEmitChk.checked) {
+          await emitAndPrintNFCeForOrder(created.id, nfceCpfVal, true);
+        } else {
+          openReceiptModal(created.id);
+        }
+      } catch (e) {
+        hidePdvLoading();
+        alert('Erro de conexão ao finalizar venda.');
+      }
+    } finally {
+      isFinalizingCaixaSale = false;
     }
   }
 

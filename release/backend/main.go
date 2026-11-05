@@ -34,6 +34,8 @@ type Server struct {
 	remotePrintersByPC map[string][]models.DetectedPrinter
 	remotePCSeenAt     map[string]time.Time
 	remotePrintQueue   []models.RemotePrintJob
+	printAlertsMu      sync.Mutex
+	recentPrintAlerts  []models.PrintAlert
 }
 
 func main() {
@@ -147,6 +149,7 @@ func main() {
 	mux.HandleFunc("/api/coupons/validate", srv.withCORS(srv.handleValidateCoupon))
 	mux.HandleFunc("/api/admin/printer", srv.withCORS(srv.handlePrinterConfig))
 	mux.HandleFunc("/api/admin/printers", srv.withCORS(srv.handlePrinterStations))
+	mux.HandleFunc("/api/admin/print-alerts", srv.withCORS(srv.handlePrintAlerts))
 	mux.HandleFunc("/api/printers/download-cashier-bridge", srv.withCORS(srv.handleDownloadCashierBridge))
 	mux.HandleFunc("/api/operational-settings", srv.withCORS(srv.handleOperationalSettings))
 	mux.HandleFunc("/api/waiter/alerts", srv.withCORS(srv.handleWaiterAlerts))
@@ -2301,8 +2304,12 @@ func (s *Server) handleOrderStatus(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if updated != nil {
-			go s.dispatchOrderPhysicalPrintWithBanner(*updated, "*** PEDIDO ALTERADO / EDITADO ***")
-			_ = s.Store.AddSystemLog("INFO", "PEDIDO-EDITADO", fmt.Sprintf("Pedido #%s editado e reimpresso nos setores com aviso de PEDIDO ALTERADO", updated.OrderCode), "", "")
+			if strings.EqualFold(updated.Status, "CANCELADO") {
+				go s.dispatchOrderCancellationPrint(*updated, "CANCELADO PELO ADMINISTRADOR")
+			} else {
+				go s.dispatchOrderPhysicalPrintWithBanner(*updated, "*** PEDIDO ALTERADO / EDITADO ***")
+			}
+			_ = s.Store.AddSystemLog("INFO", "PEDIDO-EDITADO", fmt.Sprintf("Pedido #%s editado e notificado nos setores", updated.OrderCode), "", "")
 		}
 		shifts, _ := s.Store.ListCashierShifts()
 		newTotVal := req.Total
@@ -2367,6 +2374,9 @@ func (s *Server) handleOrderStatus(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
+	}
+	if strings.EqualFold(req.Status, "CANCELADO") && updated != nil {
+		go s.dispatchOrderCancellationPrint(*updated, "CANCELADO NA EXPEDIÇÃO / OPERAÇÃO")
 	}
 	// Se for pedido de Mesa / Salão / Tablet e a Cozinha/Expedição mudou para PRONTO, também aciona automaticamente o garçom se o alarme estiver ativo!
 	if strings.EqualFold(req.Status, "PRONTO") && updated != nil {
@@ -2528,9 +2538,13 @@ func (s *Server) handleCashierShifts(w http.ResponseWriter, r *http.Request) {
 			adminName = "Guilherme (Diretor / ADM)"
 		}
 		if strings.EqualFold(req.Action, "CLOSE") {
-			if _, err := s.Store.CloseCashierShiftWithReconciliation(req.CashierID, adminName, req.CountedCash, req.CountedCard, req.CountedPix, req.ValidateMatch); err != nil {
+			closed, err := s.Store.CloseCashierShiftWithReconciliation(req.CashierID, adminName, req.CountedCash, req.CountedCard, req.CountedPix, req.ValidateMatch)
+			if err != nil {
 				writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 				return
+			}
+			if closed != nil {
+				go s.dispatchCashierShiftClosePhysicalPrint(*closed)
 			}
 		} else {
 			_, _ = s.Store.OpenCashierShift(req.CashierID, req.OpeningFloat, adminName)
@@ -2811,7 +2825,9 @@ func (s *Server) dispatchOrderPhysicalPrintWithBanner(o models.Order, banner str
 			time.Sleep(350 * time.Millisecond)
 		}
 		txt := prependPrintBanner(tk.TicketText, banner, st.Columns)
-		_ = s.sendTicketToStation(st, txt)
+		if err := s.sendTicketToStation(st, txt); err != nil {
+			s.recordPrintAlert(o.ID, o.OrderCode, st, err.Error(), txt)
+		}
 		printedStations[st.ID] = true
 	}
 
@@ -2838,10 +2854,152 @@ func (s *Server) dispatchOrderPhysicalPrintWithBanner(o models.Order, banner str
 				}
 				receiptText := prependPrintBanner(escpos.RenderTextReceipt(o, cols), banner, cols)
 				time.Sleep(350 * time.Millisecond)
-				_ = s.sendTicketToStation(st, receiptText)
+				if err := s.sendTicketToStation(st, receiptText); err != nil {
+					s.recordPrintAlert(o.ID, o.OrderCode, st, err.Error(), receiptText)
+				}
 				printedStations[st.ID] = true
 			}
 		}
+	}
+}
+
+func (s *Server) dispatchOrderCancellationPrint(o models.Order, reason string) {
+	stations, _ := s.Store.ListPrinterStations()
+	stMap := map[string]models.PrinterStation{}
+	for _, st := range stations {
+		stMap[st.ID] = st
+	}
+	tickets := s.Store.BuildOrderSectorTickets(o)
+	for i, tk := range tickets {
+		st, ok := stMap[tk.StationID]
+		if !ok || !st.Active {
+			continue
+		}
+		if i > 0 {
+			time.Sleep(350 * time.Millisecond)
+		}
+		txt := escpos.RenderCancellationTicket(o, st, reason)
+		_ = s.sendTicketToStation(st, txt)
+	}
+}
+
+func (s *Server) dispatchCashierShiftClosePhysicalPrint(shift models.CashierShift) {
+	stations, _ := s.Store.ListPrinterStations()
+	for _, st := range stations {
+		if !st.Active {
+			continue
+		}
+		isUseful := strings.TrimSpace(st.WindowsPrinterName) != "" || strings.TrimSpace(st.PrinterIP) != ""
+		isCaixaNamed := strings.Contains(strings.ToUpper(st.Name), "CAIXA") || strings.Contains(strings.ToUpper(st.WindowsPrinterName), "CAIXA") || strings.Contains(strings.ToUpper(st.ID), "CAIXA")
+		if isUseful && (st.PrintFiscalNotes || isCaixaNamed) {
+			ticket := escpos.RenderCashierShiftCloseTicket(shift, st.Columns)
+			_ = s.sendTicketToStation(st, ticket)
+			break
+		}
+	}
+}
+
+func (s *Server) recordPrintAlert(orderID int, orderCode string, st models.PrinterStation, errMsg string, ticketText string) {
+	s.printAlertsMu.Lock()
+	defer s.printAlertsMu.Unlock()
+	alert := models.PrintAlert{
+		ID:         fmt.Sprintf("pa_%d_%d", orderID, time.Now().UnixNano()),
+		OrderID:    orderID,
+		OrderCode:  orderCode,
+		StationID:  st.ID,
+		SectorName: st.Name,
+		TargetInfo: fmt.Sprintf("%s (%s)", st.PCName, st.WindowsPrinterName),
+		ErrorMsg:   errMsg,
+		TicketText: ticketText,
+		CreatedAt:  time.Now().Format("15:04:05"),
+		Resolved:   false,
+	}
+	s.recentPrintAlerts = append(s.recentPrintAlerts, alert)
+	if len(s.recentPrintAlerts) > 30 {
+		s.recentPrintAlerts = s.recentPrintAlerts[len(s.recentPrintAlerts)-30:]
+	}
+	_ = s.Store.AddSystemLog("ERROR", "IMPRESSAO-FALHA", fmt.Sprintf("⚠️ Falha na impressora '%s' (%s) no Pedido #%s: %s", st.Name, st.WindowsPrinterName, orderCode, errMsg), "", st.PCName)
+}
+
+func (s *Server) handlePrintAlerts(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		s.printAlertsMu.Lock()
+		defer s.printAlertsMu.Unlock()
+		var unresolved []models.PrintAlert
+		for _, a := range s.recentPrintAlerts {
+			if !a.Resolved {
+				unresolved = append(unresolved, a)
+			}
+		}
+		writeJSON(w, http.StatusOK, map[string]any{
+			"alerts": unresolved,
+		})
+		return
+	}
+	if r.Method == http.MethodPost {
+		var req struct {
+			Action  string `json:"action"` // REPRINT_COUNTER, DISMISS, DISMISS_ALL
+			AlertID string `json:"alert_id"`
+			OrderID int    `json:"order_id"`
+		}
+		_ = json.NewDecoder(r.Body).Decode(&req)
+		s.printAlertsMu.Lock()
+		defer s.printAlertsMu.Unlock()
+
+		if req.Action == "DISMISS_ALL" {
+			for i := range s.recentPrintAlerts {
+				s.recentPrintAlerts[i].Resolved = true
+			}
+			writeJSON(w, http.StatusOK, map[string]any{"success": true})
+			return
+		}
+
+		var target *models.PrintAlert
+		for i := range s.recentPrintAlerts {
+			if s.recentPrintAlerts[i].ID == req.AlertID || (req.OrderID > 0 && s.recentPrintAlerts[i].OrderID == req.OrderID) {
+				target = &s.recentPrintAlerts[i]
+				break
+			}
+		}
+
+		if req.Action == "DISMISS" {
+			if target != nil {
+				target.Resolved = true
+			}
+			writeJSON(w, http.StatusOK, map[string]any{"success": true})
+			return
+		}
+
+		if req.Action == "REPRINT_COUNTER" {
+			if target != nil {
+				target.Resolved = true
+				stations, _ := s.Store.ListPrinterStations()
+				var counterStation *models.PrinterStation
+				for i := range stations {
+					st := &stations[i]
+					if st.Active && (strings.Contains(strings.ToUpper(st.Name), "CAIXA") || strings.Contains(strings.ToUpper(st.WindowsPrinterName), "CAIXA") || strings.Contains(strings.ToUpper(st.ID), "CAIXA")) {
+						counterStation = st
+						break
+					}
+				}
+				if counterStation == nil {
+					for i := range stations {
+						if stations[i].Active && strings.TrimSpace(stations[i].WindowsPrinterName) != "" {
+							counterStation = &stations[i]
+							break
+						}
+					}
+				}
+				if counterStation != nil {
+					contingencyText := prependPrintBanner(target.TicketText, "*** CONTINGÊNCIA - REIMPRESSO NO BALCÃO ***", counterStation.Columns)
+					_ = s.sendTicketToStation(*counterStation, contingencyText)
+					_ = s.Store.AddSystemLog("WARN", "REIMPRESSAO-CONTINGENCIA", fmt.Sprintf("Ticket de contingência do Pedido #%s redirecionado para '%s'", target.OrderCode, counterStation.Name), "", counterStation.PCName)
+				}
+			}
+			writeJSON(w, http.StatusOK, map[string]any{"reprinted": true})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{"success": true})
 	}
 }
 

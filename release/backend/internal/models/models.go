@@ -525,4 +525,18 @@ type MotoboyLiveLocation struct {
 	IsLive        bool    `json:"is_live"`
 }
 
+type PrintAlert struct {
+	ID         string `json:"id"`
+	OrderID    int    `json:"order_id"`
+	OrderCode  string `json:"order_code"`
+	StationID  string `json:"station_id"`
+	SectorName string `json:"sector_name"`
+	TargetInfo string `json:"target_info"`
+	ErrorMsg   string `json:"error_msg"`
+	TicketText string `json:"ticket_text"`
+	CreatedAt  string `json:"created_at"`
+	Resolved   bool   `json:"resolved"`
+}
+
+
 

@@ -1766,8 +1766,19 @@ func (s *Store) LookupBarcode(code string) (*models.Product, float64, error) {
 			p.TrackStock = trackStock == 1
 			p.Active = active == 1
 			_ = json.Unmarshal([]byte(modJSON), &p.ModifierGroups)
-			grams, _ := strconv.ParseFloat(weightGramsStr, 64)
-			qtyKg := grams / 1000.0
+
+			// Suporte duplo Poka-Yoke: Balanças Toledo/Filizola configuradas por Peso (código tipo '0') ou por Preço Total (código tipo '1')
+			payloadVal, _ := strconv.ParseFloat(weightGramsStr, 64)
+			qtyKg := 1.0
+			isPriceEncoded := (len(code) > 5 && code[5] == '1') || (len(code) > 6 && code[6] == '1')
+			if isPriceEncoded && p.Price > 0.009 {
+				// Carga útil representa centavos do valor total pago na balança (ex: 02540 = R$ 25,40)
+				totalPrice := payloadVal / 100.0
+				qtyKg = totalPrice / p.Price
+			} else {
+				// Carga útil representa gramas (ex: 00750 = 750g = 0.750 kg)
+				qtyKg = payloadVal / 1000.0
+			}
 			if qtyKg <= 0 {
 				qtyKg = 1.0
 			}
@@ -3289,9 +3300,12 @@ func (s *Store) PayAndCloseComanda(comandaID int, paymentMethod string, cashierI
 	nowISO := time.Now().Format("2006-01-02 15:04:05")
 	var tableID int
 	var cmdTotal float64
-	var cmdCode, custName string
-	if err := s.DB.QueryRow(`SELECT COALESCE(table_id, 0), COALESCE(total, 0), COALESCE(comanda_code, ''), COALESCE(customer_name, '') FROM comandas WHERE id = ?`, comandaID).Scan(&tableID, &cmdTotal, &cmdCode, &custName); err != nil {
+	var cmdCode, custName, curStatus string
+	if err := s.DB.QueryRow(`SELECT COALESCE(status, ''), COALESCE(table_id, 0), COALESCE(total, 0), COALESCE(comanda_code, ''), COALESCE(customer_name, '') FROM comandas WHERE id = ?`, comandaID).Scan(&curStatus, &tableID, &cmdTotal, &cmdCode, &custName); err != nil {
 		return nil, err
+	}
+	if strings.EqualFold(curStatus, "PAGA") && !strings.EqualFold(paymentMethod, "CANCELADA_ZERADA") {
+		return nil, fmt.Errorf("⚠️ Esta comanda %s já foi recebida e encerrada por outro terminal/caixa!", cmdCode)
 	}
 	var activeOrders int
 	var activeSum float64

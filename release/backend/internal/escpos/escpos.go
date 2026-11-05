@@ -422,6 +422,117 @@ func RenderComandaClosureTicket(cmd models.Comanda, columns int) string {
 	return sb.String()
 }
 
+// RenderCancellationTicket gera o ticket físico de cancelamento urgente com tarja de aviso para a Cozinha / Bar (Descarte Zero).
+func RenderCancellationTicket(order models.Order, station models.PrinterStation, reason string) string {
+	cols := station.Columns
+	if cols != 32 && cols != 48 {
+		cols = 48
+	}
+	var sb strings.Builder
+	divEq := strings.Repeat("=", cols)
+	divStar := strings.Repeat("*", cols)
+	divDash := strings.Repeat("-", cols)
+
+	sb.WriteString(divStar + "\n")
+	sb.WriteString(centerText(">>> ATENCAO COZINHA / BAR <<<", cols) + "\n")
+	sb.WriteString(centerText("*** PEDIDO CANCELADO ***", cols) + "\n")
+	sb.WriteString(centerText("!!! NAO PREPARAR ESTES ITENS !!!", cols) + "\n")
+	sb.WriteString(divStar + "\n")
+	bigBanner, detailLine := ExtractOrderProminentModality(order)
+	sb.WriteString(centerText("[ "+bigBanner+" ]", cols) + "\n")
+	if detailLine != "" && !strings.EqualFold(detailLine, bigBanner) {
+		sb.WriteString(centerText(detailLine, cols) + "\n")
+	}
+	sb.WriteString(divDash + "\n")
+	sb.WriteString(formatLeftRight(fmt.Sprintf("PEDIDO: #%s", order.OrderCode), time.Now().Format("02/01 15:04"), cols) + "\n")
+	if order.CustomerName != "" {
+		sb.WriteString(truncateRunes("CLIENTE: "+strings.ToUpper(order.CustomerName), cols) + "\n")
+	}
+	if reason != "" {
+		sb.WriteString(truncateRunes("MOTIVO: "+strings.ToUpper(reason), cols) + "\n")
+	}
+	sb.WriteString(divDash + "\n")
+	sb.WriteString(centerText("ITENS A CANCELAR / DESPREZAR:", cols) + "\n")
+	for _, item := range order.Items {
+		qtyStr := fmt.Sprintf("%.0fx", item.Quantity)
+		if item.Quantity != float64(int(item.Quantity)) {
+			qtyStr = fmt.Sprintf("%.3fkg", item.Quantity)
+		}
+		line := fmt.Sprintf("[CANCELADO] %s %s", qtyStr, strings.ToUpper(item.ProductName))
+		for _, wl := range wrapText(line, cols) {
+			sb.WriteString(wl + "\n")
+		}
+		for _, mod := range item.SelectedModifiers {
+			for _, wl := range wrapText("  - "+mod.OptionName, cols) {
+				sb.WriteString(wl + "\n")
+			}
+		}
+	}
+	sb.WriteString(divStar + "\n")
+	sb.WriteString(centerText("INTERROMPER PRODUCAO IMEDIATAMENTE", cols) + "\n")
+	sb.WriteString(divEq + "\n")
+	return sb.String()
+}
+
+// RenderCashierShiftCloseTicket gera o cupom de auditoria térmica para o fechamento de caixa (inclusive com conferência cega).
+func RenderCashierShiftCloseTicket(shift models.CashierShift, columns int) string {
+	if columns != 32 && columns != 48 {
+		columns = 48
+	}
+	var sb strings.Builder
+	divEq := strings.Repeat("=", columns)
+	divDash := strings.Repeat("-", columns)
+	divStar := strings.Repeat("*", columns)
+
+	sb.WriteString(divEq + "\n")
+	sb.WriteString(centerText("SIR BEEF - BURGERS & BOUTIQUE", columns) + "\n")
+	sb.WriteString(centerText("AUDITORIA DE FECHAMENTO DE CAIXA", columns) + "\n")
+	sb.WriteString(divStar + "\n")
+	sb.WriteString(formatLeftRight("OPERADOR:", shift.CashierName, columns) + "\n")
+	if shift.CashierUsername != "" {
+		sb.WriteString(formatLeftRight("LOGIN:", shift.CashierUsername, columns) + "\n")
+	}
+	sb.WriteString(formatLeftRight("ABERTURA:", shift.OpenedAt, columns) + "\n")
+	sb.WriteString(formatLeftRight("FECHAMENTO:", shift.ClosedAt, columns) + "\n")
+	if shift.ClosedByAdmin != "" {
+		sb.WriteString(formatLeftRight("ADM RESPONSAVEL:", shift.ClosedByAdmin, columns) + "\n")
+	}
+	sb.WriteString(divDash + "\n")
+
+	sb.WriteString(formatLeftRight("FUNDO DE TROCO INICIAL:", fmt.Sprintf("R$ %.2f", shift.OpeningFloat), columns) + "\n")
+	sb.WriteString(formatLeftRight("QTD DE VENDAS / CUPONS:", fmt.Sprintf("%d", shift.SalesCount), columns) + "\n")
+	sb.WriteString(formatLeftRight("VENDAS EM DINHEIRO:", fmt.Sprintf("R$ %.2f", shift.CashSalesTotal), columns) + "\n")
+	sb.WriteString(formatLeftRight("VENDAS EM CARTAO:", fmt.Sprintf("R$ %.2f", shift.CardSalesTotal), columns) + "\n")
+	sb.WriteString(formatLeftRight("VENDAS EM PIX:", fmt.Sprintf("R$ %.2f", shift.PixSalesTotal), columns) + "\n")
+	sb.WriteString(formatLeftRight("TOTAL MOVIMENTADO:", fmt.Sprintf("R$ %.2f", shift.TotalMoved), columns) + "\n")
+	sb.WriteString(divDash + "\n")
+
+	sb.WriteString(centerText("--- CONFERENCIA FISICA (CEGA) ---", columns) + "\n")
+	sb.WriteString(formatLeftRight("DINHEIRO GAVETA ESPERADO:", fmt.Sprintf("R$ %.2f", shift.ExpectedDrawerCash), columns) + "\n")
+	sb.WriteString(formatLeftRight("DINHEIRO CONFERIDO:", fmt.Sprintf("R$ %.2f", shift.CountedCash), columns) + "\n")
+	diffCash := shift.CountedCash - shift.ExpectedDrawerCash
+	if shift.CountedCash > 0.001 {
+		diffLabel := "BATIDO (EXATO)"
+		if diffCash > 0.05 {
+			diffLabel = fmt.Sprintf("SOBRA: +R$ %.2f", diffCash)
+		} else if diffCash < -0.05 {
+			diffLabel = fmt.Sprintf("FALTA: -R$ %.2f", -diffCash)
+		}
+		sb.WriteString(formatLeftRight("DIFERENCA DINHEIRO:", diffLabel, columns) + "\n")
+	}
+
+	sb.WriteString(formatLeftRight("CARTAO CONFERIDO:", fmt.Sprintf("R$ %.2f", shift.CountedCard), columns) + "\n")
+	sb.WriteString(formatLeftRight("PIX CONFERIDO:", fmt.Sprintf("R$ %.2f", shift.CountedPix), columns) + "\n")
+	sb.WriteString(divDash + "\n\n")
+
+	sb.WriteString(centerText("________________________________________", columns) + "\n")
+	sb.WriteString(centerText("Assinatura do Operador de Caixa", columns) + "\n\n")
+	sb.WriteString(centerText("________________________________________", columns) + "\n")
+	sb.WriteString(centerText("Assinatura do Administrador (ADM)", columns) + "\n")
+	sb.WriteString(divEq + "\n")
+	return sb.String()
+}
+
 // BuildRawTextTicketESCPOS transforma qualquer texto de setor/conta/alerta em payload ESC/POS binário com comando de corte de papel (guilhotina).
 func BuildRawTextTicketESCPOS(ticketText string, cutPaper bool) []byte {
 	var buf bytes.Buffer
