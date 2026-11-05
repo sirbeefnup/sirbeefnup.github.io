@@ -50,10 +50,12 @@
       will-change: transform, margin-bottom, opacity;
     }
     header.header-hidden {
-      transform: translateY(-100%);
-      margin-bottom: calc(-1 * var(--header-height-reclaim, 68px));
-      opacity: 0;
-      pointer-events: none;
+      transform: translateY(-100%) !important;
+      margin-top: calc(-1 * var(--header-height-reclaim, 68px)) !important;
+      margin-bottom: 0 !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
     }
     #headerTopHoverTrigger {
       position: fixed;
@@ -621,8 +623,8 @@
       <button type="button" class="btn" style="padding:4px 7px;font-size:11px;" onclick="stepPdvScreenScale(5)" title="Aumentar tamanho da tela neste PC">➕</button>
       <button type="button" class="btn" id="hdrCompactHdBtn" style="padding:4px 7px;font-size:11px;border-color:#38bdf8;color:#7dd3fc;" onclick="togglePdvCompactHdMode()" title="Modo Compacto Vertical para telas 1366x768 (Cabe os 5 botões e o Cupom inteiro na tela sem diminuir a letra!)">📐 Compacto</button>
       <button type="button" class="btn" id="hdrFullscreenBtn" style="padding:4px 7px;font-size:11px;border-color:var(--green);color:#86efac;" onclick="togglePdvFullscreen()" title="Abrir em Tela Cheia (Esconde barras do navegador para ganhar mais espaço vertical)">⛶ Tela Cheia</button>
-      <button type="button" class="btn" id="hdrAutoHideBtn" style="padding:4px 7px;font-size:11px;border-color:#a855f7;color:#d8b4fe;" onclick="toggleHeaderAutoHide()" title="Auto-Ocultar Menu Superior (O menu recolhe após alguns segundos e volta ao mover o mouse para o topo)">
-        <span id="hdrAutoHideIcon">🚀</span> <span id="hdrAutoHideLabel">Auto-Ocultar</span>
+      <button type="button" class="btn btn-gold" id="hdrAutoHideBtn" style="padding:4px 7px;font-size:11px;border-color:var(--gold-light);color:#000;font-weight:700;" onclick="toggleHeaderAutoHide()" title="Auto-Ocultar ATIVADO. O menu recolhe após alguns segundos e volta ao mover o mouse para o topo. Clique para FIXAR permanente.">
+        <span id="hdrAutoHideIcon">📌</span> <span id="hdrAutoHideLabel">Fixar Menu</span>
       </button>
     </div>
     <button class="btn btn-red" style="padding:8px 11px;font-size:12px;" onclick="logoutPdvOperator()">🚪 Sair</button>
@@ -13626,6 +13628,120 @@
     }
   }
 
+  // =========================================================================
+  // AUTO-OCULTAR MENU SUPERIOR (MAXIMIZAÇÃO DINÂMICA DE ESPAÇO ÚTIL NA TELA)
+  // O menu superior desliza para cima após inatividade e retorna imediatamente
+  // quando o operador mover o cursor do mouse em direção ao topo da tela (<= 55px).
+  // =========================================================================
+  var isHeaderAutoHideEnabled = (localStorage.getItem('sirbeef_pdv_autohide_header') !== 'OFF');
+  var headerHideTimer = null;
+  var isHeaderCurrentlyHidden = false;
+
+  function isAnyPdvModalOpen() {
+    var openModals = document.querySelectorAll('.modal-backdrop');
+    for (var i = 0; i < openModals.length; i++) {
+      var m = openModals[i];
+      if (m && (m.style.display === 'flex' || m.style.display === 'block')) return true;
+    }
+    var customAlert = document.getElementById('sirbeefCustomAlertBackdrop');
+    if (customAlert && (customAlert.style.display === 'flex' || customAlert.style.display === 'block')) return true;
+    return false;
+  }
+
+  function showPdvHeader() {
+    var hdr = document.getElementById('mainPdvHeader');
+    if (!hdr) return;
+    if (headerHideTimer) {
+      clearTimeout(headerHideTimer);
+      headerHideTimer = null;
+    }
+    isHeaderCurrentlyHidden = false;
+    hdr.classList.remove('header-hidden');
+    hdr.style.marginTop = '';
+    document.body.classList.remove('header-is-hidden');
+  }
+
+  function hidePdvHeader() {
+    if (!isHeaderAutoHideEnabled) return;
+    if (isAnyPdvModalOpen()) return;
+    var hdr = document.getElementById('mainPdvHeader');
+    if (!hdr) return;
+    var h = hdr.offsetHeight || 68;
+    hdr.style.setProperty('--header-height-reclaim', h + 'px');
+    isHeaderCurrentlyHidden = true;
+    hdr.classList.add('header-hidden');
+    document.body.classList.add('header-is-hidden');
+  }
+
+  function scheduleHeaderHide(delayMs) {
+    if (!isHeaderAutoHideEnabled) return;
+    if (headerHideTimer) clearTimeout(headerHideTimer);
+    headerHideTimer = setTimeout(function() {
+      hidePdvHeader();
+    }, delayMs || 3000);
+  }
+
+  function toggleHeaderAutoHide(forceState) {
+    if (typeof forceState === 'boolean') {
+      isHeaderAutoHideEnabled = forceState;
+    } else {
+      isHeaderAutoHideEnabled = !isHeaderAutoHideEnabled;
+    }
+    localStorage.setItem('sirbeef_pdv_autohide_header', isHeaderAutoHideEnabled ? 'ON' : 'OFF');
+    updateHeaderAutoHideUI();
+    if (isHeaderAutoHideEnabled) {
+      scheduleHeaderHide(2500);
+    } else {
+      showPdvHeader();
+    }
+  }
+
+  function updateHeaderAutoHideUI() {
+    var btn = document.getElementById('hdrAutoHideBtn');
+    var icon = document.getElementById('hdrAutoHideIcon');
+    var label = document.getElementById('hdrAutoHideLabel');
+    if (btn) {
+      if (isHeaderAutoHideEnabled) {
+        btn.classList.add('btn-gold');
+        btn.style.borderColor = 'var(--gold-light)';
+        btn.style.color = '#000';
+        btn.title = 'Auto-Ocultar ATIVADO. Clique aqui para fixar o menu no topo permanentemente.';
+      } else {
+        btn.classList.remove('btn-gold');
+        btn.style.borderColor = '#a855f7';
+        btn.style.color = '#d8b4fe';
+        btn.title = 'Menu FIXO no topo. Clique aqui para ativar o Auto-Ocultar e ganhar mais espaço.';
+      }
+    }
+    if (icon) icon.textContent = isHeaderAutoHideEnabled ? '📌' : '🚀';
+    if (label) label.textContent = isHeaderAutoHideEnabled ? 'Fixar Menu' : 'Auto-Ocultar';
+  }
+
+  // Listener Global de Movimento do Mouse
+  window.addEventListener('mousemove', function(e) {
+    if (!isHeaderAutoHideEnabled) return;
+    // Se o mouse estiver nos 55px superiores da tela, traz o menu imediatamente
+    if (e.clientY <= 55) {
+      showPdvHeader();
+    } else if (!isHeaderCurrentlyHidden && e.clientY > 110) {
+      // Se o mouse se afastou para baixo, programa para recolher
+      scheduleHeaderHide(3000);
+    }
+  });
+
+  // Interação quando o mouse entra ou sai do próprio Header
+  document.addEventListener('DOMContentLoaded', function() {
+    var hdrEl = document.getElementById('mainPdvHeader');
+    if (hdrEl) {
+      hdrEl.addEventListener('mouseenter', function() {
+        showPdvHeader();
+      });
+      hdrEl.addEventListener('mouseleave', function() {
+        if (isHeaderAutoHideEnabled) scheduleHeaderHide(2500);
+      });
+    }
+  });
+
   function applyPdvCompactHdModeInit() {
     const saved = localStorage.getItem('sirbeef_pdv_compact_hd_mode');
     const screenH = (window.screen && window.screen.availHeight) ? window.screen.availHeight : 768;
@@ -13637,116 +13753,14 @@
 
   applyPdvScreenScale();
   applyPdvCompactHdModeInit();
-  applyHeaderAutoHideInit();
+  updateHeaderAutoHideUI();
+  if (isHeaderAutoHideEnabled) {
+    scheduleHeaderHide(3000);
+  }
   checkPdvLoginSession();
   switchPdvTab(activeTab);
   loadAllData();
   setInterval(loadAllData, 4000);
-
-  // =========================================================================
-  // AUTO-OCULTAR MENU SUPERIOR (MAXIMIZAÇÃO DINÂMICA DE ESPAÇO ÚTIL NA TELA)
-  // O menu superior desliza para cima após inatividade e retorna imediatamente
-  // quando o operador mover o cursor do mouse em direção ao topo da tela (<= 45px).
-  // =========================================================================
-  let isHeaderAutoHideEnabled = localStorage.getItem('sirbeef_pdv_autohide_header') === 'ON';
-  let headerHideTimer = null;
-  let isHeaderCurrentlyHidden = false;
-
-  function isAnyPdvModalOpen() {
-    const openModals = document.querySelectorAll('.modal-backdrop, #sirbeefCustomAlertBackdrop, #productFormModal, #paymentModal, #cashierModal');
-    for (let m of openModals) {
-      if (m && m.style.display !== 'none' && m.style.display !== '') return true;
-    }
-    return false;
-  }
-
-  function showPdvHeader() {
-    const hdr = document.getElementById('mainPdvHeader');
-    if (!hdr) return;
-    if (headerHideTimer) {
-      clearTimeout(headerHideTimer);
-      headerHideTimer = null;
-    }
-    isHeaderCurrentlyHidden = false;
-    hdr.classList.remove('header-hidden');
-    document.body.classList.remove('header-is-hidden');
-    const pill = document.getElementById('headerTopHoverPill');
-    if (pill) pill.classList.remove('pill-visible');
-  }
-
-  function hidePdvHeader() {
-    if (!isHeaderAutoHideEnabled) return;
-    if (isAnyPdvModalOpen()) return;
-    const hdr = document.getElementById('mainPdvHeader');
-    if (!hdr) return;
-    const h = hdr.offsetHeight || 64;
-    hdr.style.setProperty('--header-height-reclaim', h + 'px');
-    isHeaderCurrentlyHidden = true;
-    hdr.classList.add('header-hidden');
-    document.body.classList.add('header-is-hidden');
-  }
-
-  function scheduleHeaderHide(delayMs = 3500) {
-    if (!isHeaderAutoHideEnabled) return;
-    if (headerHideTimer) clearTimeout(headerHideTimer);
-    headerHideTimer = setTimeout(() => {
-      hidePdvHeader();
-    }, delayMs);
-  }
-
-  function toggleHeaderAutoHide(forceState) {
-    const newState = (typeof forceState === 'boolean') ? forceState : !isHeaderAutoHideEnabled;
-    isHeaderAutoHideEnabled = newState;
-    localStorage.setItem('sirbeef_pdv_autohide_header', newState ? 'ON' : 'OFF');
-    updateHeaderAutoHideUI();
-    if (isHeaderAutoHideEnabled) {
-      scheduleHeaderHide(3500);
-    } else {
-      showPdvHeader();
-    }
-  }
-
-  function updateHeaderAutoHideUI() {
-    const btn = document.getElementById('hdrAutoHideBtn');
-    const icon = document.getElementById('hdrAutoHideIcon');
-    const label = document.getElementById('hdrAutoHideLabel');
-    if (btn) {
-      btn.classList.toggle('btn-gold', isHeaderAutoHideEnabled);
-      btn.style.borderColor = isHeaderAutoHideEnabled ? 'var(--gold-light)' : '#a855f7';
-      btn.style.color = isHeaderAutoHideEnabled ? '#000' : '#d8b4fe';
-    }
-    if (icon) icon.textContent = isHeaderAutoHideEnabled ? '📌' : '🚀';
-    if (label) label.textContent = isHeaderAutoHideEnabled ? 'Fixar Menu' : 'Auto-Ocultar';
-  }
-
-  // Listener Global de Movimento do Mouse
-  window.addEventListener('mousemove', (e) => {
-    if (!isHeaderAutoHideEnabled) return;
-    // Se o mouse estiver nos 45px superiores da tela, traz o menu imediatamente
-    if (e.clientY <= 45) {
-      showPdvHeader();
-    } else if (!isHeaderCurrentlyHidden && e.clientY > 110) {
-      // Se o mouse se afastou para baixo, programa para recolher
-      scheduleHeaderHide(3500);
-    }
-  });
-
-  const hdrEl = document.getElementById('mainPdvHeader');
-  if (hdrEl) {
-    hdrEl.addEventListener('mouseenter', () => {
-      showPdvHeader();
-    });
-    hdrEl.addEventListener('mouseleave', () => {
-      scheduleHeaderHide(3000);
-    });
-  }
-
-  function applyHeaderAutoHideInit() {
-    const saved = localStorage.getItem('sirbeef_pdv_autohide_header');
-    // Se ainda não configurado ou se ON, ativa por padrão para máxima comodidade
-    const shouldEnable = (saved === 'ON' || saved === null);
-    toggleHeaderAutoHide(shouldEnable);
-  }
 </script>
 </body>
 </html>
