@@ -1,8 +1,8 @@
 {
   "apk_direct_url": "https://raw.githubusercontent.com/sirbeefnup/sirbeefnup.github.io/main/SirBeef-SuperApp.apk",
   "apk_fixed_url": "https://sirbeefnup.github.io/apk",
-  "apk_version_code": 44,
-  "apk_version_name": "4.8.6",
+  "apk_version_code": 47,
+  "apk_version_name": "4.8.9",
   "cardapio_fixed_url": "https://sirbeefnup.github.io/cardapio",
   "hostname_url": "http://gui",
   "lan_ips": [
@@ -14,5 +14,5 @@
   "pdv_fixed_url": "https://sirbeefnup.github.io/pdv",
   "rastreio_fixed_url": "https://sirbeefnup.github.io/rastreio",
   "tunnel_url": "https://metallica-dream-exhibit-blue.trycloudflare.com",
-  "updated_at": "2026-11-05T08:34:52-03:00"
+  "updated_at": "2026-11-05T08:39:47-03:00"
 }
