@@ -1,7 +1,7 @@
 {
-  "release_notes": "v4.9.0 (Build #48): Correção de Conexão Recusada (ERR_CONNECTION_REFUSED): Auto-cura no launcher do PDV com healthcheck síncrono antes da abertura, eliminação da corrida dual-stack IPv4/IPv6 e inicialização 100% headless.",
-  "version_code": 48,
+  "release_notes": "v4.9.1 (Build #49): Filtro de Categorias e Busca no Modal de Adicionar Produto em Oferta.",
+  "version_code": 49,
   "file_size_bytes": 1823600,
-  "version_name": "4.9.0",
-  "built_at": "05/11/2026 08:58:00"
+  "version_name": "4.9.1",
+  "built_at": "05/11/2026 09:05:00"
 }

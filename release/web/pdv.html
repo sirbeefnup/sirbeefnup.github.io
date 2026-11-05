@@ -1497,9 +1497,20 @@
           <div id="addWpDayLabel" style="font-size:15px;color:var(--gold-light);font-weight:900;margin-top:2px;">Segunda-feira</div>
         </div>
 
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div>
+            <label style="font-size:11.5px;color:var(--gold-light);font-weight:700;">📁 Filtrar por Categoria:</label>
+            <select id="addWpCategorySelect" onchange="onAddWpFilterChange()" style="margin-top:4px;width:100%;font-size:13px;padding:9px;background:#181824;border:1px solid var(--border);border-radius:8px;color:#fff;font-weight:600;"></select>
+          </div>
+          <div>
+            <label style="font-size:11.5px;color:var(--muted);font-weight:700;">🔍 Buscar Produto:</label>
+            <input type="text" id="addWpSearchInput" oninput="onAddWpFilterChange()" placeholder="Filtrar por nome..." style="margin-top:4px;width:100%;font-size:13px;padding:9px;background:#181824;border:1px solid var(--border);border-radius:8px;color:#fff;" />
+          </div>
+        </div>
+
         <div style="margin-bottom:12px;">
           <label style="font-size:11.5px;color:var(--muted);font-weight:700;">🍔 Produto do Cardápio / Hamburgueria *</label>
-          <select id="addWpProductSelect" onchange="onAddWpProductChange()" style="margin-top:4px;width:100%;font-size:13px;padding:9px;"></select>
+          <select id="addWpProductSelect" onchange="onAddWpProductChange()" style="margin-top:4px;width:100%;font-size:13px;padding:9px;background:#181824;border:1px solid var(--border);border-radius:8px;color:#fff;font-weight:600;"></select>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
@@ -11509,23 +11520,91 @@
     const modal = document.getElementById('addWeeklyPromoModal');
     const dayInp = document.getElementById('addWpDayOfWeek');
     const dayLbl = document.getElementById('addWpDayLabel');
+    const catSel = document.getElementById('addWpCategorySelect');
+    const searchInp = document.getElementById('addWpSearchInput');
     const prodSel = document.getElementById('addWpProductSelect');
     if (!modal || !dayInp || !dayLbl || !prodSel) return;
 
     dayInp.value = dayOfWeek;
     dayLbl.textContent = `📅 ${dayName}`;
 
-    // Popula com todos os produtos reais do cardápio (exceto categoria 137 que é espelho)
-    const validProds = flatProducts.filter(p => Number(p.category_id) !== 137);
-    const sortedProds = [...validProds].sort((a, b) => String(a.category_name || '').localeCompare(String(b.category_name || '')) || String(a.name || '').localeCompare(String(b.name || '')));
+    if (searchInp) searchInp.value = '';
 
+    // Popula com todas as categorias reais (exceto espelho de ofertas 137)
+    const validProds = flatProducts.filter(p => Number(p.category_id) !== 137);
+    const catMap = new Map();
+    validProds.forEach(p => {
+      const cId = String(p.category_id || '0');
+      const cName = String(p.category_name || 'Geral').trim();
+      if (!catMap.has(cId)) {
+        catMap.set(cId, cName);
+      }
+    });
+
+    if (catSel) {
+      let catOptions = `<option value="ALL">🔍 Todas as Categorias (${validProds.length} itens)</option>`;
+      Array.from(catMap.entries())
+        .sort((a, b) => a[1].localeCompare(b[1]))
+        .forEach(([id, name]) => {
+          const count = validProds.filter(p => String(p.category_id || '0') === id).length;
+          catOptions += `<option value="${id}">${name} (${count})</option>`;
+        });
+      catSel.innerHTML = catOptions;
+      catSel.value = 'ALL';
+    }
+
+    renderAddWpProducts();
+    modal.style.display = 'flex';
+  }
+
+  function onAddWpFilterChange() {
+    renderAddWpProducts();
+  }
+
+  function renderAddWpProducts() {
+    const catSel = document.getElementById('addWpCategorySelect');
+    const searchInp = document.getElementById('addWpSearchInput');
+    const prodSel = document.getElementById('addWpProductSelect');
+    const origPrev = document.getElementById('addWpOrigPricePreview');
+    const promoInp = document.getElementById('addWpPromoPrice');
+    if (!prodSel) return;
+
+    const selectedCat = catSel ? catSel.value : 'ALL';
+    const term = searchInp ? searchInp.value.toLowerCase().trim() : '';
+
+    let prods = flatProducts.filter(p => Number(p.category_id) !== 137);
+
+    if (selectedCat && selectedCat !== 'ALL') {
+      prods = prods.filter(p => String(p.category_id || '0') === selectedCat);
+    }
+
+    if (term) {
+      prods = prods.filter(p => 
+        String(p.name || '').toLowerCase().includes(term) ||
+        String(p.category_name || '').toLowerCase().includes(term)
+      );
+    }
+
+    const sortedProds = [...prods].sort((a, b) => 
+      String(a.category_name || '').localeCompare(String(b.category_name || '')) || 
+      String(a.name || '').localeCompare(String(b.name || ''))
+    );
+
+    if (sortedProds.length === 0) {
+      prodSel.innerHTML = `<option value="">⚠️ Nenhum produto encontrado com este filtro</option>`;
+      prodSel.disabled = true;
+      if (origPrev) origPrev.value = 'R$ 0,00';
+      if (promoInp) promoInp.value = '';
+      return;
+    }
+
+    prodSel.disabled = false;
     prodSel.innerHTML = sortedProds.map(p => {
       const baseP = (p.promo_from && p.promo_from > p.price) ? p.promo_from : p.price;
       return `<option value="${p.id}" data-baseprice="${baseP}">[${p.category_name || 'Hamburgueria'}] ${p.name} — R$ ${(baseP || 0).toFixed(2)}</option>`;
     }).join('');
 
     onAddWpProductChange();
-    modal.style.display = 'flex';
   }
 
   function onAddWpProductChange() {
