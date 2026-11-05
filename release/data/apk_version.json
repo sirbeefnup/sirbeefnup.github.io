@@ -1,7 +1,7 @@
 {
-  "release_notes": "v4.8.9 (Build #47): Inicialização 100% em Segundo Plano (Headless): (1) Zero telas CMD, zero janelas na barra de tarefas; (2) Não abre navegador sozinho; (3) Janelas próprias com logotipo; (4) Poka-Yoke operacional completo.",
-  "version_code": 47,
+  "release_notes": "v4.9.0 (Build #48): Correção de Conexão Recusada (ERR_CONNECTION_REFUSED): Auto-cura no launcher do PDV com healthcheck síncrono antes da abertura, eliminação da corrida dual-stack IPv4/IPv6 e inicialização 100% headless.",
+  "version_code": 48,
   "file_size_bytes": 1823600,
-  "version_name": "4.8.9",
-  "built_at": "05/11/2026 08:35:00"
+  "version_name": "4.9.0",
+  "built_at": "05/11/2026 08:58:00"
 }

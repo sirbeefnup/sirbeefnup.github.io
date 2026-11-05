@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -50,6 +51,11 @@ func main() {
 	_ = os.Chdir(exeDir)
 	dataDir := filepath.Join(exeDir, "data")
 	_ = os.MkdirAll(dataDir, 0755)
+
+	logFilePath := filepath.Join(dataDir, "server.log")
+	if logF, errL := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666); errL == nil {
+		log.SetOutput(io.MultiWriter(os.Stdout, logF))
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -219,7 +225,13 @@ func main() {
 	// Supervisor automático do Túnel Cloudflare (inicia e mantém o cloudflared.exe ativo sozinho)
 	go srv.ensureCloudflareTunnelRunning(exeDir)
 
-	// Escuta simultaneamente na porta 80 (HTTP padrão) e 8080 em IPv4 puro (tcp4) e IPv6 (tcp6)
+	// 1. Escuta primária OBRIGATÓRIA na porta IPv4 (0.0.0.0:port) garantida antes de qualquer outra porta
+	ln4, err := net.Listen("tcp4", "0.0.0.0:"+port)
+	if err != nil {
+		log.Fatalf("Erro fatal ao vincular porta %s (IPv4): %v", port, err)
+	}
+
+	// 2. Escuta auxiliar na porta 80 (HTTP padrão) e IPv6 sem interferir na porta primária
 	go func() {
 		if ln80, err := net.Listen("tcp4", "0.0.0.0:80"); err == nil {
 			_ = http.Serve(ln80, mux)
@@ -236,10 +248,6 @@ func main() {
 		}
 	}()
 
-	ln4, err := net.Listen("tcp4", "0.0.0.0:"+port)
-	if err != nil {
-		log.Fatal(http.ListenAndServe("0.0.0.0:"+port, mux))
-	}
 	log.Fatal(http.Serve(ln4, mux))
 }
 
@@ -835,7 +843,8 @@ func ensureWindowsNetworkReady(port string, exeDir string) {
 	rootDir := filepath.Dir(exeDir)
 	starterBat := filepath.Join(rootDir, "INICIAR_ECOSSISTEMA_SIRBEEF.bat")
 	envModeBytes, _ := os.ReadFile(filepath.Join(exeDir, "data", "server_env_mode.txt"))
-	isTestMode := strings.EqualFold(strings.TrimSpace(string(envModeBytes)), "TESTE_DEV")
+	envStr := strings.ToUpper(strings.TrimSpace(string(envModeBytes)))
+	isTestMode := envStr == "TESTE_DEV" || envStr == "TESTE_LOCAL"
 
 	if isTestMode {
 		_ = exec.Command("schtasks", "/Delete", "/TN", "SirBeef_AutoStart_Admin", "/F").Run()
