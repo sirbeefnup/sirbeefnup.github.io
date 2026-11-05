@@ -3,22 +3,24 @@
     "sirbeef.db (Clientes/Vendas de Teste)",
     "whatsapp_session.db"
   ],
-  "published_at": "04/11/2026 19:55:06",
+  "published_at": "05/11/2026 07:14:25",
   "published_files": [
     "release/data/apk_version.json",
     "release/backend/main.go",
     "release/backend/internal/db/db.go",
+    "release/backend/internal/db/market_products.json",
+    "release/backend/internal/whatsapp/engine.go",
+    "release/web/rastreio.html",
+    "release/backend/internal/models/models.go",
+    "release/backend/internal/db/market_seed.go",
+    "release/backend/internal/escpos/escpos.go",
     "release/INICIAR_ECOSSISTEMA_SIRBEEF.bat",
     "release/backend/sirbeef-server.zip",
-    "release/backend/internal/models/models.go",
-    "release/backend/internal/escpos/escpos.go",
-    "release/backend/internal/whatsapp/engine.go",
     "release/web/pdv.html",
-    "release/web/index.html",
-    "release/web/rastreio.html"
+    "release/web/index.html"
   ],
   "published_from_pc": "GUI",
-  "release_notes": "v4.8.6 (Build #44): (1) Correcao critica do botao de login do PDV (remocao de token inesperado no JS e sincronizacao de operationalSettings); (2) Autenticacao aprimorada aceitando senha mestre ou PIN (admin/1234, admin/admin, caixa/caixa, caixa/1234); (3) Dicas e placeholders de credenciais integrados na tela de acesso.",
-  "version_code": 44,
-  "version_name": "4.8.6"
+  "release_notes": "v4.8.7 (Build #45): (1) Importação completa de 814 produtos legados de mercado/açougue na categoria 'Boutique das Carnes \u0026 Empório' com códigos de barras, PLU e preços de venda; (2) Migração e sincronização automática entre PC de Teste e PC da Hamburgueria sem perda de faturamento ou clientes; (3) Motor de busca de código de barras aprimorado com suporte a balanças (etiquetas 2+PLU+Peso), EAN-13 e PLU rápido.",
+  "version_code": 45,
+  "version_name": "4.8.7"
 }

@@ -1,0 +1,4072 @@
+[
+  {
+    "code": "0502883512245",
+    "name": "CHOPP VINHO",
+    "price": 16.9
+  },
+  {
+    "code": "074468247901",
+    "name": "Queijo Coalho",
+    "price": 25.0
+  },
+  {
+    "code": "1001",
+    "name": "Picanha Angus",
+    "price": 99.9
+  },
+  {
+    "code": "1002",
+    "name": "Picanha Grill",
+    "price": 119.9
+  },
+  {
+    "code": "1003",
+    "name": "Bife Chorizo",
+    "price": 56.9
+  },
+  {
+    "code": "1004",
+    "name": "Chorizo Angus",
+    "price": 69.9
+  },
+  {
+    "code": "1005",
+    "name": "Cupim injetado",
+    "price": 49.9
+  },
+  {
+    "code": "1006",
+    "name": "Cupim",
+    "price": 42.9
+  },
+  {
+    "code": "1007",
+    "name": "Baby Beef",
+    "price": 42.9
+  },
+  {
+    "code": "1008",
+    "name": "Baby Beef Angus",
+    "price": 49.9
+  },
+  {
+    "code": "10081",
+    "name": "VENDAS DA LOJA 1",
+    "price": 1.0
+  },
+  {
+    "code": "100810",
+    "name": "VENDAS DA LOJA 10",
+    "price": 1.0
+  },
+  {
+    "code": "10082",
+    "name": "VENDAS DA LOJA 2",
+    "price": 1.0
+  },
+  {
+    "code": "10083",
+    "name": "VENDAS DA LOJA 3",
+    "price": 1.0
+  },
+  {
+    "code": "10084",
+    "name": "VENDAS DA LOJA 4",
+    "price": 1.0
+  },
+  {
+    "code": "10085",
+    "name": "VENDAS DA LOJA 5",
+    "price": 1.0
+  },
+  {
+    "code": "10086",
+    "name": "VENDAS DA LOJA 6",
+    "price": 1.0
+  },
+  {
+    "code": "10087",
+    "name": "VENDAS DA LOJA 7",
+    "price": 1.0
+  },
+  {
+    "code": "10088",
+    "name": "VENDAS DA LOJA 8",
+    "price": 1.0
+  },
+  {
+    "code": "10089",
+    "name": "VENDAS DA LOJA 9",
+    "price": 1.0
+  },
+  {
+    "code": "1009",
+    "name": "Costela Minga",
+    "price": 21.9
+  },
+  {
+    "code": "1010",
+    "name": "Costela Janela",
+    "price": 21.9
+  },
+  {
+    "code": "1011",
+    "name": "Coxao Duro",
+    "price": 29.9
+  },
+  {
+    "code": "1012",
+    "name": "Coxao Duro Angus",
+    "price": 99.0
+  },
+  {
+    "code": "1013",
+    "name": "Fraldinha",
+    "price": 42.9
+  },
+  {
+    "code": "1014",
+    "name": "Fraldinha Angus",
+    "price": 15.9
+  },
+  {
+    "code": "1015",
+    "name": "Chuleta/Bisteca",
+    "price": 56.9
+  },
+  {
+    "code": "1016",
+    "name": "Panceta Temperada Camari",
+    "price": 34.9
+  },
+  {
+    "code": "1017",
+    "name": "T-Bone",
+    "price": 56.9
+  },
+  {
+    "code": "1018",
+    "name": "Ponta de Peito",
+    "price": 34.9
+  },
+  {
+    "code": "1019",
+    "name": "Ponta de Peito Angus",
+    "price": 36.9
+  },
+  {
+    "code": "1020",
+    "name": "Ponta Peito Maturatta",
+    "price": 29.9
+  },
+  {
+    "code": "1021",
+    "name": "Maminha da Alcatra",
+    "price": 49.9
+  },
+  {
+    "code": "1022",
+    "name": "Maminha Angus",
+    "price": 33.9
+  },
+  {
+    "code": "1023",
+    "name": "Ancho/Entrecote",
+    "price": 54.9
+  },
+  {
+    "code": "1024",
+    "name": "Ancho/Entrecote Angus",
+    "price": 44.9
+  },
+  {
+    "code": "1025",
+    "name": "Steak Picanha",
+    "price": 36.9
+  },
+  {
+    "code": "1026",
+    "name": "Steak Picanha Angus",
+    "price": 59.9
+  },
+  {
+    "code": "1028",
+    "name": "Linguiça Toscana Camari",
+    "price": 15.9
+  },
+  {
+    "code": "1029",
+    "name": "Linguiça Fina Apimentada Camari",
+    "price": 15.9
+  },
+  {
+    "code": "1030",
+    "name": "Paleta",
+    "price": 42.9
+  },
+  {
+    "code": "1031",
+    "name": "Paleta Angus",
+    "price": 69.9
+  },
+  {
+    "code": "1032",
+    "name": "Peixinho",
+    "price": 52.9
+  },
+  {
+    "code": "1033",
+    "name": "Shoulder Steak Angus",
+    "price": 46.9
+  },
+  {
+    "code": "1034",
+    "name": "Acem",
+    "price": 14.9
+  },
+  {
+    "code": "1035",
+    "name": "Acem Angus",
+    "price": 20.0
+  },
+  {
+    "code": "1036",
+    "name": "Chuck eye Roll",
+    "price": 44.9
+  },
+  {
+    "code": "1037",
+    "name": "Chuck eye Roll Angus",
+    "price": 49.9
+  },
+  {
+    "code": "1038",
+    "name": "Bananinha",
+    "price": 39.9
+  },
+  {
+    "code": "1039",
+    "name": "File Mignon s/ Cordão",
+    "price": 59.9
+  },
+  {
+    "code": "1040",
+    "name": "Contra-File",
+    "price": 34.9
+  },
+  {
+    "code": "1041",
+    "name": "Contra-File Angus",
+    "price": 32.9
+  },
+  {
+    "code": "1046",
+    "name": "Pct Esp. Bovino",
+    "price": 19.0
+  },
+  {
+    "code": "1047",
+    "name": "Pct Medalhão Frango",
+    "price": 36.9
+  },
+  {
+    "code": "1048",
+    "name": "Pct Medalhão Cheddar",
+    "price": 19.0
+  },
+  {
+    "code": "1049",
+    "name": "Peixinho Angus",
+    "price": 38.0
+  },
+  {
+    "code": "1050",
+    "name": "Pct Medalhão Mandioca",
+    "price": 20.0
+  },
+  {
+    "code": "1051",
+    "name": "Pct Romeu e Julieta",
+    "price": 5.5
+  },
+  {
+    "code": "1052",
+    "name": "Pct Panceta",
+    "price": 16.0
+  },
+  {
+    "code": "1053",
+    "name": "Pct Coração",
+    "price": 25.0
+  },
+  {
+    "code": "1054",
+    "name": "Pct Kafta Carne",
+    "price": 18.0
+  },
+  {
+    "code": "1055",
+    "name": "Pct Kafta Frango",
+    "price": 18.0
+  },
+  {
+    "code": "1056",
+    "name": "Pct Kafta Kibe",
+    "price": 18.0
+  },
+  {
+    "code": "1057",
+    "name": "Pct Esp. Picanha",
+    "price": 50.0
+  },
+  {
+    "code": "1058",
+    "name": "Pct Esp. Cordeiro",
+    "price": 25.0
+  },
+  {
+    "code": "1059",
+    "name": "Pct Esp. Frango",
+    "price": 19.33
+  },
+  {
+    "code": "1060",
+    "name": "Pct Esp. Quiabo",
+    "price": 18.0
+  },
+  {
+    "code": "1061",
+    "name": "Queijo Coalho",
+    "price": 69.9
+  },
+  {
+    "code": "1062",
+    "name": "mussarela",
+    "price": 64.9
+  },
+  {
+    "code": "1063",
+    "name": "QUEIJO PROVOLONE",
+    "price": 64.9
+  },
+  {
+    "code": "1064",
+    "name": "Sobrecoxa Desossada",
+    "price": 18.9
+  },
+  {
+    "code": "1065",
+    "name": "Costelinha Suína",
+    "price": 20.5
+  },
+  {
+    "code": "1066",
+    "name": "Espeto Miolo Alcatra",
+    "price": 0.01
+  },
+  {
+    "code": "1067",
+    "name": "Pct Medalhão c/ Cheddar",
+    "price": 1.0
+  },
+  {
+    "code": "1068",
+    "name": "Pct Espeto Frango",
+    "price": 1.0
+  },
+  {
+    "code": "1069",
+    "name": "Pct Espetinho Bovino",
+    "price": 22.0
+  },
+  {
+    "code": "1070",
+    "name": "Pct Espetinho Fraldinha",
+    "price": 1.0
+  },
+  {
+    "code": "1071",
+    "name": "LINGUIÇA COSTELA 300G",
+    "price": 12.99
+  },
+  {
+    "code": "1072",
+    "name": "Pct Espetinho Panceta",
+    "price": 19.0
+  },
+  {
+    "code": "1073",
+    "name": "Espeto linguiça toscana/pernil",
+    "price": 3.5
+  },
+  {
+    "code": "1074",
+    "name": "PRODUTO PROXIMO AO VENCIMENTO",
+    "price": 0.01
+  },
+  {
+    "code": "1075",
+    "name": "Costela Black Angus",
+    "price": 32.9
+  },
+  {
+    "code": "1076",
+    "name": "PALETA ANGUS FRIGOL",
+    "price": 34.9
+  },
+  {
+    "code": "1077",
+    "name": "Chorizo Angus",
+    "price": 62.9
+  },
+  {
+    "code": "1078",
+    "name": "LING MISTA C/ PIMENTA",
+    "price": 29.9
+  },
+  {
+    "code": "1079",
+    "name": "LING MISTA S/ PIMENTA",
+    "price": 29.9
+  },
+  {
+    "code": "1080",
+    "name": "Pão de Cebola Sta Massa",
+    "price": 14.0
+  },
+  {
+    "code": "1081",
+    "name": "LINGUIÇA PERNIL",
+    "price": 9.5
+  },
+  {
+    "code": "1083",
+    "name": "QUEIJO MUSSARELA",
+    "price": 56.0
+  },
+  {
+    "code": "1085",
+    "name": "Kafta Recheada Catupiry",
+    "price": 22.9
+  },
+  {
+    "code": "1089",
+    "name": "Contra Filé Montana",
+    "price": 38.9
+  },
+  {
+    "code": "1090",
+    "name": "Acem Angus Frigol",
+    "price": 32.9
+  },
+  {
+    "code": "1091",
+    "name": "Carne Atacado",
+    "price": 1.0
+  },
+  {
+    "code": "1092",
+    "name": "Peito Maturada Black Better Beef",
+    "price": 34.9
+  },
+  {
+    "code": "1094",
+    "name": "CHORIZO WAGYU",
+    "price": 339.9
+  },
+  {
+    "code": "1095",
+    "name": "Camarão empanado",
+    "price": 70.0
+  },
+  {
+    "code": "1096",
+    "name": "Costela Serrada Angus",
+    "price": 25.9
+  },
+  {
+    "code": "1097",
+    "name": "Costela Serrada",
+    "price": 17.9
+  },
+  {
+    "code": "1098",
+    "name": "Ancho / Entrecote",
+    "price": 42.9
+  },
+  {
+    "code": "1099",
+    "name": "DIVERSOS",
+    "price": 1.0
+  },
+  {
+    "code": "11",
+    "name": "Porção Churrasco",
+    "price": 26.0
+  },
+  {
+    "code": "1100",
+    "name": "Maminha Bassi",
+    "price": 46.9
+  },
+  {
+    "code": "1101",
+    "name": "Bolinhos Variados",
+    "price": 20.0
+  },
+  {
+    "code": "1102",
+    "name": "Ossobuco Vila das Carnes",
+    "price": 32.9
+  },
+  {
+    "code": "1103",
+    "name": "Pescoço Cordeiro",
+    "price": 38.9
+  },
+  {
+    "code": "1104",
+    "name": "Coxão Duro Angus",
+    "price": 46.9
+  },
+  {
+    "code": "1105",
+    "name": "Picanha BassI",
+    "price": 109.9
+  },
+  {
+    "code": "1107",
+    "name": "Contra File Angus",
+    "price": 54.9
+  },
+  {
+    "code": "1108",
+    "name": "Fraldinha Bassi",
+    "price": 48.9
+  },
+  {
+    "code": "1109",
+    "name": "Capa de Filé",
+    "price": 34.9
+  },
+  {
+    "code": "1110",
+    "name": "Fraldinha Reserva",
+    "price": 38.9
+  },
+  {
+    "code": "1111",
+    "name": "Picanha Angus",
+    "price": 74.9
+  },
+  {
+    "code": "1112",
+    "name": "Pernil Suíno",
+    "price": 14.9
+  },
+  {
+    "code": "1113",
+    "name": "Lagarto Angus Frigol",
+    "price": 32.0
+  },
+  {
+    "code": "1114",
+    "name": "MAMINHA FRIGOL",
+    "price": 39.9
+  },
+  {
+    "code": "1115",
+    "name": "CUPIM FRIGOL",
+    "price": 32.9
+  },
+  {
+    "code": "1116",
+    "name": "CHULETA MATURATTA",
+    "price": 42.9
+  },
+  {
+    "code": "1117",
+    "name": "PRIME STEAK ANGUS",
+    "price": 39.9
+  },
+  {
+    "code": "1120",
+    "name": "SC KRAFT P",
+    "price": 47.9
+  },
+  {
+    "code": "1123",
+    "name": "Picanha Fatiada",
+    "price": 42.9
+  },
+  {
+    "code": "1127",
+    "name": "Galinha Caipira Nho Bento",
+    "price": 14.0
+  },
+  {
+    "code": "1128",
+    "name": "Galinha a passarinho",
+    "price": 5.5
+  },
+  {
+    "code": "1134",
+    "name": "Fraldinha Angus",
+    "price": 47.9
+  },
+  {
+    "code": "1135",
+    "name": "Costela suina Churrasco",
+    "price": 16.9
+  },
+  {
+    "code": "1136",
+    "name": "Fraldinha Grill",
+    "price": 35.0
+  },
+  {
+    "code": "1137",
+    "name": "Kit Churrasco individual",
+    "price": 1.0
+  },
+  {
+    "code": "1141",
+    "name": "Capa File Prime",
+    "price": 34.9
+  },
+  {
+    "code": "1142",
+    "name": "CUPIM TEMPERADO",
+    "price": 34.9
+  },
+  {
+    "code": "121214",
+    "name": "EMB BATATA GRDE",
+    "price": 92.1
+  },
+  {
+    "code": "1230",
+    "name": "Paleta Angus Frigol",
+    "price": 34.9
+  },
+  {
+    "code": "12345",
+    "name": "Espetinhos Variados",
+    "price": 1.0
+  },
+  {
+    "code": "1236",
+    "name": "Paleta Cordeiro Estancia 92",
+    "price": 52.9
+  },
+  {
+    "code": "1321",
+    "name": "Batata Curtida",
+    "price": 25.0
+  },
+  {
+    "code": "1791",
+    "name": "Lanche funcionario",
+    "price": 1.0
+  },
+  {
+    "code": "191072",
+    "name": "Batata Funcionario",
+    "price": 1.0
+  },
+  {
+    "code": "197",
+    "name": "REFEIÇÃO",
+    "price": 35.0
+  },
+  {
+    "code": "2",
+    "name": "KIT CHURRASCO",
+    "price": 100.0
+  },
+  {
+    "code": "2001",
+    "name": "Frango Carcaça Sta Cecilia",
+    "price": 11.9
+  },
+  {
+    "code": "2058",
+    "name": "Queijo cheddar",
+    "price": 12.0
+  },
+  {
+    "code": "22222",
+    "name": "Acerto de Caixa",
+    "price": 10.0
+  },
+  {
+    "code": "22444",
+    "name": "SC KRAFT PP",
+    "price": 42.9
+  },
+  {
+    "code": "2312314",
+    "name": "FILÉ TILAPIA 500G",
+    "price": 25.0
+  },
+  {
+    "code": "23132",
+    "name": "Taxa Maquininha",
+    "price": 1.0
+  },
+  {
+    "code": "231324",
+    "name": "Saquinho Termico",
+    "price": 60.0
+  },
+  {
+    "code": "2424",
+    "name": "Cerveja Boa",
+    "price": 3.0
+  },
+  {
+    "code": "2816109336098",
+    "name": "SUCO NATURAL MARACUJA C/ MORANGO 900 ML",
+    "price": 17.0
+  },
+  {
+    "code": "3",
+    "name": "Sal de Parrilha",
+    "price": 5.0
+  },
+  {
+    "code": "3001",
+    "name": "Ponta de Peito Marfrig",
+    "price": 28.5
+  },
+  {
+    "code": "30012",
+    "name": "Tempero para espetos",
+    "price": 15.0
+  },
+  {
+    "code": "300123220",
+    "name": "LANCHE TRADICIONAL",
+    "price": 40.0
+  },
+  {
+    "code": "30013",
+    "name": "Carne para espetos",
+    "price": 1.0
+  },
+  {
+    "code": "30014",
+    "name": "Oleo de Soja",
+    "price": 6.9
+  },
+  {
+    "code": "30015",
+    "name": "Vinagre de Alcool",
+    "price": 2.75
+  },
+  {
+    "code": "30016",
+    "name": "Palitos Churrasco c/ 1000un",
+    "price": 40.0
+  },
+  {
+    "code": "3003",
+    "name": "Alho descascado 1,1kg",
+    "price": 20.0
+  },
+  {
+    "code": "3004",
+    "name": "Jardineira 2,0kg",
+    "price": 17.5
+  },
+  {
+    "code": "3005",
+    "name": "Fundue de Queijo Gorgonzola",
+    "price": 25.0
+  },
+  {
+    "code": "3011",
+    "name": "LINGUICA C/ COALHO",
+    "price": 15.0
+  },
+  {
+    "code": "3013",
+    "name": "Kit Feijoada",
+    "price": 16.9
+  },
+  {
+    "code": "3025",
+    "name": "Carré Suino",
+    "price": 17.5
+  },
+  {
+    "code": "3111",
+    "name": "TBONE MATURATTA",
+    "price": 44.9
+  },
+  {
+    "code": "3123515",
+    "name": "Brownie",
+    "price": 25.0
+  },
+  {
+    "code": "323121",
+    "name": "Pão hamburguer",
+    "price": 2.0
+  },
+  {
+    "code": "32322",
+    "name": "ISCA TILAPIA 500G",
+    "price": 30.0
+  },
+  {
+    "code": "323232",
+    "name": "PÃO GERGELIM",
+    "price": 2.0
+  },
+  {
+    "code": "32323210",
+    "name": "LANCHE SIR BURGER",
+    "price": 0.01
+  },
+  {
+    "code": "323553151",
+    "name": "MAIONESE CASEIRA",
+    "price": 20.0
+  },
+  {
+    "code": "3254564",
+    "name": "Smirnoff Ice",
+    "price": 8.5
+  },
+  {
+    "code": "4",
+    "name": "Sal Parrilla Temperado",
+    "price": 15.0
+  },
+  {
+    "code": "4000",
+    "name": "Pct Bolinha Queijo",
+    "price": 20.0
+  },
+  {
+    "code": "4001",
+    "name": "HB FRALDINHA 100G",
+    "price": 5.6
+  },
+  {
+    "code": "4002",
+    "name": "HB VEGETARIANO",
+    "price": 7.0
+  },
+  {
+    "code": "4003",
+    "name": "HB ANGUS 100G",
+    "price": 5.6
+  },
+  {
+    "code": "4004",
+    "name": "HB COSTELA 100G",
+    "price": 5.6
+  },
+  {
+    "code": "4006",
+    "name": "HB FRANDINHA 125G",
+    "price": 7.0
+  },
+  {
+    "code": "4007",
+    "name": "HB FRALDINHA 150G",
+    "price": 7.5
+  },
+  {
+    "code": "4008",
+    "name": "Saches Heinz",
+    "price": 20.9
+  },
+  {
+    "code": "4033",
+    "name": "PICOLÉ GALLEGA",
+    "price": 16.0
+  },
+  {
+    "code": "4040",
+    "name": "Geleia",
+    "price": 18.0
+  },
+  {
+    "code": "4041",
+    "name": "Milho Torrado",
+    "price": 8.0
+  },
+  {
+    "code": "4321",
+    "name": "Pão de Queijo Joia de Minas",
+    "price": 28.0
+  },
+  {
+    "code": "4471859640802",
+    "name": "SUCO NATURAL MARACUJA 300 ML",
+    "price": 9.0
+  },
+  {
+    "code": "456455",
+    "name": "FILÉ MIGNON",
+    "price": 56.9
+  },
+  {
+    "code": "46545",
+    "name": "CREME ALHO",
+    "price": 30.0
+  },
+  {
+    "code": "5",
+    "name": "PAPADA",
+    "price": 0.4
+  },
+  {
+    "code": "5001",
+    "name": "SAL E TEMPEROS",
+    "price": 12.0
+  },
+  {
+    "code": "5002",
+    "name": "Espetinho Carne",
+    "price": 4.5
+  },
+  {
+    "code": "5003",
+    "name": "Espetinho Capa File",
+    "price": 3.2
+  },
+  {
+    "code": "5004",
+    "name": "Espetinho Linguiça",
+    "price": 3.5
+  },
+  {
+    "code": "5005",
+    "name": "Espetinho Panceta",
+    "price": 3.5
+  },
+  {
+    "code": "5006",
+    "name": "Espetinho Coração",
+    "price": 4.0
+  },
+  {
+    "code": "5007",
+    "name": "Espetinho de Frango",
+    "price": 3.0
+  },
+  {
+    "code": "5008",
+    "name": "Espetinho Medalhão Frango",
+    "price": 4.5
+  },
+  {
+    "code": "5009",
+    "name": "Medalhão de Mandioca",
+    "price": 22.0
+  },
+  {
+    "code": "5014",
+    "name": "Espetinho  Quejo Provolone",
+    "price": 24.0
+  },
+  {
+    "code": "5015",
+    "name": "Espetinho Queijo Mussarela",
+    "price": 22.0
+  },
+  {
+    "code": "5016",
+    "name": "Espetinho Queijo Coalho Lara",
+    "price": 3.2
+  },
+  {
+    "code": "5017",
+    "name": "Espetinho Queijo Coalho",
+    "price": 23.0
+  },
+  {
+    "code": "5018",
+    "name": "Espetinho Codiguim Tradicional",
+    "price": 15.0
+  },
+  {
+    "code": "5019",
+    "name": "Espetinho Codiguim Pimenta",
+    "price": 15.0
+  },
+  {
+    "code": "5020",
+    "name": "Kafta de Costela c/ mandioca",
+    "price": 2.5
+  },
+  {
+    "code": "5021",
+    "name": "Espetinho Kafta",
+    "price": 3.5
+  },
+  {
+    "code": "5023",
+    "name": "Espetinho Kafta Frango",
+    "price": 12.0
+  },
+  {
+    "code": "5024",
+    "name": "Kafta de Kibe",
+    "price": 10.0
+  },
+  {
+    "code": "5025",
+    "name": "Espetinho Romeu e Julieta",
+    "price": 5.0
+  },
+  {
+    "code": "5026",
+    "name": "Espetinho de Medalhão com Cheddar",
+    "price": 4.0
+  },
+  {
+    "code": "5027",
+    "name": "Espetinho Medalhão de Queijo",
+    "price": 3.2
+  },
+  {
+    "code": "5028",
+    "name": "Espetinho Picanha",
+    "price": 8.0
+  },
+  {
+    "code": "5029",
+    "name": "Espeto Cordeiro",
+    "price": 6.0
+  },
+  {
+    "code": "5030",
+    "name": "Pão de Alho",
+    "price": 14.0
+  },
+  {
+    "code": "5031",
+    "name": "Espetinho Vegetariano",
+    "price": 3.5
+  },
+  {
+    "code": "5034",
+    "name": "Medalhao de Queijo Coalho",
+    "price": 5.0
+  },
+  {
+    "code": "5035",
+    "name": "Medalhao de Quiabo",
+    "price": 3.5
+  },
+  {
+    "code": "5036",
+    "name": "Cupim Injetado",
+    "price": 4.5
+  },
+  {
+    "code": "5037",
+    "name": "Espeto Contra File",
+    "price": 5.5
+  },
+  {
+    "code": "5038",
+    "name": "Contra File com Queijo",
+    "price": 6.5
+  },
+  {
+    "code": "5039",
+    "name": "Costelinha BBQ",
+    "price": 3.8
+  },
+  {
+    "code": "5040",
+    "name": "Espeto Linguiça Costela Mandioca",
+    "price": 3.2
+  },
+  {
+    "code": "5045",
+    "name": "Bacon Fatiado",
+    "price": 30.0
+  },
+  {
+    "code": "5050",
+    "name": "Bacon Cubos",
+    "price": 27.0
+  },
+  {
+    "code": "5067",
+    "name": "PALITOS ESPETO 25CM",
+    "price": 145.0
+  },
+  {
+    "code": "5068",
+    "name": "PALITOS ESPETO 30CM",
+    "price": 160.0
+  },
+  {
+    "code": "5091",
+    "name": "CAFÉ SCALABRINI",
+    "price": 40.0
+  },
+  {
+    "code": "5099",
+    "name": "Palito espeto",
+    "price": 3.0
+  },
+  {
+    "code": "5113",
+    "name": "Carvão 10kg",
+    "price": 40.0
+  },
+  {
+    "code": "5121231231",
+    "name": "Espeto Linguiça Pernil",
+    "price": 3.5
+  },
+  {
+    "code": "5141426534665",
+    "name": "SUCO NATURAL LARANJA 300 ML",
+    "price": 9.0
+  },
+  {
+    "code": "52145415241",
+    "name": "FILE MIGNON",
+    "price": 59.9
+  },
+  {
+    "code": "54103212321",
+    "name": "Pão Brioche",
+    "price": 13.9
+  },
+  {
+    "code": "5441",
+    "name": "Costelinha suina",
+    "price": 3.5
+  },
+  {
+    "code": "5456456444",
+    "name": "REFRIGERANTE LATA",
+    "price": 10.0
+  },
+  {
+    "code": "545646546",
+    "name": "FUTURO BURGER",
+    "price": 6.5
+  },
+  {
+    "code": "54640101",
+    "name": "Ganho de Caixa",
+    "price": 15.0
+  },
+  {
+    "code": "54645646",
+    "name": "PIZZA",
+    "price": 8.0
+  },
+  {
+    "code": "54654",
+    "name": "CARNE EMPORIO BOA VISTA",
+    "price": 1.0
+  },
+  {
+    "code": "54654456",
+    "name": "SALGADO DA DANI",
+    "price": 21.0
+  },
+  {
+    "code": "5473048240090",
+    "name": "Pimenta Biquinho Chão Preto",
+    "price": 14.9
+  },
+  {
+    "code": "5601252102433",
+    "name": "Azeite Exta Virgem Gallo",
+    "price": 25.0
+  },
+  {
+    "code": "5601855119005",
+    "name": "Azeite Extra Virgem Alma Lusa",
+    "price": 28.9
+  },
+  {
+    "code": "564564",
+    "name": "ISCA FRANGO 500G",
+    "price": 25.0
+  },
+  {
+    "code": "564564654564",
+    "name": "BOBINA IMPRESSORA",
+    "price": 7.0
+  },
+  {
+    "code": "5646541",
+    "name": "CATUPIRY / CHEDDAR",
+    "price": 44.9
+  },
+  {
+    "code": "566545",
+    "name": "Torresmo banha",
+    "price": 15.0
+  },
+  {
+    "code": "5853562961211",
+    "name": "SUCO NATURAL MARACUJA C/ MORANGO 300 ML",
+    "price": 9.0
+  },
+  {
+    "code": "6001",
+    "name": "Espetinho Fraldinha",
+    "price": 5.0
+  },
+  {
+    "code": "6002",
+    "name": "Espetinho Bovino",
+    "price": 4.7
+  },
+  {
+    "code": "6003",
+    "name": "Espetinho de Capa de File",
+    "price": 3.3
+  },
+  {
+    "code": "6004",
+    "name": "Espetinho de Pernil",
+    "price": 2.6
+  },
+  {
+    "code": "6005",
+    "name": "Espetinho de Panceta",
+    "price": 3.8
+  },
+  {
+    "code": "6006",
+    "name": "Espetinho de Coração",
+    "price": 4.0
+  },
+  {
+    "code": "6007",
+    "name": "Espetinho de Frango",
+    "price": 3.0
+  },
+  {
+    "code": "6008",
+    "name": "Medalhão de Frango",
+    "price": 4.5
+  },
+  {
+    "code": "6009",
+    "name": "Espetinho de Mandioca",
+    "price": 25.0
+  },
+  {
+    "code": "6014",
+    "name": "Pct Espeto de Queijo Defumado",
+    "price": 25.0
+  },
+  {
+    "code": "6015",
+    "name": "Pct de Queijo Mussarela",
+    "price": 24.0
+  },
+  {
+    "code": "6017",
+    "name": "Espetinho de Queijo Coalho",
+    "price": 24.0
+  },
+  {
+    "code": "6018",
+    "name": "Espetinho de Codiguim Tradicional",
+    "price": 15.5
+  },
+  {
+    "code": "6019",
+    "name": "Espetinho de Codiguim Apimentado",
+    "price": 15.5
+  },
+  {
+    "code": "6020",
+    "name": "Espetinho de Kafta Costela c/ Mandioca",
+    "price": 2.6
+  },
+  {
+    "code": "6021",
+    "name": "Espetinho de Kafta",
+    "price": 3.8
+  },
+  {
+    "code": "6023",
+    "name": "Espetinho de Kafta Carne",
+    "price": 2.5
+  },
+  {
+    "code": "6024",
+    "name": "Espetinho de Kafta Kibe",
+    "price": 2.6
+  },
+  {
+    "code": "6025",
+    "name": "Espetinho de Romeu e Julieta",
+    "price": 5.5
+  },
+  {
+    "code": "6026",
+    "name": "Espetinho de Cheddar",
+    "price": 4.5
+  },
+  {
+    "code": "6027",
+    "name": "Espetinho de Medalhão Queijo",
+    "price": 4.6
+  },
+  {
+    "code": "6028",
+    "name": "Espetinho de Picanha",
+    "price": 8.0
+  },
+  {
+    "code": "602883100435",
+    "name": "Pimenta Viva Mexico Moderada",
+    "price": 12.0
+  },
+  {
+    "code": "602883232716",
+    "name": "Pão de Alho Scambo Bacon",
+    "price": 15.0
+  },
+  {
+    "code": "602883601017",
+    "name": "Pimenta Viva México Suave",
+    "price": 12.0
+  },
+  {
+    "code": "6029",
+    "name": "Espetinho de Cordeiro",
+    "price": 7.0
+  },
+  {
+    "code": "6030",
+    "name": "Pão de Alho",
+    "price": 15.0
+  },
+  {
+    "code": "6032",
+    "name": "Carvão de 2,8 kg",
+    "price": 18.0
+  },
+  {
+    "code": "6033",
+    "name": "Carvão de 4,0kg",
+    "price": 25.0
+  },
+  {
+    "code": "6052",
+    "name": "Maionese Temperada",
+    "price": 20.0
+  },
+  {
+    "code": "6065",
+    "name": "CARNE C/ LEGUMES",
+    "price": 4.0
+  },
+  {
+    "code": "606529990589",
+    "name": "Pimenta Marguerita com Manjericão",
+    "price": 12.0
+  },
+  {
+    "code": "609963033133",
+    "name": "Pão de alho Scamboo",
+    "price": 16.9
+  },
+  {
+    "code": "609963395064",
+    "name": "PAO ARTESANAL SCAMBOO",
+    "price": 15.0
+  },
+  {
+    "code": "6133",
+    "name": "Espetinho Vegano",
+    "price": 3.5
+  },
+  {
+    "code": "619205852415",
+    "name": "Sal Parilla",
+    "price": 15.0
+  },
+  {
+    "code": "619205852439",
+    "name": "Sal Parilla  Defumado",
+    "price": 16.0
+  },
+  {
+    "code": "619205852453",
+    "name": "Sal Parilla Pimenta",
+    "price": 15.0
+  },
+  {
+    "code": "619205852491",
+    "name": "Sal Parilla Blend Bull",
+    "price": 21.0
+  },
+  {
+    "code": "619205852545",
+    "name": "Dry Rub",
+    "price": 15.0
+  },
+  {
+    "code": "619205852552",
+    "name": "Paprica Defumada",
+    "price": 12.0
+  },
+  {
+    "code": "619205852569",
+    "name": "Fumaça em Pó",
+    "price": 12.0
+  },
+  {
+    "code": "619205852576",
+    "name": "Lemon Pepper",
+    "price": 15.0
+  },
+  {
+    "code": "619205852620",
+    "name": "Barbecue em pó",
+    "price": 18.0
+  },
+  {
+    "code": "619205852668",
+    "name": "Flor de Sal",
+    "price": 15.0
+  },
+  {
+    "code": "619205852682",
+    "name": "Molho Pimenta Malagueta",
+    "price": 16.0
+  },
+  {
+    "code": "619205852705",
+    "name": "Molho Pimenta Jalapeño",
+    "price": 16.0
+  },
+  {
+    "code": "6232",
+    "name": "PCT BRUSQUETA LINGUIÇA",
+    "price": 11.0
+  },
+  {
+    "code": "6246464152709",
+    "name": "SUCO NATURAL MORANGO 300 ML",
+    "price": 9.0
+  },
+  {
+    "code": "631430064661",
+    "name": "PAO DE ALHO SCAMBOO C/ CATUPIRY E BACON",
+    "price": 15.0
+  },
+  {
+    "code": "6333",
+    "name": "Panela 4,5 l Pressao",
+    "price": 240.0
+  },
+  {
+    "code": "6454564611",
+    "name": "Prato Descartavel",
+    "price": 3.0
+  },
+  {
+    "code": "645641",
+    "name": "Vácuo",
+    "price": 0.3
+  },
+  {
+    "code": "6465465",
+    "name": "PAO FILAO",
+    "price": 1.0
+  },
+  {
+    "code": "653232",
+    "name": "ESPETOS VARIADOS",
+    "price": 4.0
+  },
+  {
+    "code": "65644",
+    "name": "COPO SALES BIER",
+    "price": 14.9
+  },
+  {
+    "code": "65645",
+    "name": "TACA SALES BIER",
+    "price": 24.9
+  },
+  {
+    "code": "68510",
+    "name": "Filezinho Empanado De Frango 700g Brasil Baita",
+    "price": 20.0
+  },
+  {
+    "code": "6933902808563",
+    "name": "SUCO NATURAL LARANJA 900 ML",
+    "price": 17.0
+  },
+  {
+    "code": "7015105467835",
+    "name": "SUCO NATURAL MORANGO 900 ML",
+    "price": 17.0
+  },
+  {
+    "code": "72012",
+    "name": "Coracação da Alcatra - (miolo)",
+    "price": 49.9
+  },
+  {
+    "code": "7329177850922",
+    "name": "SUCO NATURAL MARACUJA 900 ML",
+    "price": 17.0
+  },
+  {
+    "code": "736532161086",
+    "name": "Pão com linguiça apimentado",
+    "price": 9.9
+  },
+  {
+    "code": "736532471871",
+    "name": "Farofa Premium CantaGallo Tradicional",
+    "price": 13.5
+  },
+  {
+    "code": "736532787408",
+    "name": "Molho CantaGallo Sweet Ginger",
+    "price": 19.9
+  },
+  {
+    "code": "736532787446",
+    "name": "Molho CantaGallo Barbecue Chipotle",
+    "price": 19.9
+  },
+  {
+    "code": "736532787668",
+    "name": "Molho CantaGallo Barbecue Original",
+    "price": 19.9
+  },
+  {
+    "code": "736532787835",
+    "name": "Molho CantaGallo Sweet Chilli",
+    "price": 19.9
+  },
+  {
+    "code": "751320477101",
+    "name": "Farofa",
+    "price": 7.5
+  },
+  {
+    "code": "7541",
+    "name": "Pudim",
+    "price": 15.0
+  },
+  {
+    "code": "7542",
+    "name": "Gelato",
+    "price": 15.0
+  },
+  {
+    "code": "7543",
+    "name": "Sacolé",
+    "price": 10.0
+  },
+  {
+    "code": "7544",
+    "name": "Cerveja long neck",
+    "price": 10.0
+  },
+  {
+    "code": "7545",
+    "name": "Refri Lata",
+    "price": 6.0
+  },
+  {
+    "code": "7547",
+    "name": "Energetico",
+    "price": 12.0
+  },
+  {
+    "code": "7548",
+    "name": "Chopp Antartica",
+    "price": 8.9
+  },
+  {
+    "code": "7549",
+    "name": "Pão de queijo recheado",
+    "price": 35.0
+  },
+  {
+    "code": "7579",
+    "name": "CHOPP 1 LITRO",
+    "price": 18.0
+  },
+  {
+    "code": "7580",
+    "name": "CHOPP 1 LITRO + GROWLER",
+    "price": 20.0
+  },
+  {
+    "code": "7622210565563",
+    "name": "Chocolicia",
+    "price": 6.9
+  },
+  {
+    "code": "7726",
+    "name": "HEINEKEN",
+    "price": 8.0
+  },
+  {
+    "code": "7727",
+    "name": "CORONA",
+    "price": 8.0
+  },
+  {
+    "code": "7728",
+    "name": "STELLA",
+    "price": 8.0
+  },
+  {
+    "code": "7742",
+    "name": "bacalhau",
+    "price": 79.9
+  },
+  {
+    "code": "7771",
+    "name": "Gelato",
+    "price": 10.0
+  },
+  {
+    "code": "7772",
+    "name": "Sacolé",
+    "price": 7.0
+  },
+  {
+    "code": "7773",
+    "name": "Corona",
+    "price": 13.0
+  },
+  {
+    "code": "7774",
+    "name": "Heineken",
+    "price": 6.5
+  },
+  {
+    "code": "7775",
+    "name": "Pudim",
+    "price": 10.0
+  },
+  {
+    "code": "7777",
+    "name": "Farofa",
+    "price": 13.0
+  },
+  {
+    "code": "7798039590496",
+    "name": "Reservado Concha Y Toro Malbec",
+    "price": 34.9
+  },
+  {
+    "code": "7804320116846",
+    "name": "Concha Y Toro Cabernet Sauvignon Reservado",
+    "price": 34.9
+  },
+  {
+    "code": "7804320148397",
+    "name": "Reservado Concha Y Toro Merlot",
+    "price": 34.9
+  },
+  {
+    "code": "7804320303178",
+    "name": "CASILLERO DEL DIABLO CABERNET SAUVIGNON",
+    "price": 49.9
+  },
+  {
+    "code": "7804320510187",
+    "name": "CASILLERO DEL DIABLO MALBEC",
+    "price": 49.9
+  },
+  {
+    "code": "78602731",
+    "name": "KINDER JOY",
+    "price": 12.0
+  },
+  {
+    "code": "7890010001073",
+    "name": "ISCA TILAPIA EMPANADA",
+    "price": 30.0
+  },
+  {
+    "code": "7890028085546",
+    "name": "Mel 500g",
+    "price": 20.0
+  },
+  {
+    "code": "7890046859679",
+    "name": "Mel 500g",
+    "price": 20.0
+  },
+  {
+    "code": "7891000248768",
+    "name": "Kit Kat",
+    "price": 5.0
+  },
+  {
+    "code": "7891000416266",
+    "name": "Cafe Solúvel",
+    "price": 8.9
+  },
+  {
+    "code": "7891000460207",
+    "name": "prestígio",
+    "price": 4.0
+  },
+  {
+    "code": "78910041",
+    "name": "Pastilha Hortelã",
+    "price": 1.5
+  },
+  {
+    "code": "7891021007078",
+    "name": "Capuccino Melitta",
+    "price": 18.9
+  },
+  {
+    "code": "7891022868036",
+    "name": "BOMBRIL",
+    "price": 2.49
+  },
+  {
+    "code": "7891031105238",
+    "name": "Cogumelos Inteiros Hemmer",
+    "price": 6.99
+  },
+  {
+    "code": "7891031112120",
+    "name": "Pepinos em Conserva Hemmer 440g",
+    "price": 28.0
+  },
+  {
+    "code": "7891031405031",
+    "name": "Mostarda Hemmer 1kg",
+    "price": 25.0
+  },
+  {
+    "code": "7891031409039",
+    "name": "KETCHUP ZERO HEMMER",
+    "price": 14.0
+  },
+  {
+    "code": "7891031409091",
+    "name": "ketchup hemmer 1kg",
+    "price": 20.0
+  },
+  {
+    "code": "7891031409381",
+    "name": "Molho Barbecue HEMMER",
+    "price": 32.9
+  },
+  {
+    "code": "7891031412091",
+    "name": "Maionese Hemmer 930g",
+    "price": 22.0
+  },
+  {
+    "code": "7891040347261",
+    "name": "Espanja Dupla face",
+    "price": 2.0
+  },
+  {
+    "code": "7891095031177",
+    "name": "Batata palha Yoki Parmessão",
+    "price": 8.9
+  },
+  {
+    "code": "7891141031731",
+    "name": "Vinho Espumante Moscatel",
+    "price": 18.9
+  },
+  {
+    "code": "7891143001206",
+    "name": "Cheddar Polenghi",
+    "price": 12.0
+  },
+  {
+    "code": "7891143020337",
+    "name": "Fondue Cheddar",
+    "price": 26.9
+  },
+  {
+    "code": "7891149010509",
+    "name": "Brahma 350ml",
+    "price": 5.0
+  },
+  {
+    "code": "7891149108718",
+    "name": "Corona long neck",
+    "price": 8.0
+  },
+  {
+    "code": "7891149200504",
+    "name": "Skol 350ml",
+    "price": 3.5
+  },
+  {
+    "code": "7891164015459",
+    "name": "Filezinho Sassami",
+    "price": 18.9
+  },
+  {
+    "code": "7891164015701",
+    "name": "Coração Aurora",
+    "price": 30.0
+  },
+  {
+    "code": "7891164016326",
+    "name": "TULIPA 1KG",
+    "price": 28.9
+  },
+  {
+    "code": "7891164017569",
+    "name": "Coxinha da Asa Aurora Premiun",
+    "price": 16.9
+  },
+  {
+    "code": "7891164017576",
+    "name": "Coxa e Sobrecoxa Desossada",
+    "price": 16.9
+  },
+  {
+    "code": "7891164017606",
+    "name": "Tulipa Temperada",
+    "price": 22.9
+  },
+  {
+    "code": "7891164018306",
+    "name": "Coração aurora",
+    "price": 35.0
+  },
+  {
+    "code": "7891164018504",
+    "name": "Meio da Asa",
+    "price": 21.9
+  },
+  {
+    "code": "7891164026745",
+    "name": "doce de leite",
+    "price": 10.0
+  },
+  {
+    "code": "7891164026905",
+    "name": "Leite Condensado",
+    "price": 6.99
+  },
+  {
+    "code": "7891164028770",
+    "name": "Choripan",
+    "price": 20.0
+  },
+  {
+    "code": "7891164110666",
+    "name": "Isca Frango Tempura",
+    "price": 12.9
+  },
+  {
+    "code": "7891164110680",
+    "name": "AURORA NUGGETS COM QUEIJO 900G",
+    "price": 34.9
+  },
+  {
+    "code": "7891164110734",
+    "name": "Aurogetes Tradicional 2kg",
+    "price": 46.9
+  },
+  {
+    "code": "7891164110758",
+    "name": "Aurogets queijo",
+    "price": 10.0
+  },
+  {
+    "code": "7891164110789",
+    "name": "Coxinha da Asa empanada 1,5kg",
+    "price": 58.9
+  },
+  {
+    "code": "7891164113513",
+    "name": "PEITO FRANGO EMPANADO",
+    "price": 2.0
+  },
+  {
+    "code": "7891242457317",
+    "name": "LIMPADOR UAU 1L",
+    "price": 8.9
+  },
+  {
+    "code": "7891242457614",
+    "name": "Uau Perfumes - Requinte",
+    "price": 4.9
+  },
+  {
+    "code": "7891242811270",
+    "name": "Uau Perfumes - Chá Branco",
+    "price": 4.9
+  },
+  {
+    "code": "7891515486372",
+    "name": "Coxinha da Asa",
+    "price": 12.0
+  },
+  {
+    "code": "7891515486587",
+    "name": "Sobrecoxa",
+    "price": 15.9
+  },
+  {
+    "code": "7891515486747",
+    "name": "File peito Temperado",
+    "price": 25.9
+  },
+  {
+    "code": "7891515487416",
+    "name": "Coração na Brasa",
+    "price": 28.0
+  },
+  {
+    "code": "7891515489328",
+    "name": "Mini Chicken com queijo 3kg",
+    "price": 79.9
+  },
+  {
+    "code": "7891515535568",
+    "name": "Coxinha da Asa Empanada 2kg",
+    "price": 46.9
+  },
+  {
+    "code": "7891515544041",
+    "name": "Mini Checken",
+    "price": 26.9
+  },
+  {
+    "code": "7891515546212",
+    "name": "Coxinha da Asa Empanada",
+    "price": 19.9
+  },
+  {
+    "code": "7891515557454",
+    "name": "Requeijão Cremoso",
+    "price": 7.99
+  },
+  {
+    "code": "7891515557461",
+    "name": "Requeijao Cremoso",
+    "price": 7.99
+  },
+  {
+    "code": "7891515562885",
+    "name": "Queijo Coalho na Brasa",
+    "price": 20.0
+  },
+  {
+    "code": "7891515614065",
+    "name": "SASAMI",
+    "price": 19.9
+  },
+  {
+    "code": "7891515644437",
+    "name": "TOSCANA NA BRASA",
+    "price": 21.9
+  },
+  {
+    "code": "7891515661526",
+    "name": "HB FRANGO EMPANADO",
+    "price": 5.0
+  },
+  {
+    "code": "7891515665586",
+    "name": "isca coxa",
+    "price": 15.0
+  },
+  {
+    "code": "7891515972059",
+    "name": "2KG CORAÇÃO DE FRANGO",
+    "price": 70.0
+  },
+  {
+    "code": "7891515977412",
+    "name": "Coração de Frango Perdigão",
+    "price": 23.9
+  },
+  {
+    "code": "7891527031676",
+    "name": "Raquete",
+    "price": 19.9
+  },
+  {
+    "code": "7891991014762",
+    "name": "Budweiser Long Neck",
+    "price": 9.0
+  },
+  {
+    "code": "7891991304870",
+    "name": "Stella Artois Gold",
+    "price": 8.0
+  },
+  {
+    "code": "7891991306188",
+    "name": "Beats Tropical",
+    "price": 10.0
+  },
+  {
+    "code": "7891999970053",
+    "name": "Queijo Parmesão Ralado",
+    "price": 5.9
+  },
+  {
+    "code": "7892840808174",
+    "name": "GATORADE",
+    "price": 8.0
+  },
+  {
+    "code": "7892840812850",
+    "name": "LIMONETO",
+    "price": 7.0
+  },
+  {
+    "code": "7892840820701",
+    "name": "GATORATE ZERO",
+    "price": 6.0
+  },
+  {
+    "code": "7892840822019",
+    "name": "GATORADE",
+    "price": 8.0
+  },
+  {
+    "code": "7892840822637",
+    "name": "Torcida Pimenta Mexicana",
+    "price": 3.5
+  },
+  {
+    "code": "7893000090026",
+    "name": "Meio da Asa Bandeja Sadia",
+    "price": 27.9
+  },
+  {
+    "code": "7893000394209",
+    "name": "Margarina Qualy 500g",
+    "price": 9.9
+  },
+  {
+    "code": "7893000488793",
+    "name": "Coxa e Sobrecoxa a Passarinho",
+    "price": 19.9
+  },
+  {
+    "code": "7893000516083",
+    "name": "Filezinho Sassami",
+    "price": 21.9
+  },
+  {
+    "code": "7893000863125",
+    "name": "Sassami Bandeja 1,0kg",
+    "price": 21.9
+  },
+  {
+    "code": "7893218003603",
+    "name": "Smirnoff Ice",
+    "price": 10.0
+  },
+  {
+    "code": "7893595699819",
+    "name": "Pao de Alho Baguete Tradicional General",
+    "price": 7.0
+  },
+  {
+    "code": "78936683",
+    "name": "Heineken Long Neck",
+    "price": 8.0
+  },
+  {
+    "code": "78938830",
+    "name": "Halls Menta",
+    "price": 2.0
+  },
+  {
+    "code": "7894650008546",
+    "name": "RAID AEROSOL",
+    "price": 23.9
+  },
+  {
+    "code": "7894900010015",
+    "name": "Coca-Cola 350ml",
+    "price": 3.5
+  },
+  {
+    "code": "7894900011715",
+    "name": "Coca-Cola 1 Litro",
+    "price": 6.0
+  },
+  {
+    "code": "7894900018394",
+    "name": "Coca-Cola 2 litros",
+    "price": 10.0
+  },
+  {
+    "code": "7894900030013",
+    "name": "Fanta Laranja 350ml",
+    "price": 3.5
+  },
+  {
+    "code": "7894900700015",
+    "name": "Coca-Cola Zero 350ml",
+    "price": 3.5
+  },
+  {
+    "code": "7894904015429",
+    "name": "Coração Seara",
+    "price": 28.0
+  },
+  {
+    "code": "7894904098293",
+    "name": "Linguiça Cuiabana",
+    "price": 19.99
+  },
+  {
+    "code": "7894904197736",
+    "name": "Filezinho Sassami pct 1kg",
+    "price": 21.9
+  },
+  {
+    "code": "7894904219070",
+    "name": "Meio Asa Temperada - Tulipa 1kg",
+    "price": 21.9
+  },
+  {
+    "code": "7894904254989",
+    "name": "Camarão 500g",
+    "price": 30.0
+  },
+  {
+    "code": "7894904255030",
+    "name": "Seara Filé de Tilápia 600g",
+    "price": 30.0
+  },
+  {
+    "code": "7894904255177",
+    "name": "Luinguica Pernil com coalho",
+    "price": 18.9
+  },
+  {
+    "code": "7894904256563",
+    "name": "Coxinha da Asa Buffalo Wings",
+    "price": 19.9
+  },
+  {
+    "code": "7894904256587",
+    "name": "Meio da Asa Seara Gourmet",
+    "price": 25.0
+  },
+  {
+    "code": "7894904256594",
+    "name": "Sobrecoxa Desossada ao Chimichurri",
+    "price": 15.9
+  },
+  {
+    "code": "7894904271528",
+    "name": "Margarina Delicia 500g",
+    "price": 5.79
+  },
+  {
+    "code": "7894904271535",
+    "name": "Margarina Delicia 250g",
+    "price": 3.5
+  },
+  {
+    "code": "7894904296309",
+    "name": "ARROZ CARRETEIRO",
+    "price": 18.0
+  },
+  {
+    "code": "7894904296316",
+    "name": "Escondidinho",
+    "price": 18.0
+  },
+  {
+    "code": "7894904296323",
+    "name": "FEIJADA",
+    "price": 18.0
+  },
+  {
+    "code": "7894904603633",
+    "name": "PIPOQUINHA FRANGO",
+    "price": 15.0
+  },
+  {
+    "code": "7894904605071",
+    "name": "LING TOSCANA SEARA",
+    "price": 15.9
+  },
+  {
+    "code": "7894904605101",
+    "name": "linguiça pernil",
+    "price": 16.9
+  },
+  {
+    "code": "7894904727186",
+    "name": "Linguiça Toscana Seara",
+    "price": 17.9
+  },
+  {
+    "code": "7894904727193",
+    "name": "Linguiça Seara 700g",
+    "price": 17.9
+  },
+  {
+    "code": "789515486372",
+    "name": "COXINHA ASA PERDIGÃO",
+    "price": 16.9
+  },
+  {
+    "code": "7896003537123",
+    "name": "OLEO DE SOJA BREJEIRO",
+    "price": 8.49
+  },
+  {
+    "code": "7896005800157",
+    "name": "Capuccino Clássico 3 Corações",
+    "price": 18.9
+  },
+  {
+    "code": "7896020630623",
+    "name": "CHURRASQUEIRA PORTÁTIL",
+    "price": 72.9
+  },
+  {
+    "code": "7896020631057",
+    "name": "Grelha Dupla Abaulada 02",
+    "price": 36.9
+  },
+  {
+    "code": "7896020632023",
+    "name": "Espeto Simples 65",
+    "price": 9.9
+  },
+  {
+    "code": "7896020632030",
+    "name": "Espeto Simples 75",
+    "price": 14.9
+  },
+  {
+    "code": "7896020632078",
+    "name": "Espeto Duplo 65",
+    "price": 10.9
+  },
+  {
+    "code": "7896020632085",
+    "name": "Espeto Duplo 75",
+    "price": 15.9
+  },
+  {
+    "code": "7896020632115",
+    "name": "Espeto Duplo fino 75",
+    "price": 13.0
+  },
+  {
+    "code": "7896020633105",
+    "name": "Conj.Assador Faca 9\" , Garfo e Chaira",
+    "price": 44.9
+  },
+  {
+    "code": "7896020633389",
+    "name": "Conju. Assados Faca 8\", garfo e chaira",
+    "price": 29.9
+  },
+  {
+    "code": "7896020633419",
+    "name": "FACA 10 ASSADOR",
+    "price": 20.0
+  },
+  {
+    "code": "7896020633440",
+    "name": "Faca Desossa",
+    "price": 9.9
+  },
+  {
+    "code": "7896020633518",
+    "name": "TABUA CHURRASCO 35X25",
+    "price": 24.9
+  },
+  {
+    "code": "7896020633600",
+    "name": "Conj. Churrasco Tabua, faca e garfo",
+    "price": 74.9
+  },
+  {
+    "code": "7896020633648",
+    "name": "GAMELA 2 REP",
+    "price": 75.0
+  },
+  {
+    "code": "7896020633655",
+    "name": "GAMELA 5 REP",
+    "price": 75.0
+  },
+  {
+    "code": "7896020633747",
+    "name": "FRIGIDEIRA GRELHA",
+    "price": 34.9
+  },
+  {
+    "code": "7896020636113656",
+    "name": "BOLSA TERMICA",
+    "price": 59.9
+  },
+  {
+    "code": "7896020639046",
+    "name": "Afiador de facas",
+    "price": 45.0
+  },
+  {
+    "code": "7896020639411",
+    "name": "Faca 8\" Steel Inox",
+    "price": 51.9
+  },
+  {
+    "code": "7896020639428",
+    "name": "FACA 9' INOX",
+    "price": 59.9
+  },
+  {
+    "code": "7896020639442",
+    "name": "Faca 8\" e Garfo Steel",
+    "price": 90.0
+  },
+  {
+    "code": "7896020639459",
+    "name": "Conj. Steel Faca 8\" Garfo e Chaira",
+    "price": 134.9
+  },
+  {
+    "code": "7896020639558",
+    "name": "Faca 8\" Assador Black",
+    "price": 16.9
+  },
+  {
+    "code": "7896020684497",
+    "name": "Moedor de Pimenta e Saleiro",
+    "price": 42.9
+  },
+  {
+    "code": "7896023081477",
+    "name": "Classic Cabernet Sauvignon",
+    "price": 28.9
+  },
+  {
+    "code": "7896026850148",
+    "name": "Papel Higiênico Duetto 4 rolos",
+    "price": 6.9
+  },
+  {
+    "code": "7896026850155",
+    "name": "Papel Higienico",
+    "price": 9.9
+  },
+  {
+    "code": "7896031223845",
+    "name": "LINGUIÇA COSTELA 300G",
+    "price": 12.99
+  },
+  {
+    "code": "7896031245960",
+    "name": "pão de alho Maturatta",
+    "price": 6.0
+  },
+  {
+    "code": "7896040706247",
+    "name": "Desinfetante Perfumado",
+    "price": 4.9
+  },
+  {
+    "code": "7896045506040",
+    "name": "Heineken Zero",
+    "price": 8.0
+  },
+  {
+    "code": "7896048200051",
+    "name": "VINAGRE ALCOOL CASTELO",
+    "price": 4.9
+  },
+  {
+    "code": "7896048284648",
+    "name": "vinagre de álcool Fortaleza",
+    "price": 3.0
+  },
+  {
+    "code": "7896048284785",
+    "name": "Linguiça Toscana 500g",
+    "price": 15.9
+  },
+  {
+    "code": "7896051020158",
+    "name": "Palito de dente Gina 200un",
+    "price": 1.9
+  },
+  {
+    "code": "7896054908538",
+    "name": "Molho American Burger 1,01",
+    "price": 18.9
+  },
+  {
+    "code": "7896065870497",
+    "name": "ÁGUA COM GÁS",
+    "price": 4.0
+  },
+  {
+    "code": "7896065880069",
+    "name": "ÁGUA",
+    "price": 3.0
+  },
+  {
+    "code": "7896080900216",
+    "name": "Fósforo longo pct",
+    "price": 3.0
+  },
+  {
+    "code": "7896080900261",
+    "name": "Fóforo longo",
+    "price": 1.0
+  },
+  {
+    "code": "7896080900889",
+    "name": "Acendedor Carvão",
+    "price": 5.9
+  },
+  {
+    "code": "7896080901893",
+    "name": "Acendedor Sólido Paraná",
+    "price": 12.0
+  },
+  {
+    "code": "7896083800025",
+    "name": "AGUA SANITARIA QBOA",
+    "price": 7.9
+  },
+  {
+    "code": "7896098900208",
+    "name": "Detergente Ype Neutro",
+    "price": 2.79
+  },
+  {
+    "code": "7896098902226",
+    "name": "Sabonete em barra Flor de Ype Frésia e Pêssego",
+    "price": 2.5
+  },
+  {
+    "code": "7896098902271",
+    "name": "Sabonete em barra Flor de Ype",
+    "price": 2.5
+  },
+  {
+    "code": "7896098904428",
+    "name": "Veja Multiuso Perfumes",
+    "price": 4.9
+  },
+  {
+    "code": "7896102000122",
+    "name": "KETCHUP 1,0KG",
+    "price": 22.0
+  },
+  {
+    "code": "7896102503708",
+    "name": "Ketchup Heinz",
+    "price": 10.0
+  },
+  {
+    "code": "7896102583182",
+    "name": "Maionese Heinz",
+    "price": 10.0
+  },
+  {
+    "code": "7896104992340",
+    "name": "Papel toalha",
+    "price": 5.9
+  },
+  {
+    "code": "7896183202217",
+    "name": "Fundue Queijo",
+    "price": 26.9
+  },
+  {
+    "code": "7896183203177",
+    "name": "Queijo Coalho Quatá",
+    "price": 20.0
+  },
+  {
+    "code": "7896212520084",
+    "name": "Queijo Coalho",
+    "price": 20.0
+  },
+  {
+    "code": "7896216100527",
+    "name": "Ravioli de 4 Queijos",
+    "price": 10.0
+  },
+  {
+    "code": "7896216100541",
+    "name": "Capeletti de Frango",
+    "price": 10.0
+  },
+  {
+    "code": "7896216100909",
+    "name": "Pão de Alho Mezzani",
+    "price": 10.0
+  },
+  {
+    "code": "7896272004203",
+    "name": "Azeitona sem caroço",
+    "price": 6.9
+  },
+  {
+    "code": "7896275981273",
+    "name": "porco passarinho",
+    "price": 26.9
+  },
+  {
+    "code": "7896292313347",
+    "name": "Passata Sacciali",
+    "price": 15.0
+  },
+  {
+    "code": "7896292330061",
+    "name": "Goiabada 300g",
+    "price": 4.0
+  },
+  {
+    "code": "7896292330207",
+    "name": "GOIABADA",
+    "price": 10.9
+  },
+  {
+    "code": "7896292341098",
+    "name": "Milho em Conserva",
+    "price": 3.9
+  },
+  {
+    "code": "7896295388496",
+    "name": "Sassami 1kg",
+    "price": 19.9
+  },
+  {
+    "code": "7896295389356",
+    "name": "coração cevale",
+    "price": 35.0
+  },
+  {
+    "code": "7896306625190",
+    "name": "TRENTO AVELÂ",
+    "price": 4.0
+  },
+  {
+    "code": "7896306625213",
+    "name": "TRENTO MORANGO",
+    "price": 4.0
+  },
+  {
+    "code": "7896336005917",
+    "name": "Paçoquita",
+    "price": 1.0
+  },
+  {
+    "code": "7896343099503",
+    "name": "Garfo Sobremesa",
+    "price": 4.99
+  },
+  {
+    "code": "7896369615077",
+    "name": "Abacaxi em pedaços",
+    "price": 14.9
+  },
+  {
+    "code": "7896423419276",
+    "name": "M&Ms",
+    "price": 5.0
+  },
+  {
+    "code": "7896423439014",
+    "name": "SNICKERS DARK",
+    "price": 5.0
+  },
+  {
+    "code": "7896423439182",
+    "name": "SNICKERS MACCHIATO",
+    "price": 5.0
+  },
+  {
+    "code": "7896423445985",
+    "name": "Snickers morango",
+    "price": 6.0
+  },
+  {
+    "code": "7896423497984",
+    "name": "SNICKERS PE DE MOLEQUE",
+    "price": 5.0
+  },
+  {
+    "code": "7896430500059",
+    "name": "SAL FINO",
+    "price": 3.0
+  },
+  {
+    "code": "7896430502312",
+    "name": "SAL GROSSO",
+    "price": 3.0
+  },
+  {
+    "code": "7896430504699",
+    "name": "SAL DE PARRILHA",
+    "price": 10.0
+  },
+  {
+    "code": "7896502816293",
+    "name": "Pegador de inox 28,5cm",
+    "price": 19.9
+  },
+  {
+    "code": "7896547500317",
+    "name": "Corote Ice Tropicalia",
+    "price": 5.0
+  },
+  {
+    "code": "7896547501543",
+    "name": "Corote Ice Sex On The Beach",
+    "price": 5.0
+  },
+  {
+    "code": "7896547501550",
+    "name": "Corote Ice Pink Limonete",
+    "price": 5.0
+  },
+  {
+    "code": "7896980439953",
+    "name": "garra de urso",
+    "price": 16.9
+  },
+  {
+    "code": "7896992500153",
+    "name": "12 OVOS BRANCOS",
+    "price": 8.0
+  },
+  {
+    "code": "7896992500252",
+    "name": "12 OVOS MARROM",
+    "price": 10.0
+  },
+  {
+    "code": "7897517206086",
+    "name": "Molho de Tomate",
+    "price": 1.9
+  },
+  {
+    "code": "7897517209544",
+    "name": "Milho",
+    "price": 3.9
+  },
+  {
+    "code": "7897517209650",
+    "name": "Ervilhas",
+    "price": 3.3
+  },
+  {
+    "code": "7897574189032",
+    "name": "Farofa pronta Churrasco",
+    "price": 6.0
+  },
+  {
+    "code": "7897574189070",
+    "name": "Farofa pronta Picante",
+    "price": 6.0
+  },
+  {
+    "code": "7897574189131",
+    "name": "Farofa pronta costela",
+    "price": 6.0
+  },
+  {
+    "code": "7897942100447",
+    "name": "Panko",
+    "price": 19.9
+  },
+  {
+    "code": "7898017337836",
+    "name": "Linguiça calabresa",
+    "price": 16.0
+  },
+  {
+    "code": "7898024397915",
+    "name": "Nutella B-ready",
+    "price": 5.0
+  },
+  {
+    "code": "7898067340008",
+    "name": "Torresmo Santa Massa",
+    "price": 7.5
+  },
+  {
+    "code": "7898067340206",
+    "name": "PAO PEPERONI E REQ.",
+    "price": 15.0
+  },
+  {
+    "code": "7898067340220",
+    "name": "FAROFA STA MASSA",
+    "price": 4.9
+  },
+  {
+    "code": "7898067340404",
+    "name": "Pão de alho Santa Massa",
+    "price": 15.0
+  },
+  {
+    "code": "7898067340503",
+    "name": "PÃO ALHO C/ PIEMNTA",
+    "price": 15.0
+  },
+  {
+    "code": "7898067340688",
+    "name": "Pão de Cebola Sta Massa",
+    "price": 15.0
+  },
+  {
+    "code": "7898072520044",
+    "name": "Saco de lixo100l 5un.",
+    "price": 3.9
+  },
+  {
+    "code": "7898072810169",
+    "name": "Farinha de Rosca",
+    "price": 6.5
+  },
+  {
+    "code": "7898072810213",
+    "name": "Fubá Mimoso",
+    "price": 3.9
+  },
+  {
+    "code": "7898072810404",
+    "name": "Farofa Caseira Chão Preto Tradicional",
+    "price": 6.99
+  },
+  {
+    "code": "7898072810466",
+    "name": "PAPRICA PICANTE",
+    "price": 1.6
+  },
+  {
+    "code": "7898072810473",
+    "name": "PAPRICA DOCE",
+    "price": 1.6
+  },
+  {
+    "code": "7898072810480",
+    "name": "PAPRICA DEFUMADA",
+    "price": 1.6
+  },
+  {
+    "code": "7898072810510",
+    "name": "PIMENTA DO REINO MOIDA PURA 100%",
+    "price": 6.5
+  },
+  {
+    "code": "7898072810619",
+    "name": "Farofa Artesanal Cebola Agridoce",
+    "price": 8.9
+  },
+  {
+    "code": "7898072810626",
+    "name": "Farofa Artesanal Costelinha c/ Limão",
+    "price": 8.9
+  },
+  {
+    "code": "7898072811005",
+    "name": "ORANGE PEPPER",
+    "price": 1.6
+  },
+  {
+    "code": "7898072811012",
+    "name": "AÇAFRÃO",
+    "price": 2.9
+  },
+  {
+    "code": "7898072811036",
+    "name": "BICARBONATO DE SODIO",
+    "price": 2.3
+  },
+  {
+    "code": "7898072811067",
+    "name": "CAMOMILA FLOR",
+    "price": 1.6
+  },
+  {
+    "code": "7898072811104",
+    "name": "CANELA EM RAMA",
+    "price": 6.0
+  },
+  {
+    "code": "7898072811180",
+    "name": "COLORAU COLORIFICO",
+    "price": 1.6
+  },
+  {
+    "code": "7898072811234",
+    "name": "COMINHO EM PO",
+    "price": 1.6
+  },
+  {
+    "code": "7898072811258",
+    "name": "CRAVO DA INDIA",
+    "price": 3.9
+  },
+  {
+    "code": "7898072811272",
+    "name": "ERVA DOCE",
+    "price": 1.9
+  },
+  {
+    "code": "7898072811296",
+    "name": "LOURO EM FOLHA",
+    "price": 1.6
+  },
+  {
+    "code": "7898072811326",
+    "name": "NOZ MOSCADA EM PO",
+    "price": 3.7
+  },
+  {
+    "code": "7898072811357",
+    "name": "OREGANO",
+    "price": 2.3
+  },
+  {
+    "code": "7898072811395",
+    "name": "PIMENTA DO REINO GRAO",
+    "price": 5.4
+  },
+  {
+    "code": "7898072811418",
+    "name": "PIMENTA DO REINO CONDIMENTADA MOIDA",
+    "price": 3.6
+  },
+  {
+    "code": "7898072811463",
+    "name": "SAL AMONIACO",
+    "price": 2.2
+  },
+  {
+    "code": "7898072811470",
+    "name": "NOZ MOSCADA 2 BOLAS",
+    "price": 2.8
+  },
+  {
+    "code": "7898072811524",
+    "name": "Farofa Artesanal Crocante",
+    "price": 8.9
+  },
+  {
+    "code": "7898072812507",
+    "name": "SACO P/GELADINHO 100UN",
+    "price": 1.9
+  },
+  {
+    "code": "7898072812514",
+    "name": "Farofa Caseira Chão Preto C/ Pequi",
+    "price": 6.99
+  },
+  {
+    "code": "7898072812576",
+    "name": "CHIMICHURRI",
+    "price": 2.3
+  },
+  {
+    "code": "7898072812590",
+    "name": "PIMENTA SIRIA/JAMAICA",
+    "price": 3.9
+  },
+  {
+    "code": "7898072812606",
+    "name": "TEMP  BAIANO",
+    "price": 3.4
+  },
+  {
+    "code": "7898072812644",
+    "name": "SAL TEMPERADO",
+    "price": 3.0
+  },
+  {
+    "code": "7898072812705",
+    "name": "MANJERICAO",
+    "price": 1.6
+  },
+  {
+    "code": "7898072812712",
+    "name": "SALSA DESIDRATADA",
+    "price": 1.6
+  },
+  {
+    "code": "7898072812743",
+    "name": "PIMENTA CALABRESA",
+    "price": 1.6
+  },
+  {
+    "code": "7898072812767",
+    "name": "CEBOLINHA DESIDRATADA",
+    "price": 1.6
+  },
+  {
+    "code": "7898072813139",
+    "name": "TEMPERO EDU",
+    "price": 1.8
+  },
+  {
+    "code": "7898072813146",
+    "name": "TEMPERO ANA MARIA",
+    "price": 1.5
+  },
+  {
+    "code": "7898072813153",
+    "name": "HORTELA",
+    "price": 1.6
+  },
+  {
+    "code": "7898072813160",
+    "name": "VINAGRETE",
+    "price": 3.3
+  },
+  {
+    "code": "7898072813177",
+    "name": "ALHO FRITO",
+    "price": 3.3
+  },
+  {
+    "code": "7898072813184",
+    "name": "ERVAS FINAS",
+    "price": 1.6
+  },
+  {
+    "code": "7898072813221",
+    "name": "Farofa Caseira Chão Preto C/ Bacon",
+    "price": 6.99
+  },
+  {
+    "code": "7898072813238",
+    "name": "Farofa Caseira Chão Preto C/ Pimenta",
+    "price": 6.99
+  },
+  {
+    "code": "7898072813382",
+    "name": "LEMON PEPPER",
+    "price": 2.3
+  },
+  {
+    "code": "7898072813665",
+    "name": "Molho de Alho",
+    "price": 3.9
+  },
+  {
+    "code": "7898072813672",
+    "name": "Molho Ingles",
+    "price": 4.2
+  },
+  {
+    "code": "7898072813689",
+    "name": "Molho Shoyu",
+    "price": 3.9
+  },
+  {
+    "code": "7898072814921",
+    "name": "Amendoim Cebola e Salsa",
+    "price": 8.9
+  },
+  {
+    "code": "7898072814938",
+    "name": "Amendoim Sabor Bacon",
+    "price": 8.9
+  },
+  {
+    "code": "7898072814969",
+    "name": "Farofa Artesanal Tradicional",
+    "price": 8.9
+  },
+  {
+    "code": "7898072814983",
+    "name": "Farofa Artesanal Picante",
+    "price": 8.9
+  },
+  {
+    "code": "7898072814990",
+    "name": "Farofa Artesanal Picanha",
+    "price": 8.9
+  },
+  {
+    "code": "7898072815010",
+    "name": "Farofa Artesanal Bacon",
+    "price": 8.9
+  },
+  {
+    "code": "7898072817021",
+    "name": "Farofa Caseira Chão Preto C/ Galinha Caipira",
+    "price": 6.99
+  },
+  {
+    "code": "7898072817151",
+    "name": "Farofa Caseira Chão Preto Picanha",
+    "price": 6.99
+  },
+  {
+    "code": "7898072817359",
+    "name": "COENTRO EM GRAO",
+    "price": 1.6
+  },
+  {
+    "code": "7898080664808",
+    "name": "ENERGÉTICO BALY",
+    "price": 6.0
+  },
+  {
+    "code": "7898080664822",
+    "name": "GIN MELANCIA",
+    "price": 15.0
+  },
+  {
+    "code": "7898080666321",
+    "name": "GIN MORANGO E PESSEGO",
+    "price": 15.0
+  },
+  {
+    "code": "7898187830014",
+    "name": "Açucar 1kg",
+    "price": 6.9
+  },
+  {
+    "code": "7898213800165",
+    "name": "Jerket Minerva",
+    "price": 14.0
+  },
+  {
+    "code": "7898213800363",
+    "name": "File de Peito Empanado Minerva 1,5kg",
+    "price": 32.9
+  },
+  {
+    "code": "7898213800639",
+    "name": "File de Peito Empanado Minerva 700g",
+    "price": 16.9
+  },
+  {
+    "code": "7898213800660",
+    "name": "Filé de Frango Empanado 2kg",
+    "price": 44.9
+  },
+  {
+    "code": "7898213800684",
+    "name": "Pangasius Minerva",
+    "price": 23.9
+  },
+  {
+    "code": "7898213800691",
+    "name": "Coxa e Sobrecoxa Empanado",
+    "price": 18.9
+  },
+  {
+    "code": "7898213800745",
+    "name": "Polaca salgada",
+    "price": 19.9
+  },
+  {
+    "code": "7898215151784",
+    "name": "CREME DE LEITE PIRACANJUBA",
+    "price": 3.4
+  },
+  {
+    "code": "7898215152002",
+    "name": "LEITE COND. PIRACANJUBA",
+    "price": 7.0
+  },
+  {
+    "code": "7898215157441",
+    "name": "Leite Molico",
+    "price": 8.9
+  },
+  {
+    "code": "7898234850019",
+    "name": "Farinha de Trigo",
+    "price": 5.9
+  },
+  {
+    "code": "7898266900607",
+    "name": "Linguiça Fina Suina Camari",
+    "price": 15.9
+  },
+  {
+    "code": "7898266900614",
+    "name": "Linguiça Fina Apimentada Camari",
+    "price": 15.9
+  },
+  {
+    "code": "7898266900706",
+    "name": "Toscana Mini",
+    "price": 22.9
+  },
+  {
+    "code": "7898266901314",
+    "name": "Linguiça Toscana Camari",
+    "price": 15.9
+  },
+  {
+    "code": "7898280000291",
+    "name": "Sal Grosso União",
+    "price": 3.0
+  },
+  {
+    "code": "7898280080149",
+    "name": "Sal refinado",
+    "price": 2.5
+  },
+  {
+    "code": "7898288821133",
+    "name": "Alcool Liquido 92,8%",
+    "price": 15.5
+  },
+  {
+    "code": "7898323520410",
+    "name": "Pão queijo",
+    "price": 25.0
+  },
+  {
+    "code": "7898367983790",
+    "name": "Eisenbahn 350ml",
+    "price": 4.5
+  },
+  {
+    "code": "7898373971545",
+    "name": "CAMARÃO EMPANADO 300G",
+    "price": 28.0
+  },
+  {
+    "code": "7898373971675",
+    "name": "FILEZINHO DE FRANGO EMPANADO",
+    "price": 21.9
+  },
+  {
+    "code": "7898386340178",
+    "name": "CORAÇÃO",
+    "price": 16.0
+  },
+  {
+    "code": "7898386720277",
+    "name": "Jerked Traseiro Frigol",
+    "price": 17.5
+  },
+  {
+    "code": "7898400540515",
+    "name": "Farofa Prea Pimenta",
+    "price": 8.5
+  },
+  {
+    "code": "7898400540522",
+    "name": "Farofa Prea Brasileirinha",
+    "price": 8.5
+  },
+  {
+    "code": "7898400540539",
+    "name": "Farofa Prea Lemon Pepper",
+    "price": 8.5
+  },
+  {
+    "code": "7898400540546",
+    "name": "Pao Baguete Prea Pimenta",
+    "price": 12.0
+  },
+  {
+    "code": "7898400540553",
+    "name": "Farofa Prea Tradicional",
+    "price": 8.5
+  },
+  {
+    "code": "7898400540577",
+    "name": "Pao Baguete Prea Tradicional",
+    "price": 12.0
+  },
+  {
+    "code": "7898400540584",
+    "name": "Pao Baguete Prea Cebola e Salsa",
+    "price": 12.0
+  },
+  {
+    "code": "7898400540591",
+    "name": "Pão de chocolate",
+    "price": 15.0
+  },
+  {
+    "code": "7898400540713",
+    "name": "Pao Bolinha Prea Cebola e Salsa",
+    "price": 12.0
+  },
+  {
+    "code": "7898400540720",
+    "name": "Pao Bolinha Prea Tradicional",
+    "price": 9.5
+  },
+  {
+    "code": "7898400540737",
+    "name": "Pao Bolinha Prea 3 Queijos",
+    "price": 9.5
+  },
+  {
+    "code": "7898400540775",
+    "name": "SAL PARRILA",
+    "price": 12.0
+  },
+  {
+    "code": "7898400540782",
+    "name": "SAL DE PARRILLA PIMENTA PREÁ",
+    "price": 12.0
+  },
+  {
+    "code": "7898400540836",
+    "name": "Pão 3 queijos",
+    "price": 12.0
+  },
+  {
+    "code": "7898400540843",
+    "name": "FAROFA PREÁ",
+    "price": 7.0
+  },
+  {
+    "code": "7898400540850",
+    "name": "FAROFA PREÁ",
+    "price": 7.0
+  },
+  {
+    "code": "7898400540867",
+    "name": "FAROFA PREÁ",
+    "price": 7.0
+  },
+  {
+    "code": "7898400540874",
+    "name": "FAROFA PREÁ",
+    "price": 7.5
+  },
+  {
+    "code": "7898400540898",
+    "name": "Molho Pimenta",
+    "price": 10.0
+  },
+  {
+    "code": "7898400540911",
+    "name": "SAL C/ ERVAS FINAS",
+    "price": 10.0
+  },
+  {
+    "code": "7898400540928",
+    "name": "SAL C/ CHIMICHURRI",
+    "price": 10.0
+  },
+  {
+    "code": "7898400540935",
+    "name": "SAL DE PARRILLA ARGENTINO PREÁ",
+    "price": 10.0
+  },
+  {
+    "code": "7898400540942",
+    "name": "SAL C/ PIMENTA",
+    "price": 10.0
+  },
+  {
+    "code": "7898400540959",
+    "name": "SAL C/ ALHO",
+    "price": 10.0
+  },
+  {
+    "code": "7898608572905",
+    "name": "Plastico Filme Churrasco",
+    "price": 5.0
+  },
+  {
+    "code": "789861922645",
+    "name": "Colher Sobremesa",
+    "price": 4.9
+  },
+  {
+    "code": "7898631400022",
+    "name": "Barquete 120g",
+    "price": 9.0
+  },
+  {
+    "code": "7898634384992",
+    "name": "Pao Baguete Tradicional Frigol",
+    "price": 8.0
+  },
+  {
+    "code": "7898634389010",
+    "name": "Espeto Panceta",
+    "price": 21.0
+  },
+  {
+    "code": "7898634389027",
+    "name": "Espetinhos Bovinos Grand Chef",
+    "price": 23.5
+  },
+  {
+    "code": "7898634389546",
+    "name": "Farofa Tradicional",
+    "price": 6.0
+  },
+  {
+    "code": "7898641040362",
+    "name": "Filé de Tilápia 400g",
+    "price": 17.9
+  },
+  {
+    "code": "7898673790167",
+    "name": "CARNE MOIDA",
+    "price": 25.0
+  },
+  {
+    "code": "7898697670148",
+    "name": "Cerveja Pilsen",
+    "price": 12.9
+  },
+  {
+    "code": "7898697670179",
+    "name": "IMPERIAL IPA",
+    "price": 18.9
+  },
+  {
+    "code": "7898697670193",
+    "name": "DANUBE VIENA LAGER",
+    "price": 16.9
+  },
+  {
+    "code": "7898703420354",
+    "name": "LUVAS S/ PÓ PRETA",
+    "price": 25.0
+  },
+  {
+    "code": "7898703420927",
+    "name": "Pano de chão Microfibra",
+    "price": 8.9
+  },
+  {
+    "code": "7898756240015",
+    "name": "MOLHO ALHO",
+    "price": 13.9
+  },
+  {
+    "code": "7898756240039",
+    "name": "BACONMESE",
+    "price": 13.9
+  },
+  {
+    "code": "7898756240046",
+    "name": "MOLHO VERDE",
+    "price": 13.9
+  },
+  {
+    "code": "7898756240077",
+    "name": "Mostarda com mel",
+    "price": 13.9
+  },
+  {
+    "code": "7898756240084",
+    "name": "MOLHO BBQ",
+    "price": 13.9
+  },
+  {
+    "code": "7898910095208",
+    "name": "Alcool 46,2% 500ml",
+    "price": 5.9
+  },
+  {
+    "code": "7898910095307",
+    "name": "Acendedor Tupi",
+    "price": 7.9
+  },
+  {
+    "code": "7898910912222",
+    "name": "Bola Queijo Bufala Soro",
+    "price": 15.0
+  },
+  {
+    "code": "7898910912260",
+    "name": "Queijo Coalho Lara",
+    "price": 18.9
+  },
+  {
+    "code": "7898910912291",
+    "name": "Queijo Mussarela de Bufala",
+    "price": 14.9
+  },
+  {
+    "code": "7898915949209",
+    "name": "Cerveja Império",
+    "price": 3.5
+  },
+  {
+    "code": "7898915949544",
+    "name": "agua com gas",
+    "price": 4.0
+  },
+  {
+    "code": "7898921153003",
+    "name": "Queijo Provolone Defumado",
+    "price": 25.0
+  },
+  {
+    "code": "7898921153096",
+    "name": "Queijo Coalho",
+    "price": 25.0
+  },
+  {
+    "code": "7898921153126",
+    "name": "Queijo Mussarela Condimentado",
+    "price": 25.0
+  },
+  {
+    "code": "7898921567503",
+    "name": "Batata Crinckle 1,05kg",
+    "price": 20.0
+  },
+  {
+    "code": "7898922793130",
+    "name": "Prato descartável 18cm",
+    "price": 2.9
+  },
+  {
+    "code": "7898924887240",
+    "name": "Pé de Moça",
+    "price": 3.5
+  },
+  {
+    "code": "7898930340845",
+    "name": "Prato descartavel",
+    "price": 4.0
+  },
+  {
+    "code": "7898930672441",
+    "name": "PAPEL ALUMINIO",
+    "price": 6.0
+  },
+  {
+    "code": "7898933030019",
+    "name": "Torresmo",
+    "price": 5.0
+  },
+  {
+    "code": "7898941554767",
+    "name": "Bife de Patinho 900G",
+    "price": 34.0
+  },
+  {
+    "code": "7898941554774",
+    "name": "Bife Coxao Mole pct 900gr",
+    "price": 35.0
+  },
+  {
+    "code": "7898941554798",
+    "name": "Coxão Duro em Cubos",
+    "price": 16.9
+  },
+  {
+    "code": "7898941554835",
+    "name": "Bife Patinho Tirinha",
+    "price": 17.5
+  },
+  {
+    "code": "7898946401103",
+    "name": "Queijo Prato Lanche",
+    "price": 7.0
+  },
+  {
+    "code": "7898946401745",
+    "name": "Queijo Coalho",
+    "price": 25.0
+  },
+  {
+    "code": "7898946757293",
+    "name": "Espetos de Bambu",
+    "price": 4.0
+  },
+  {
+    "code": "7898946757828",
+    "name": "Luva Nitrilica Preta P",
+    "price": 25.0
+  },
+  {
+    "code": "7898946757842",
+    "name": "Luva Nitrilica Preta M",
+    "price": 25.0
+  },
+  {
+    "code": "7898946757866",
+    "name": "Luva Nitrilica Preta G",
+    "price": 25.0
+  },
+  {
+    "code": "7898948934111",
+    "name": "QUEIJO COALHO LACTOWALL",
+    "price": 20.0
+  },
+  {
+    "code": "7898950581099",
+    "name": "Ovo Coderna",
+    "price": 16.0
+  },
+  {
+    "code": "7898953148701",
+    "name": "Suco Prats Laranja",
+    "price": 7.0
+  },
+  {
+    "code": "7898955887042",
+    "name": "KAFTA DE CARNE ESPANHA",
+    "price": 16.5
+  },
+  {
+    "code": "7898955887066",
+    "name": "KAFTA FRANGO ESPANHA",
+    "price": 15.0
+  },
+  {
+    "code": "7898955887080",
+    "name": "Luinguiça Cuiabada",
+    "price": 28.9
+  },
+  {
+    "code": "7898955887905",
+    "name": "Libguiça Cuiabana 4 queijos",
+    "price": 28.9
+  },
+  {
+    "code": "7898955887936",
+    "name": "CODEGUIM",
+    "price": 15.5
+  },
+  {
+    "code": "7898955887943",
+    "name": "Codiguim com Pimenta",
+    "price": 15.5
+  },
+  {
+    "code": "7898958658076",
+    "name": "Molho Pimenta",
+    "price": 6.0
+  },
+  {
+    "code": "7898958658120",
+    "name": "Farofa Gourmet Picante",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658137",
+    "name": "Farofa Gourmet Bacon",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658151",
+    "name": "Farofa Gourmet Alho",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658168",
+    "name": "Sal Parrilla Poleto",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658205",
+    "name": "Sweet Chilli Pimenta Biquinho Poleto",
+    "price": 12.0
+  },
+  {
+    "code": "7898958658236",
+    "name": "Sal Parrilla e Pimenta Poleto",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658243",
+    "name": "Sweet Chilli Goiabada Poleto",
+    "price": 13.0
+  },
+  {
+    "code": "7898958658250",
+    "name": "Sauce Pepper Harbanero Poleto",
+    "price": 12.0
+  },
+  {
+    "code": "7898958658267",
+    "name": "Sal Parrilla e Chimichirri Poleto",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658328",
+    "name": "Chimichurri Poleto",
+    "price": 15.0
+  },
+  {
+    "code": "7898958658366",
+    "name": "Lemon Pepper Poleto",
+    "price": 15.0
+  },
+  {
+    "code": "7898958658380",
+    "name": "Sal Parrilla Mostarde e Hortelã Poleto",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658472",
+    "name": "Farofa Gourmet Costelinha com Limão",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658519",
+    "name": "Sweet Chilli Abacaxi Poleto",
+    "price": 13.0
+  },
+  {
+    "code": "7898958658564",
+    "name": "Farofa Gourmet Torresmo",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658588",
+    "name": "Dry Rub Poleto",
+    "price": 15.0
+  },
+  {
+    "code": "7898958658649",
+    "name": "MAIONESE DEFUMADA",
+    "price": 14.0
+  },
+  {
+    "code": "7898958658755",
+    "name": "Sal Parilla",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658779",
+    "name": "Sal de Parrilla e Pimenta",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658793",
+    "name": "Sal Parrilla e Alho",
+    "price": 10.0
+  },
+  {
+    "code": "7898958658830",
+    "name": "MAIONESE BACON",
+    "price": 14.0
+  },
+  {
+    "code": "7898964629053",
+    "name": "Papel Aluminio 45x7,5cm",
+    "price": 7.9
+  },
+  {
+    "code": "7898964629169",
+    "name": "Filme de PVC",
+    "price": 4.9
+  },
+  {
+    "code": "7898964629886",
+    "name": "Espetos de bambu",
+    "price": 5.0
+  },
+  {
+    "code": "7898967047007",
+    "name": "BATATA FRITA 2KG",
+    "price": 30.0
+  },
+  {
+    "code": "7898967923837",
+    "name": "dip loko suprise",
+    "price": 5.9
+  },
+  {
+    "code": "7898967983015",
+    "name": "KAFTA CARNE C/ QUEIJO ESPANHA",
+    "price": 18.0
+  },
+  {
+    "code": "7898967983244",
+    "name": "LINGUIÇA CUIABANA BOVINA",
+    "price": 19.99
+  },
+  {
+    "code": "7898967983459",
+    "name": "Cuiabana 4 queijos",
+    "price": 19.9
+  },
+  {
+    "code": "7898970370079",
+    "name": "Morango Congelado",
+    "price": 18.0
+  },
+  {
+    "code": "7898994301240",
+    "name": "Molho Pimenta",
+    "price": 6.0
+  },
+  {
+    "code": "7898994301271",
+    "name": "Molho Pimenta",
+    "price": 6.0
+  },
+  {
+    "code": "7898994742319",
+    "name": "Pão de Alho Chef Lino",
+    "price": 9.5
+  },
+  {
+    "code": "7899567249686",
+    "name": "Filé de Merluza Friboi Chef",
+    "price": 22.9
+  },
+  {
+    "code": "7899638342841",
+    "name": "JERKED BEEF",
+    "price": 18.0
+  },
+  {
+    "code": "7899653780161",
+    "name": "Espatula Linha Gourmet",
+    "price": 32.9
+  },
+  {
+    "code": "7900465903072",
+    "name": "GELATO MORANGO",
+    "price": 15.0
+  },
+  {
+    "code": "7900749210407",
+    "name": "Gelato Pistache",
+    "price": 25.0
+  },
+  {
+    "code": "7901194141360",
+    "name": "GELATO DOCE DE LEITE",
+    "price": 15.0
+  },
+  {
+    "code": "7902956912174",
+    "name": "GELATO 1LT FIOR DI LATE",
+    "price": 40.0
+  },
+  {
+    "code": "7903318305764",
+    "name": "GELATO 1LT AÇAI",
+    "price": 40.0
+  },
+  {
+    "code": "7903935333027",
+    "name": "GELATO 1LT CHOCOLATE BELGA",
+    "price": 40.0
+  },
+  {
+    "code": "7906643231715",
+    "name": "GELATO CHOCOLATE BELGA",
+    "price": 15.0
+  },
+  {
+    "code": "7908350000455",
+    "name": "MEIO DA ASA TULIPA",
+    "price": 21.9
+  },
+  {
+    "code": "7908350002602",
+    "name": "SASSAMI 800G",
+    "price": 18.9
+  },
+  {
+    "code": "7908446510196",
+    "name": "GELATO 1LT DOCE DE LEITE",
+    "price": 40.0
+  },
+  {
+    "code": "7908888800015",
+    "name": "Farofa Caipira Crocante",
+    "price": 13.0
+  },
+  {
+    "code": "7908888800022",
+    "name": "Farofa Caipira Crocante c/ Pimenta",
+    "price": 13.0
+  },
+  {
+    "code": "7908888800046",
+    "name": "Farofa Caipira Crocante Leve",
+    "price": 10.0
+  },
+  {
+    "code": "7908888800053",
+    "name": "Farofa de alho",
+    "price": 10.0
+  },
+  {
+    "code": "7908942695755",
+    "name": "AÇAI",
+    "price": 15.0
+  },
+  {
+    "code": "8001",
+    "name": "SAL PARRILLA",
+    "price": 12.0
+  },
+  {
+    "code": "8002",
+    "name": "REFIL SAL PARRILLA",
+    "price": 5.0
+  },
+  {
+    "code": "80761761",
+    "name": "Kinder Bueno White",
+    "price": 8.9
+  },
+  {
+    "code": "8364054707899",
+    "name": "SUCO NATURAL TAMARINDO 900 ML",
+    "price": 17.0
+  },
+  {
+    "code": "8501",
+    "name": "Pct Molheira com Tampa",
+    "price": 16.0
+  },
+  {
+    "code": "8502",
+    "name": "Farofa Chão Preto 5kg",
+    "price": 80.0
+  },
+  {
+    "code": "8756383298702",
+    "name": "Pimentinha da Vó",
+    "price": 12.0
+  },
+  {
+    "code": "8881",
+    "name": "PALITO 25CM C/ PONTA",
+    "price": 150.0
+  },
+  {
+    "code": "8882",
+    "name": "PALITO 25CM S/ PONTA",
+    "price": 145.0
+  },
+  {
+    "code": "8883",
+    "name": "PALITO 30CM C/ PONTA",
+    "price": 170.0
+  },
+  {
+    "code": "8883957821391",
+    "name": "SUCO NATURAL TAMARINDO 300 ML",
+    "price": 9.0
+  },
+  {
+    "code": "8884",
+    "name": "PALITO 30CM S/ PONTA",
+    "price": 160.0
+  },
+  {
+    "code": "8949461894984",
+    "name": "Farofa Caipira bacon c/ banana",
+    "price": 10.0
+  },
+  {
+    "code": "8976000266963",
+    "name": "CAFÉ",
+    "price": 80.0
+  },
+  {
+    "code": "9",
+    "name": "Caipirinha - funcionários",
+    "price": 7.5
+  },
+  {
+    "code": "9001",
+    "name": "Costela Suína",
+    "price": 18.5
+  },
+  {
+    "code": "9002",
+    "name": "Lombo Suíno",
+    "price": 18.0
+  },
+  {
+    "code": "9005",
+    "name": "Coxão Duro",
+    "price": 30.9
+  },
+  {
+    "code": "9007",
+    "name": "Coxa e Sobrecoxa",
+    "price": 9.0
+  },
+  {
+    "code": "9008",
+    "name": "Peito de Frango",
+    "price": 15.5
+  },
+  {
+    "code": "9009",
+    "name": "Maionese Balde",
+    "price": 25.5
+  },
+  {
+    "code": "9010",
+    "name": "Molho de Tomate 1kg",
+    "price": 4.49
+  },
+  {
+    "code": "9011",
+    "name": "Coxão Mole",
+    "price": 34.9
+  },
+  {
+    "code": "9012",
+    "name": "Coxão Mole",
+    "price": 33.5
+  },
+  {
+    "code": "9013",
+    "name": "Almondega Friboi",
+    "price": 22.0
+  },
+  {
+    "code": "9015",
+    "name": "Codiguim s/ Pimenta",
+    "price": 15.0
+  },
+  {
+    "code": "9016",
+    "name": "Codiguim c/ Pimenta",
+    "price": 15.0
+  },
+  {
+    "code": "9017",
+    "name": "QUEIJO MUSSARELA PÇ",
+    "price": 28.77
+  },
+  {
+    "code": "9018",
+    "name": "PRESUNTO PÇ",
+    "price": 19.55
+  },
+  {
+    "code": "9019",
+    "name": "MILHO LATA 1,7KG",
+    "price": 21.5
+  },
+  {
+    "code": "9020",
+    "name": "TOMATE",
+    "price": 5.0
+  },
+  {
+    "code": "9021",
+    "name": "Limão",
+    "price": 6.0
+  },
+  {
+    "code": "9022",
+    "name": "Cebola Roxa",
+    "price": 8.0
+  },
+  {
+    "code": "9023",
+    "name": "Cebola Branca",
+    "price": 6.0
+  },
+  {
+    "code": "9025",
+    "name": "Pera do Coxão Mole",
+    "price": 29.9
+  },
+  {
+    "code": "9500015716013",
+    "name": "Espeto giratório EspetoSul",
+    "price": 220.0
+  },
+  {
+    "code": "9500215716013",
+    "name": "espeto sul",
+    "price": 199.99
+  },
+  {
+    "code": "98231",
+    "name": "KIT CHURRASCO",
+    "price": 129.0
+  },
+  {
+    "code": "98955120092",
+    "name": "Café",
+    "price": 80.0
+  },
+  {
+    "code": "9898",
+    "name": "FRANGO PADARIA",
+    "price": 19.9
+  },
+  {
+    "code": "99",
+    "name": "Moscow Mule funcionários",
+    "price": 10.0
+  },
+  {
+    "code": "9903333",
+    "name": "Costela Minga Friboi",
+    "price": 21.9
+  },
+  {
+    "code": "99103411",
+    "name": "Ponta de Peito Friboi",
+    "price": 21.5
+  },
+  {
+    "code": "999",
+    "name": "GIN TÔNICA",
+    "price": 7.5
+  },
+  {
+    "code": "9991",
+    "name": "Produto não cadastrado 01",
+    "price": 1.0
+  },
+  {
+    "code": "9992",
+    "name": "Produto não cadastrado 02",
+    "price": 1.0
+  },
+  {
+    "code": "9993",
+    "name": "Produto não cadastrado 03",
+    "price": 1.0
+  },
+  {
+    "code": "9994",
+    "name": "Produto não cadastrado 04",
+    "price": 1.0
+  },
+  {
+    "code": "9995",
+    "name": "Produto não cadastrado 05",
+    "price": 1.0
+  }
+]

@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
 	"os"
@@ -452,6 +453,9 @@ func (s *Store) migrate() error {
 
 	// Garante os Grupos de Adicionais reutilizáveis e limpa "Ponto da Carne" das Porções / Batatas / Frango
 	s.ensureDefaultModifierGroupTemplatesAndCleanPorcoes()
+
+	// Garante a importação e atualização de todos os 814 produtos da Boutique das Carnes & Empório (legado de mercado)
+	_ = s.EnsureLegacyMarketProducts()
 
 	// Garante as 30 Mesas padrão (01 a 12 = Tablet Kiosk sem QR de Mesa, 13 a 30 = Salão/QR) sem prefixo [Q]/[T]
 	_, _ = s.DB.Exec(`DELETE FROM dining_tables WHERE number = 99`)
@@ -1719,21 +1723,39 @@ func (s *Store) ListAllProducts() ([]models.Product, error) {
 	return list, nil
 }
 
-// LookupBarcode suporta tanto códigos EAN-13 padrão quanto etiquetas de balança (Toledo/Filizola 13 dígitos começando com "2").
+// LookupBarcode suporta códigos EAN-13 padrão, PLU interno/curto e etiquetas de balança (Toledo/Filizola 13 dígitos começando com "2").
 func (s *Store) LookupBarcode(code string) (*models.Product, float64, error) {
 	code = strings.TrimSpace(code)
-	// Verifica etiqueta de balança padrão 2 + 4 dígitos PLU + 5 dígitos peso (gramas) ou valor + dígito verificador
+	if code == "" {
+		return nil, 0, errors.New("código de barras vazio")
+	}
+
+	// 1. Verifica etiqueta de balança padrão 2 + 4/5 dígitos PLU + 5 dígitos peso (gramas) ou valor + dígito verificador
 	if len(code) == 13 && strings.HasPrefix(code, "2") {
-		plu := code[1:5]
+		plu4 := code[1:5]
+		plu5 := code[1:6]
+		plu4Zero := code[2:6]
 		weightGramsStr := code[7:12]
+
 		var p models.Product
 		var weighted, trackStock, active int
 		var modJSON string
 		err := s.DB.QueryRow(`SELECT id, external_id, category_id, category_name, sector, sector_abc, name, description,
 			price, cost_price, ean13, plu_code, is_weighted, ncm, cest, cfop, image_url, modifier_groups_json,
 			COALESCE(stock_qty, 40.0), COALESCE(min_stock, 5.0), COALESCE(track_stock, 1), active
-			FROM products WHERE (plu_code = ? OR SUBSTR(ean13, 1, 5) = ?) AND active = 1 LIMIT 1`,
-			plu, code[0:5]).Scan(
+			FROM products 
+			WHERE (plu_code = ? OR plu_code = ? OR plu_code = ? OR ean13 = ? OR ean13 = ? OR ean13 = ? OR SUBSTR(ean13, 1, 5) = ?) 
+			  AND active = 1 
+			ORDER BY 
+				CASE 
+					WHEN plu_code = ? OR plu_code = ? THEN 1
+					WHEN ean13 = ? OR ean13 = ? THEN 2
+					ELSE 3
+				END, id ASC 
+			LIMIT 1`,
+			plu4, plu5, plu4Zero, plu4, plu5, plu4Zero, code[0:5],
+			plu4, plu5, plu4, plu5,
+		).Scan(
 			&p.ID, &p.ExternalID, &p.CategoryID, &p.CategoryName, &p.Sector, &p.SectorABC,
 			&p.Name, &p.Description, &p.Price, &p.CostPrice, &p.EAN13, &p.PLUCode,
 			&weighted, &p.NCM, &p.CEST, &p.CFOP, &p.ImageURL, &modJSON,
@@ -1753,14 +1775,33 @@ func (s *Store) LookupBarcode(code string) (*models.Product, float64, error) {
 		}
 	}
 
+	// 2. Busca padrão por EAN-13, PLU, ID ou Nome (com prioridade rigorosa para códigos exatos)
+	trimmedCode := strings.TrimLeft(code, "0")
 	var p models.Product
 	var weighted, trackStock, active int
 	var modJSON string
 	err := s.DB.QueryRow(`SELECT id, external_id, category_id, category_name, sector, sector_abc, name, description,
 		price, cost_price, ean13, plu_code, is_weighted, ncm, cest, cfop, image_url, modifier_groups_json,
 		COALESCE(stock_qty, 40.0), COALESCE(min_stock, 5.0), COALESCE(track_stock, 1), active
-		FROM products WHERE (ean13 = ? OR CAST(id AS TEXT) = ? OR LOWER(name) LIKE LOWER(?)) AND active = 1 LIMIT 1`,
-		code, code, "%"+code+"%").Scan(
+		FROM products 
+		WHERE (
+			ean13 = ? 
+			OR plu_code = ? 
+			OR (length(?) > 0 AND (LTRIM(ean13, '0') = ? OR LTRIM(plu_code, '0') = ?))
+			OR CAST(id AS TEXT) = ? 
+			OR LOWER(name) LIKE LOWER(?)
+		) AND active = 1 
+		ORDER BY 
+			CASE 
+				WHEN ean13 = ? OR plu_code = ? THEN 1
+				WHEN length(?) > 0 AND (LTRIM(ean13, '0') = ? OR LTRIM(plu_code, '0') = ?) THEN 2
+				WHEN CAST(id AS TEXT) = ? THEN 3
+				ELSE 4
+			END, id ASC 
+		LIMIT 1`,
+		code, code, trimmedCode, trimmedCode, trimmedCode, code, "%"+code+"%",
+		code, code, trimmedCode, trimmedCode, trimmedCode, code,
+	).Scan(
 		&p.ID, &p.ExternalID, &p.CategoryID, &p.CategoryName, &p.Sector, &p.SectorABC,
 		&p.Name, &p.Description, &p.Price, &p.CostPrice, &p.EAN13, &p.PLUCode,
 		&weighted, &p.NCM, &p.CEST, &p.CFOP, &p.ImageURL, &modJSON,
