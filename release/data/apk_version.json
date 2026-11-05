@@ -1,7 +1,7 @@
 {
-    "release_notes":  "v4.8.6 (Build #44): (1) Nova Grade de 7 Colunas para Ofertas da Semana (SEG a DOM); (2) Botoes de adicionar e excluir produtos por dia e toggle geral mestre; (3) Categoria de Ofertas protegida contra exclusao; (4) Tela cheia permanente no PDV; (5) Autenticacao unificada com suporte a PIN e usuario.",
-    "version_code":  44,
-    "file_size_bytes":  1823600,
-    "version_name":  "4.8.6",
-    "built_at":  "04/11/2026 19:42:22"
+  "release_notes": "v4.8.9 (Build #47): Inicialização 100% em Segundo Plano (Headless): (1) Zero telas CMD, zero janelas na barra de tarefas; (2) Não abre navegador sozinho; (3) Janelas próprias com logotipo; (4) Poka-Yoke operacional completo.",
+  "version_code": 47,
+  "file_size_bytes": 1823600,
+  "version_name": "4.8.9",
+  "built_at": "05/11/2026 08:35:00"
 }

@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"sirbeef/backend/internal/db"
@@ -39,7 +40,14 @@ type Server struct {
 }
 
 func main() {
-	exeDir, _ := os.Getwd()
+	exePath, errExe := os.Executable()
+	var exeDir string
+	if errExe == nil {
+		exeDir = filepath.Dir(exePath)
+	} else {
+		exeDir, _ = os.Getwd()
+	}
+	_ = os.Chdir(exeDir)
 	dataDir := filepath.Join(exeDir, "data")
 	_ = os.MkdirAll(dataDir, 0755)
 
@@ -261,6 +269,10 @@ func (s *Server) ensureCloudflareTunnelRunning(exeDir string) {
 			cmd = exec.Command(cfPath, "tunnel", "--no-autoupdate", "run", "--token", tok)
 		} else {
 			cmd = exec.Command(cfPath, "tunnel", "--url", "http://127.0.0.1:"+s.Port, "--metrics", "127.0.0.1:20241", "--no-autoupdate")
+		}
+		cmd.SysProcAttr = &syscall.SysProcAttr{
+			HideWindow:    true,
+			CreationFlags: 0x08000000, // CREATE_NO_WINDOW
 		}
 		if err := cmd.Start(); err == nil {
 			// Aguarda alguns segundos para capturar a nova URL gerada
@@ -866,7 +878,8 @@ func ensureWindowsNetworkReady(port string, exeDir string) {
 	_ = os.WriteFile(tmpScript, []byte(psScriptContent), 0644)
 
 	// Tenta aplicar diretamente caso já esteja rodando como Administrador
-	directCmd := exec.Command("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", tmpScript)
+	directCmd := exec.Command("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", tmpScript)
+	directCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
 	_ = directCmd.Run()
 	if out2, err2 := exec.Command("netsh", "advfirewall", "firewall", "show", "rule", "name="+ruleName).CombinedOutput(); err2 == nil && strings.Contains(string(out2), ruleName) {
 		fmt.Println("✅ [REDE LOCAL] Firewall, Porta 8080/80 e IPs Wi-Fi configurados com sucesso (Modo ADM Direto)!")
@@ -878,9 +891,11 @@ func ensureWindowsNetworkReady(port string, exeDir string) {
 		"powershell",
 		"-NoProfile",
 		"-ExecutionPolicy", "Bypass",
+		"-WindowStyle", "Hidden",
 		"-Command",
-		fmt.Sprintf(`Start-Process powershell -Verb RunAs -Wait -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File "%s"'`, tmpScript),
+		fmt.Sprintf(`Start-Process powershell -Verb RunAs -Wait -WindowStyle Hidden -ArgumentList '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%s"'`, tmpScript),
 	)
+	elevatedCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
 	if err := elevatedCmd.Run(); err != nil {
 		fmt.Printf("⚠️  [REDE LOCAL] Aviso ao solicitar permissão ADM: %v\n", err)
 	} else {
@@ -4862,6 +4877,11 @@ func (s *Server) handleSystemDeploy(w http.ResponseWriter, r *http.Request) {
 			{"release/backend/internal/escpos/escpos.go", filepath.Join(exeDir, "internal", "escpos", "escpos.go")},
 			{"release/backend/internal/whatsapp/engine.go", filepath.Join(exeDir, "internal", "whatsapp", "engine.go")},
 			{"release/INICIAR_ECOSSISTEMA_SIRBEEF.bat", filepath.Join(rootDir, "INICIAR_ECOSSISTEMA_SIRBEEF.bat")},
+			{"release/SirBeef-Caixa1.exe", filepath.Join(rootDir, "SirBeef-Caixa1.exe")},
+			{"release/SirBeef-Caixa2.exe", filepath.Join(rootDir, "SirBeef-Caixa2.exe")},
+			{"release/ABRIR_PDV_JANELA_PROPRIA_PC1.bat", filepath.Join(rootDir, "ABRIR_PDV_JANELA_PROPRIA_PC1.bat")},
+			{"release/ABRIR_PDV_JANELA_PROPRIA_PC2.bat", filepath.Join(rootDir, "ABRIR_PDV_JANELA_PROPRIA_PC2.bat")},
+			{"release/SirBeef.ico", filepath.Join(rootDir, "SirBeef.ico")},
 			{"release/backend/sirbeef-server.zip", filepath.Join(exeDir, "sirbeef-server.zip")},
 			{"SirBeef-SuperApp.apk", filepath.Join(rootDir, "SirBeef-SuperApp.apk")},
 		}
